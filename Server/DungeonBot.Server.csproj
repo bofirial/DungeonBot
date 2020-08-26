@@ -19,7 +19,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Client\DungeonBot.Client.csproj" />
-    <ProjectReference Include="..\Shared\DungeonBot.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 
