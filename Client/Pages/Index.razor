@@ -1,7 +1,139 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Linq;
+@using System.Reflection;
+@using System.Threading.Tasks;
+@using System.Web;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.CodeAnalysis;
+@using Microsoft.CodeAnalysis.CSharp;
+@using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 
-Welcome to your new app.
+<textarea id="input" @bind="Input" type="text" autofocus class="w-100 d-block" rows="20"/>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<button type="button" class="btn btn-primary" @onclick="RunAsync">Run</button>
+
+@code
+{
+    public string Input { get; set; } = @"using System.Threading.Tasks;
+//DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
+namespace DungeonBot.Generated
+{
+    //DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
+    public class DungeonBot
+    {        
+        //DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
+        public async Task<int> ActionAsync() {
+            //Edit the code here!
+            System.Console.WriteLine(""Hello World!"");
+
+            return 200;
+        }
+    }
+}";
+
+    private IEnumerable<MetadataReference>? _references = null;
+
+    @inject NavigationManager NavigationManager
+
+    protected async override Task OnInitializedAsync()
+    {
+        var refs = AppDomain.CurrentDomain.GetAssemblies();
+        var client = new HttpClient
+        {
+            BaseAddress = new Uri(NavigationManager.BaseUri)
+        };
+
+        var references = new List<MetadataReference>();
+
+        foreach (var reference in refs.Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location)))
+        {
+            var stream = await client.GetStreamAsync($"_framework/_bin/{reference.Location}");
+            references.Add(MetadataReference.CreateFromStream(stream));
+        }
+        _references = references;
+    }
+
+    private async Task RunAsync(MouseEventArgs e)
+    {
+        await RunSubmission(Input);
+    }
+
+    private bool TryCompile(string source, out Assembly? assembly, out IEnumerable<Diagnostic> errorDiagnostics)
+    {
+        assembly = null;
+        var scriptCompilation = CSharpCompilation.Create(
+            Path.GetRandomFileName(),
+            new List<SyntaxTree>() {
+            CSharpSyntaxTree.ParseText(source, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))},
+            _references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: new[]
+            {
+            "System",
+            "System.IO",
+            "System.Collections.Generic",
+            "System.Console",
+            "System.Diagnostics",
+            "System.Dynamic",
+            "System.Linq",
+            "System.Linq.Expressions",
+            "System.Net.Http",
+            "System.Text",
+            "System.Threading.Tasks"
+                                })
+        );
+        errorDiagnostics = scriptCompilation.GetDiagnostics().Where(x => x.Severity == DiagnosticSeverity.Error);
+        if (errorDiagnostics.Any())
+        {
+            return false;
+        }
+        using (var peStream = new MemoryStream())
+        {
+            var emitResult = scriptCompilation.Emit(peStream);
+            if (emitResult.Success)
+            {
+                assembly = Assembly.Load(peStream.ToArray());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private async Task RunSubmission(string code)
+    {
+        try
+        {
+            if (TryCompile(code, out var script, out var errorDiagnostics))
+            {
+                if (script == null)
+                {
+                    throw new Exception("Null Assembly");
+                }
+
+                var type = script.GetType("DungeonBot.Generated.DungeonBot");
+                var actionMethod = type.GetMethod("ActionAsync");
+
+                var dungeonBot = Activator.CreateInstance(type);
+
+                var result = await ((Task<int>)actionMethod.Invoke(dungeonBot, new object[0]));
+
+                Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(result));
+            }
+            else
+            {
+                foreach (var diag in errorDiagnostics)
+                {
+                    Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(HttpUtility.HtmlEncode(diag)));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(HttpUtility.HtmlEncode(HttpUtility.HtmlEncode(CSharpObjectFormatter.Instance.FormatException(ex)))));
+        }
+
+
+    }
+}
