@@ -10,20 +10,22 @@
 @using Microsoft.CodeAnalysis;
 @using Microsoft.CodeAnalysis.CSharp;
 @using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
+@using BlazorMonaco
+@using BlazorMonaco.Bridge
 
-<textarea id="input" @bind="Input" type="text" autofocus class="w-100 d-block" rows="20"/>
+<MonacoEditor @ref="cSharpEditor" Id="monaco-container" ConstructionOptions="EditorConstructionOptions"></MonacoEditor>
 
 <button type="button" class="btn btn-primary" @onclick="RunAsync">Run</button>
 
 @code
 {
-    public string Input { get; set; } = @"using System.Threading.Tasks;
+    public string InitialInput { get; } = @"using System.Threading.Tasks;
 //DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
 namespace DungeonBot.Generated
 {
     //DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
     public class DungeonBot
-    {        
+    {
         //DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
         public async Task<int> ActionAsync() {
             //Edit the code here!
@@ -35,6 +37,8 @@ namespace DungeonBot.Generated
 }";
 
     private IEnumerable<MetadataReference>? _references = null;
+
+    private MonacoEditor? cSharpEditor { get; set; }
 
     @inject NavigationManager NavigationManager
 
@@ -56,9 +60,20 @@ namespace DungeonBot.Generated
         _references = references;
     }
 
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "csharp",
+            Theme = "vs-dark",
+            Value = InitialInput
+        };
+    }
+
     private async Task RunAsync(MouseEventArgs e)
     {
-        await RunSubmission(Input);
+        await RunSubmission(await (cSharpEditor?.GetValue() ?? Task.FromResult(string.Empty)));
     }
 
     private bool TryCompile(string source, out Assembly? assembly, out IEnumerable<Diagnostic> errorDiagnostics)
@@ -82,7 +97,7 @@ namespace DungeonBot.Generated
             "System.Net.Http",
             "System.Text",
             "System.Threading.Tasks"
-                                })
+                                    })
         );
         errorDiagnostics = scriptCompilation.GetDiagnostics().Where(x => x.Severity == DiagnosticSeverity.Error);
         if (errorDiagnostics.Any())
