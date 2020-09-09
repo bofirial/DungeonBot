@@ -12,6 +12,10 @@
 @using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 @using BlazorMonaco
 @using BlazorMonaco.Bridge
+@using Microsoft.CodeAnalysis.Host.Mef;
+@using Microsoft.CodeAnalysis.Text;
+@using Microsoft.CodeAnalysis.Completion;
+@using System.Composition.Hosting;
 
 <MonacoEditor @ref="cSharpEditor" Id="monaco-container" ConstructionOptions="EditorConstructionOptions"></MonacoEditor>
 
@@ -23,24 +27,26 @@
 //DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
 namespace DungeonBot.Generated
 {
+//DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
+public class DungeonBot
+{
     //DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
-    public class DungeonBot
-    {
-        //DO NOT MODIFY THE NAMESPACE, CLASS, OR METHOD
-        public async Task<int> ActionAsync() {
-            //Edit the code here!
-            System.Console.WriteLine(""Hello World!"");
+    public async Task<int> ActionAsync() {
+        //Edit the code here!
+        System.Console.WriteLine(""Hello World!"");
 
-            return 200;
-        }
+        return 200;
     }
+}
 }";
 
     private IEnumerable<MetadataReference>? _references = null;
 
     private MonacoEditor? cSharpEditor { get; set; }
 
-    @inject NavigationManager NavigationManager
+    @inject NavigationManager NavigationManager;
+
+    @inject HttpClient Http;
 
     protected async override Task OnInitializedAsync()
     {
@@ -73,7 +79,65 @@ namespace DungeonBot.Generated
 
     private async Task RunAsync(MouseEventArgs e)
     {
+        var _ = typeof(SQLitePCL.EntryPointAttribute);
+        var __ = typeof(Microsoft.CodeAnalysis.CSharp.Formatting.CSharpFormattingOptions);
+
+        var bytes = await Http.GetByteArrayAsync("_framework/_bin/Microsoft.CodeAnalysis.CSharp.Features.dll");
+        var assembly = System.Reflection.Assembly.Load(bytes);
+
+        //var ___ = typeof(Microsoft.CodeAnalysis.CSharp.AddMissingReference.CSharpAddMissingReferenceCodeFixProvider);
+
+        await IntellisenseAsync();
+
         await RunSubmission(await (cSharpEditor?.GetValue() ?? Task.FromResult(string.Empty)));
+    }
+
+    private async Task IntellisenseAsync()
+    {
+        //var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        //var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
+        //    .Distinct()
+        //    .SelectMany(x => x.GetTypes()).ToArray();
+
+        //var compositionContext = new ContainerConfiguration()
+        //    .WithParts(partTypes)
+        //    .CreateContainer();
+
+        //var host = MefHostServices.Create(compositionContext);
+
+        var host = MefHostServices.Create(MefHostServices.DefaultAssemblies);
+        var workspace = new AdhocWorkspace(host);
+
+        var code = @"using System;
+        public class MyClass
+        {
+            public static void MyMethod(int value)
+            {
+                Guid.
+            }
+        }";
+
+        var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "DungeonBot", "DungeonBot", LanguageNames.CSharp).
+                WithMetadataReferences(_references);
+        var project = workspace.AddProject(projectInfo);
+        var document = workspace.AddDocument(project.Id, "MyDungeonBot.cs", SourceText.From(code));
+
+        var completionService = CompletionService.GetService(document);
+
+        var codePosition = code.LastIndexOf("Guid.") + 5;
+        Console.WriteLine("Document:");
+        //var jsonOptions = new System.Text.Json.JsonSerializerOptions() { ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve };
+        Console.WriteLine(document == null);
+        Console.WriteLine(completionService == null);
+        Console.WriteLine(codePosition);
+        //var json = System.Text.Json.JsonSerializer.Serialize(document, jsonOptions);
+        //Console.WriteLine(json);
+
+        var results = await completionService.GetCompletionsAsync(document, codePosition);
+
+        Console.WriteLine("Completion Items:");
+        //Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(results.Items, new System.Text.Json.JsonSerializerOptions() { ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve }));
     }
 
     private bool TryCompile(string source, out Assembly? assembly, out IEnumerable<Diagnostic> errorDiagnostics)
@@ -97,7 +161,7 @@ namespace DungeonBot.Generated
             "System.Net.Http",
             "System.Text",
             "System.Threading.Tasks"
-                                    })
+                                        })
         );
         errorDiagnostics = scriptCompilation.GetDiagnostics().Where(x => x.Severity == DiagnosticSeverity.Error);
         if (errorDiagnostics.Any())
@@ -148,7 +212,5 @@ namespace DungeonBot.Generated
         {
             Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(HttpUtility.HtmlEncode(HttpUtility.HtmlEncode(CSharpObjectFormatter.Instance.FormatException(ex)))));
         }
-
-
     }
 }
