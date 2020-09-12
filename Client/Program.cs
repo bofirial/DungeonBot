@@ -19,6 +19,7 @@ namespace DungeonBot.Client
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             builder.Services.AddScoped<ICSharpCompiler, CSharpCompiler>();
+            builder.Services.AddScoped<ICodeCompletionService, CodeCompletionService>();
 
             builder.Services.AddLogging(builder => builder
                 .AddBrowserConsole()

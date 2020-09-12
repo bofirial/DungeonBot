@@ -1,9 +1,9 @@
 ﻿@using BlazorMonaco
 @using BlazorMonaco.Bridge
-@using Microsoft.AspNetCore.Components
 @using DungeonBot.Client.BusinessLogic
-@using System.IO
+@using Microsoft.AspNetCore.Components
 @using Microsoft.Extensions.Logging
+@using System.IO
 
 <div class="code-editor">
     <MonacoEditor @ref="CSharpEditor" Id="monaco-container" ConstructionOptions="EditorConstructionOptions"></MonacoEditor>
@@ -26,9 +26,18 @@
 
     @inject ICSharpCompiler CSharpCompiler
 
+    @inject ICodeCompletionService CodeCompletionService
+
     @inject ILogger<DungeonBotCodeEditor> Logger
 
     private MonacoEditor? CSharpEditor { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await CodeCompletionService.InitializeCodeEditorAsync();
+
+        await base.OnInitializedAsync();
+    }
 
     public void SetValue(string value)
     {

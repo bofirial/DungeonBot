@@ -29,22 +29,10 @@
     <script src="_content/BlazorMonaco/jsInterop.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/Blazor.Extensions.Logging/blazor.extensions.logging.js" defer></script>
+
+    <script src="scripts/dungeonBotCodeEditor.js" type="module"></script>
+
     <script>navigator.serviceWorker.register('service-worker.js');</script>
-
-    <!--<script type="text/javascript">
-        window.setTimeout(function () {
-            monaco.languages.registerCompletionItemProvider('csharp', {
-                provideCompletionItems: function (model, position) {
-                    console.log("CompletionItems", model, position);
-                    console.log(model.getValueInRange({ startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column }));
-
-                    return {
-                        suggestions: []
-                    };
-                }
-            });
-        }, 100);
-    </script>-->
 </body>
 
 </html>
