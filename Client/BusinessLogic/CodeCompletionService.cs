@@ -1,18 +1,21 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using DungeonBot.Models;
 using Microsoft.JSInterop;
 
 namespace DungeonBot.Client.BusinessLogic
 {
     public class CodeCompletionService : ICodeCompletionService
     {
+        private const string FILE_NAME = "DungeonBot.cs";
         private readonly IJSRuntime _jsRuntime;
-        private readonly ILogger<CodeCompletionService> _logger;
+        private readonly HttpClient _httpClient;
 
-        public CodeCompletionService(IJSRuntime jsRuntime, ILogger<CodeCompletionService> logger)
+        public CodeCompletionService(IJSRuntime jsRuntime, HttpClient httpClient)
         {
             _jsRuntime = jsRuntime;
-            _logger = logger;
+            _httpClient = httpClient;
         }
 
         public async Task InitializeCodeEditorAsync()
@@ -21,11 +24,26 @@ namespace DungeonBot.Client.BusinessLogic
         }
 
         [JSInvokable]
-        public async Task<string> GetCodeCompletionsAsync(string sourceCode, int currentPosition)
+        public async Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(string sourceCode, int currentPosition)
         {
-            _logger.LogInformation(sourceCode);
+            var response = await _httpClient.PostAsJsonAsync($"api/CodeCompletions", new CodeCompletionPostRequestModel()
+            {
+                CombatLogic = new CombatLogic()
+                {
+                    SourceCodeFiles = new System.Collections.Generic.List<SourceCodeFile>()
+                    {
+                        new SourceCodeFile()
+                        {
+                            FileName = FILE_NAME,
+                            Content = sourceCode
+                        }
+                    }
+                },
+                TargetFileName = FILE_NAME,
+                TargetFilePosition = currentPosition
+            });
 
-            return "It works!";
+            return await response.Content.ReadFromJsonAsync<CodeCompletionPostResponseModel>();
         }
     }
 }

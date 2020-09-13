@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using DungeonBot.Models;
 
 namespace DungeonBot.Client.BusinessLogic
 {
@@ -6,6 +7,6 @@ namespace DungeonBot.Client.BusinessLogic
     {
         Task InitializeCodeEditorAsync();
 
-        Task<string> GetCodeCompletionsAsync(string sourceCode, int currentPosition);
+        Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(string sourceCode, int currentPosition);
     }
 }

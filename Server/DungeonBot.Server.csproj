@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Client\DungeonBot.Client.csproj" />
+    <ProjectReference Include="..\DungeonBot.Models\DungeonBot.Models.csproj" />
   </ItemGroup>
-
 
 </Project>

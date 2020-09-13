@@ -23,11 +23,15 @@ require(["vs/editor/editor.main"], function () {
             const textUntilPosition = model.getValueInRange({ startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
             const cursorPosition = textUntilPosition.length;
 
-            window.codeCompletionService.invokeMethodAsync('GetCodeCompletionsAsync', model.getValue(), cursorPosition)
-                .then(codeCompletions => console.log(codeCompletions));
-
             return new Promise((resolve, reject) => {
-                resolve([]);
+
+                window.codeCompletionService.invokeMethodAsync('GetCodeCompletionsAsync', model.getValue(), cursorPosition)
+                    .then(codeCompletions => {
+                        console.log(codeCompletions);
+
+                        resolve({ suggestions: codeCompletions.completionItems});
+                    });
+
             });
         }
     });
