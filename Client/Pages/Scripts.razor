@@ -1,9 +1,11 @@
-﻿@page "/"
+﻿@page "/scripts"
 
 @using System.IO;
 @using System.Reflection;
 @using System.Threading.Tasks;
 @using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
+
+<h1>Scripts</h1>
 
 <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@_initialInput" OnSaveAsync="RunAsync" OnCancelAsync="CancelAsync"></DungeonBotCodeEditor>
 
