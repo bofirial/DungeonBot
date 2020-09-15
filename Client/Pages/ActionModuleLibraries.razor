@@ -29,6 +29,7 @@
 
     private async Task RunAsync(MemoryStream memoryStream)
     {
+        //Validate the Library
         var assembly = Assembly.Load(memoryStream.ToArray());
 
         if (assembly == null)
@@ -46,15 +47,6 @@
         });
 
         Dispatcher.Dispatch(updateLibraryAction);
-
-        var type = assembly.GetType("DungeonBot.Generated.DungeonBot");
-        var actionMethod = type.GetMethod("ActionAsync");
-
-        var dungeonBot = Activator.CreateInstance(type);
-
-        var result = await ((Task<int>)actionMethod.Invoke(dungeonBot, new object[0]));
-
-        Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(result));
     }
 
     private async Task CancelAsync()
