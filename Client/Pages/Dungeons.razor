@@ -1,3 +1,27 @@
 ﻿@page "/"
 
+@using System.Reflection;
+@using Fluxor;
+@using Store.ActionModule;
+
+@inject IState<ActionModuleState> ActionModuleState
+
 <h1>Dungeons</h1>
+
+<button @onclick="ButtonAsync">Button</button>
+
+@code {
+    public async Task ButtonAsync(MouseEventArgs e)
+    {
+        var assembly = Assembly.Load(ActionModuleState.Value.ActionModuleLibraries.First().Assembly.ToArray());
+
+        var type = assembly.GetType("DungeonBot.Generated.DungeonBot");
+        var actionMethod = type.GetMethod("ActionAsync");
+
+        var dungeonBot = Activator.CreateInstance(type);
+
+        var result = await ((Task<int>)actionMethod.Invoke(dungeonBot, new object[0]));
+
+        Console.WriteLine(result);
+    }
+}

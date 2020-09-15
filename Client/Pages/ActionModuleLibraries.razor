@@ -1,0 +1,67 @@
+﻿@page "/action-module-libraries"
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+
+@using System.IO;
+@using System.Reflection;
+@using System.Threading.Tasks;
+@using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
+@using Fluxor;
+@using Store.ActionModule;
+@using DungeonBot.Models;
+
+<h1>Action Module Libraries</h1>
+
+<DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@GetValueFromState()" OnSaveAsync="RunAsync" OnCancelAsync="CancelAsync"></DungeonBotCodeEditor>
+
+@inject IState<ActionModuleState> ActionModuleState
+
+@inject IDispatcher Dispatcher
+
+@code
+{
+    public DungeonBotCodeEditor? DungeonBotCodeEditor { get; set; }
+
+    private string GetValueFromState()
+    {
+        return ActionModuleState.Value.ActionModuleLibraries.First().ActionModuleFiles.First().Content;
+    }
+
+    private async Task RunAsync(MemoryStream memoryStream)
+    {
+        var assembly = Assembly.Load(memoryStream.ToArray());
+
+        if (assembly == null)
+        {
+            throw new Exception("Null Assembly");
+        }
+
+        if (DungeonBotCodeEditor == null)
+        {
+            return;
+        }
+
+        var updateLibraryAction = new UpdateActionModuleLibraryAction("DungeonBot001", "DungeonBot001", memoryStream.ToArray(), new List<ActionModuleFile>() {
+            new ActionModuleFile("DungeonBot.cs", await DungeonBotCodeEditor.GetValueAsync())
+        });
+
+        Dispatcher.Dispatch(updateLibraryAction);
+
+        var type = assembly.GetType("DungeonBot.Generated.DungeonBot");
+        var actionMethod = type.GetMethod("ActionAsync");
+
+        var dungeonBot = Activator.CreateInstance(type);
+
+        var result = await ((Task<int>)actionMethod.Invoke(dungeonBot, new object[0]));
+
+        Console.WriteLine(CSharpObjectFormatter.Instance.FormatObject(result));
+    }
+
+    private async Task CancelAsync()
+    {
+        if (DungeonBotCodeEditor != null)
+        {
+            await DungeonBotCodeEditor.SetValueAsync(GetValueFromState());
+        }
+    }
+}

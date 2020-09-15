@@ -8,6 +8,7 @@ namespace DungeonBot.Client.BusinessLogic
 {
     public class CodeCompletionService : ICodeCompletionService
     {
+        private const string LIBRARY_NAME = "DungeonBot001";
         private const string FILE_NAME = "DungeonBot.cs";
         private readonly IJSRuntime _jsRuntime;
         private readonly HttpClient _httpClient;
@@ -18,27 +19,14 @@ namespace DungeonBot.Client.BusinessLogic
             _httpClient = httpClient;
         }
 
-        public async Task InitializeCodeEditorAsync()
-        {
-            await _jsRuntime.InvokeVoidAsync("initializeMonacoCodeEditor", DotNetObjectReference.Create(this));
-        }
+        public async Task InitializeCodeEditorAsync() => await _jsRuntime.InvokeVoidAsync("initializeMonacoCodeEditor", DotNetObjectReference.Create(this));
 
         [JSInvokable]
         public async Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(string sourceCode, int currentPosition)
         {
             var response = await _httpClient.PostAsJsonAsync($"api/CodeCompletions", new CodeCompletionPostRequestModel()
             {
-                CombatLogic = new CombatLogic()
-                {
-                    SourceCodeFiles = new System.Collections.Generic.List<SourceCodeFile>()
-                    {
-                        new SourceCodeFile()
-                        {
-                            FileName = FILE_NAME,
-                            Content = sourceCode
-                        }
-                    }
-                },
+                ActionModuleLibrary = new ActionModuleLibrary(LIBRARY_NAME, System.Array.Empty<byte>(), new ActionModuleFile(FILE_NAME, sourceCode)),
                 TargetFileName = FILE_NAME,
                 TargetFilePosition = currentPosition
             });

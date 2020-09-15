@@ -22,7 +22,7 @@ namespace DungeonBot.Server.BusinessLogic
             var host = MefHostServices.Create(MefHostServices.DefaultAssemblies);
             using var workspace = new AdhocWorkspace(host);
 
-            var sourceCodeFile = requestModel.CombatLogic.SourceCodeFiles.First(s => s.FileName == requestModel.TargetFileName);
+            var sourceCodeFile = requestModel.ActionModuleLibrary.ActionModuleFiles.First(s => s.FileName == requestModel.TargetFileName);
 
             var metadataReferences = new MetadataReference[] {
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),

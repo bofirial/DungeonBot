@@ -39,13 +39,24 @@
         await base.OnInitializedAsync();
     }
 
-    public void SetValue(string value)
+    public async Task<string> GetValueAsync()
+    {
+
+        if (CSharpEditor == null)
+        {
+            return string.Empty;
+        }
+
+        return await CSharpEditor.GetValue();
+    }
+
+    public async Task SetValueAsync(string value)
     {
         Value = value;
 
         if (CSharpEditor != null)
         {
-            CSharpEditor.SetValue(value);
+            await CSharpEditor.SetValue(value);
         }
     }
 
