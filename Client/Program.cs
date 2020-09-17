@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Blazor.Extensions.Logging;
 using DungeonBot.Client.BusinessLogic;
+using Fluxor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,9 @@ namespace DungeonBot.Client
 
             builder.Services.AddLogging(builder => builder
                 .AddBrowserConsole()
-                .SetMinimumLevel(LogLevel.Trace));
+                .SetMinimumLevel(LogLevel.Information));
+
+            builder.Services.AddFluxor(options => options.ScanAssemblies(typeof(Program).Assembly));
 
             await builder.Build().RunAsync();
         }

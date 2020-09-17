@@ -22,7 +22,7 @@ namespace DungeonBot.Server
         {
             services.AddSingleton<ICodeCompletionBuilder, CodeCompletionBuilder>();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson();
             services.AddRazorPages();
         }
 

@@ -2,7 +2,7 @@
 {
     public class CodeCompletionPostRequestModel
     {
-        public CombatLogic CombatLogic { get; set; } = new CombatLogic();
+        public ActionModuleLibrary ActionModuleLibrary { get; set; }
 
         public string TargetFileName { get; set; } = string.Empty;
 
