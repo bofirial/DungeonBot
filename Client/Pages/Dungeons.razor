@@ -3,14 +3,86 @@
 @using System.Reflection;
 @using Fluxor;
 @using Store.ActionModule;
+@using DungeonBot.Models;
 
 @inject IState<ActionModuleState> ActionModuleState
 
 <h1>Dungeons</h1>
 
-<button class="btn btn-primary" @onclick="ButtonAsync">Button</button>
+<ListAndDetailView TListItem="Dungeon" List="@AvailableDungeons">
+    <ListItemView>
+        @context.Name
+    </ListItemView>
+    <DetailView>
+        <h2>@context.Name</h2>
+        <p>@context.Description</p>
+
+        <button class="btn btn-primary" @onclick="ButtonAsync">Button</button>
+    </DetailView>
+</ListAndDetailView>
 
 @code {
+
+    private IEnumerable<Dungeon> AvailableDungeons { get; set; } = new List<Dungeon>()
+    {
+        new Dungeon()
+        {
+            Name = "Rat Infestation",
+            Description = "There is one large rat that has taken over an elderly widow's dock in the harbor.  The widow would like to hire us to get rid of it.  She can't pay us much but she has promised all the apple pie we can eat if we can do this for her.",
+            Level = 1,
+            Status = "Available",
+            Encounters = new List<Encounter>()
+            {
+                 new Encounter()
+                 {
+                     Name = "Big Rat",
+                     Description = "It's a rat with no friends.",
+                     Level = 1
+                 }
+            }
+        },
+
+        new Dungeon()
+        {
+            Name = "Rescue the Farmer's Sheep",
+            Description = "A dragon whelp has stolen Farmer Lizzy's prized sheep Sweatersmith.  Sweatersmith has been entered into the regional fair this weekend.  Farmer Lizzy is willing to pay us half the prize money if we can rescue Sweatersmith in time.",
+            Level = 2,
+            Status = "Available",
+            Encounters = new List<Encounter>()
+            {
+                 new Encounter()
+                 {
+                     Name = "Hungry Dragon Whelp",
+                     Description = "He hasn't eaten.",
+                     Level = 2
+                 }
+            }
+        },
+
+        new Dungeon()
+        {
+            Name = "Skeleton Cave",
+            Description = "There are some wolves in Skeleton cave.  The cave was known to be home to mighty skeletons hundreds of years ago but adventurers cleared them out.  The wolves are just as dangerous though and need to be defeated before they start attacking the nearby livestock.  The city of Damselville has put a bounty on the Wolf King's head.",
+            Level = 1,
+            Status = "Available",
+            Encounters = new List<Encounter>()
+            {
+                 new Encounter()
+                 {
+                     Name = "Brown Wolf",
+                     Description = "The brown wolf guards the entrance to Skeleton Cave.",
+                     Level = 1
+                 },
+                 new Encounter()
+                 {
+                     Name = "Wolf King",
+                     Description = "The wolf king waits inside the cave.",
+                     Level = 1
+                 }
+            }
+        }
+    };
+
     public async Task ButtonAsync(MouseEventArgs e)
     {
         var assembly = Assembly.Load(ActionModuleState.Value.ActionModuleLibraries.First().Assembly.ToArray());

@@ -1,0 +1,37 @@
+﻿@typeparam TListItem
+
+<div class="listAndDetailView border rounded-lg">
+    @if (ListItemView != null)
+    {
+        <nav>
+            <div class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle w-100" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                    @(CurrentListItem != null ? ListItemView(CurrentListItem) : @<span>Select an item</span>)
+                </a>
+                <ul class="dropdown-menu w-100">
+                    @foreach (var listItem in List)
+                    {
+                        <li class="dropdown-item">
+                            <a class="dropdown-item @(listItem == CurrentListItem ? "active" : string.Empty)" href="#" @onclick="e => SetActiveListItem(listItem)">
+                                @ListItemView(listItem)
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            @*<ul class="list-group">
+                @foreach (var listItem in List)
+                {
+                    <li class="list-group-item @(listItem == CurrentListItem ? "active" : string.Empty)" @onclick="e => SetActiveListItem(listItem)">@ListItemView(listItem)</li>
+                }
+            </ul>*@
+        </nav>
+    }
+    @if (DetailView != null && CurrentListItem != null)
+    {
+        <section class="p-2">
+            @DetailView(CurrentListItem)
+        </section>
+    }
+</div>
