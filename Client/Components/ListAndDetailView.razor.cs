@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 
-namespace DungeonBot.Client.Shared
+namespace DungeonBot.Client.Components
 {
     public partial class ListAndDetailView<TListItem> where TListItem : class
     {
