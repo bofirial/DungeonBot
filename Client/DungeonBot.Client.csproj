@@ -63,4 +63,8 @@
     <TypeScriptCompile Include="wwwroot\scripts\dungeonBotCodeEditor.ts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\temp\" />
+  </ItemGroup>
+
 </Project>

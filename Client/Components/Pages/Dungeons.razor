@@ -1,0 +1,100 @@
+﻿@page "/"
+
+@using System.Reflection;
+@using Fluxor;
+@using Store.ActionModule;
+@using DungeonBot.Models;
+
+@inject IState<ActionModuleState> ActionModuleState
+
+<h1>Dungeons</h1>
+
+<ListAndDetailView TListItem="Dungeon" List="@AvailableDungeons">
+    <ListItemView>
+        @context.Name
+    </ListItemView>
+    <DetailView>
+        <h2>@context.Name</h2>
+        <p>@context.Description</p>
+
+        <div class="encounters row justify-content-center m-2">
+            <div class="card col-12 col-md-6 col-lg-3">
+                <img src="@context.Encounters.First().ProfileImageLocation" class="card-img-top" alt="@context.Encounters.First().Name">
+                <div class="card-body">
+                    <h3 class="card-title">@context.Encounters.First().Name</h3>
+                    <p class="card-text">@context.Encounters.First().Description</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="StartDungeonAsync">Start Dungeon</button>
+    </DetailView>
+</ListAndDetailView>
+
+@code {
+
+    private IEnumerable<Dungeon> AvailableDungeons { get; set; } = new List<Dungeon>()
+    {
+        new Dungeon()
+        {
+            Name = "Rat Infestation",
+            Description = "There is one large rat that has taken over an elderly widow's dock in the harbor.  The widow would like to hire us to get rid of it.  She can't pay us much but she has promised all the apple pie we can eat if we can do this for her.",
+            Status = "Available",
+            Encounters = new List<Encounter>()
+            {
+                 new Encounter()
+                 {
+                     Name = "Big Rat",
+                     Description = "It's a rat with no friends.",
+                     ProfileImageLocation = "/images/temp/big-rat.png"
+                 }
+            }
+        },
+
+        new Dungeon()
+        {
+            Name = "Rescue the Farmer's Sheep",
+            Description = "A dragon whelp has stolen Farmer Lizzy's prized sheep Sweatersmith.  Sweatersmith has been entered into the regional fair this weekend.  Farmer Lizzy is willing to pay us half the prize money if we can rescue Sweatersmith in time.",
+            Status = "Available",
+            Encounters = new List<Encounter>()
+            {
+                 new Encounter()
+                 {
+                     Name = "Hungry Dragon Whelp",
+                     Description = "He hasn't eaten.",
+                     ProfileImageLocation = "/images/temp/hungry-dragon.png"
+                 }
+            }
+        },
+
+        new Dungeon()
+        {
+            Name = "Skeleton Cave",
+            Description = "There are some wolves in Skeleton cave.  The cave was known to be home to mighty skeletons hundreds of years ago but adventurers cleared them out.  The wolves are just as dangerous though and need to be defeated before they start attacking the nearby livestock.  The city of Damselville has put a bounty on the Wolf King's head.",
+            Status = "Available",
+            Encounters = new List<Encounter>()
+            {
+                 new Encounter()
+                 {
+                     Name = "Wolf King",
+                     Description = "The wolf king waits inside the cave.",
+                     ProfileImageLocation = "/images/temp/wolf-king.png"
+                 }
+            }
+        }
+    };
+
+    public async Task StartDungeonAsync(MouseEventArgs e)
+    {
+        var assembly = Assembly.Load(ActionModuleState.Value.ActionModuleLibraries.First().Assembly.ToArray());
+
+        var type = assembly.GetType("DungeonBot.Generated.DungeonBot");
+        var actionMethod = type.GetMethod("ActionAsync");
+
+        var dungeonBot = Activator.CreateInstance(type);
+
+        var result = await ((Task<int>)actionMethod.Invoke(dungeonBot, new object[0]));
+
+        Console.WriteLine(result);
+    }
+}
