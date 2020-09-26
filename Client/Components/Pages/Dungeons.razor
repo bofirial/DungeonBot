@@ -17,7 +17,17 @@
         <h2>@context.Name</h2>
         <p>@context.Description</p>
 
-        <button class="btn btn-primary" @onclick="ButtonAsync">Button</button>
+        <div class="encounters row justify-content-center m-2">
+            <div class="card col-12 col-md-6 col-lg-3">
+                <img src="@context.Encounters.First().ProfileImageLocation" class="card-img-top" alt="@context.Encounters.First().Name">
+                <div class="card-body">
+                    <h3 class="card-title">@context.Encounters.First().Name</h3>
+                    <p class="card-text">@context.Encounters.First().Description</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="StartDungeonAsync">Start Dungeon</button>
     </DetailView>
 </ListAndDetailView>
 
@@ -35,7 +45,8 @@
                  new Encounter()
                  {
                      Name = "Big Rat",
-                     Description = "It's a rat with no friends."
+                     Description = "It's a rat with no friends.",
+                     ProfileImageLocation = "/images/temp/big-rat.png"
                  }
             }
         },
@@ -50,7 +61,8 @@
                  new Encounter()
                  {
                      Name = "Hungry Dragon Whelp",
-                     Description = "He hasn't eaten."
+                     Description = "He hasn't eaten.",
+                     ProfileImageLocation = "/images/temp/hungry-dragon.png"
                  }
             }
         },
@@ -64,19 +76,15 @@
             {
                  new Encounter()
                  {
-                     Name = "Brown Wolf",
-                     Description = "The brown wolf guards the entrance to Skeleton Cave."
-                 },
-                 new Encounter()
-                 {
                      Name = "Wolf King",
-                     Description = "The wolf king waits inside the cave."
+                     Description = "The wolf king waits inside the cave.",
+                     ProfileImageLocation = "/images/temp/wolf-king.png"
                  }
             }
         }
     };
 
-    public async Task ButtonAsync(MouseEventArgs e)
+    public async Task StartDungeonAsync(MouseEventArgs e)
     {
         var assembly = Assembly.Load(ActionModuleState.Value.ActionModuleLibraries.First().Assembly.ToArray());
 
