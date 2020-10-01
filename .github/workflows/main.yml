@@ -28,6 +28,14 @@ jobs:
     - name: Dotnet Build
       run: dotnet build -c Release
 
+    - name: DotNet Pack
+      if: github.ref == 'refs/heads/main'
+      run: dotnet pack ./DungeonBot/DungeonBot.csproj --configuration Release -o packages --no-build
+
+    - name: DotNet NuGet Push
+      if: github.ref == 'refs/heads/main'
+      run: dotnet nuget push "**/*.nupkg" -k ${{secrets.NUGET_PASSWORD}} -s https://api.nuget.org/v3/index.json
+        
     - name: DotNet Publish
       if: github.ref == 'refs/heads/main'
       run: dotnet publish ./Server/DungeonBot.Server.csproj -c Release -o publish --no-build
