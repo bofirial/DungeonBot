@@ -6,6 +6,7 @@
 @using DungeonBot.Models;
 
 @inject IState<ActionModuleState> ActionModuleState
+@inject IJSRuntime JSRuntime
 
 <h1>Dungeons</h1>
 
@@ -27,9 +28,26 @@
             </div>
         </div>
 
-        <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="e => StartDungeon(context)">Start Dungeon</button>
+        <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="e => StartDungeonAsync(context)">Start Dungeon</button>
     </DetailView>
 </ListAndDetailView>
+
+<div class="modal fade" id="dungeonResultModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">@(DungeonResultIsSuccess ? "Success!" : "Defeat")</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>@(DungeonResultIsSuccess ? "Congratulations!  You have defeated" : "I'm sorry! You were defeated by") the @EnemyName.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
 
@@ -84,7 +102,11 @@
         }
     };
 
-    public void StartDungeon(Dungeon currentDungeon)
+    private bool DungeonResultIsSuccess { get; set; }
+
+    private string EnemyName { get; set; } = string.Empty;
+
+    public async Task StartDungeonAsync(Dungeon currentDungeon)
     {
         var assemblyModuleLibrary = ActionModuleState.Value.ActionModuleLibraries.First();
 
@@ -123,14 +145,9 @@
             }
         }
 
-        if (enemy.CurrentHealth <= 0)
-        {
-            Console.WriteLine("Victory");
-        }
+        EnemyName = enemy.Name;
+        DungeonResultIsSuccess = enemy.CurrentHealth <= 0;
 
-        if (dungeonBot.CurrentHealth <= 0)
-        {
-            Console.WriteLine("Defeat");
-        }
+        await JSRuntime.InvokeVoidAsync("launchModal", "dungeonResultModal");
     }
 }
