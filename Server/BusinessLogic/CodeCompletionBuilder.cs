@@ -26,7 +26,8 @@ namespace DungeonBot.Server.BusinessLogic
 
             var metadataReferences = new MetadataReference[] {
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(System.Console).Assembly.Location)
+                MetadataReference.CreateFromFile(typeof(System.Console).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(ActionModuleEntrypointAttribute).Assembly.Location)
             };
 
             var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "DungeonBot", "DungeonBot", LanguageNames.CSharp)

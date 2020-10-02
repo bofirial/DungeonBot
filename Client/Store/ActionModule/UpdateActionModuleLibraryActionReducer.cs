@@ -13,6 +13,7 @@ namespace DungeonBot.Client.Store.ActionModule
 
             foreach (var actionModuleLibrary in state.ActionModuleLibraries)
             {
+                var str = string.Join(", ", actionModuleLibrary.Assembly);
                 if (action.NewActionModuleLibraryName != actionModuleLibrary.Name &&
                     action.PreviousActionModuleLibraryName != actionModuleLibrary.Name &&
                     actionModuleLibraries.Any(a => a.Name == actionModuleLibrary.Name))

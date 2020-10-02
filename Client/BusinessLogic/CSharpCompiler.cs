@@ -44,13 +44,16 @@ namespace DungeonBot.Client.BusinessLogic
                     "System.Linq.Expressions",
                     "System.Net.Http",
                     "System.Text",
-                    "System.Threading.Tasks"
+                    "System.Threading.Tasks",
+                    "DungeonBot"
                 })
             );
         }
 
         private async Task LoadReferencesAsync()
         {
+            var enemies = new List<IEnemy>();
+
             var refs = AppDomain.CurrentDomain.GetAssemblies();
 
             References = new List<MetadataReference>();

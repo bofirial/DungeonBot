@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="StartDungeonAsync">Start Dungeon</button>
+        <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="e => StartDungeon(context)">Start Dungeon</button>
     </DetailView>
 </ListAndDetailView>
 
@@ -84,17 +84,53 @@
         }
     };
 
-    public async Task StartDungeonAsync(MouseEventArgs e)
+    public void StartDungeon(Dungeon currentDungeon)
     {
-        var assembly = Assembly.Load(ActionModuleState.Value.ActionModuleLibraries.First().Assembly.ToArray());
+        var assemblyModuleLibrary = ActionModuleState.Value.ActionModuleLibraries.First();
 
-        var type = assembly.GetType("DungeonBot.Generated.DungeonBot");
-        var actionMethod = type.GetMethod("ActionAsync");
+        var assembly = Assembly.Load(assemblyModuleLibrary.Assembly.ToArray());
 
-        var dungeonBot = Activator.CreateInstance(type);
+        var methods = assembly.GetTypes().SelectMany(t => t.GetMethods()).Where(m => m.GetCustomAttributes(typeof(ActionModuleEntrypointAttribute), false).Length > 0) ;
 
-        var result = await ((Task<int>)actionMethod.Invoke(dungeonBot, new object[0]));
+        //TODO: Error for multiple entry points
+        //TODO: Error for entry point not found
+        //TODO: Error for invalid method parameters
+        //TODO: Error for invalid method return type
 
-        Console.WriteLine(result);
+        var actionMethod = methods.First();
+
+        var type = actionMethod.DeclaringType;
+
+        var actionModule = Activator.CreateInstance(type);
+
+        var dungeonBot = new Player(assemblyModuleLibrary.Name, 100);
+        var enemy = new Enemy(currentDungeon.Encounters.First().Name, 80);
+
+        var actionComponent = new ActionComponent();
+        var sensorComponent = new SensorComponent(enemy);
+
+        while (dungeonBot.CurrentHealth > 0 && enemy.CurrentHealth > 0)
+        {
+            dungeonBot.CurrentHealth -= 10;
+
+            var parameters = new object?[] { actionComponent, sensorComponent };
+
+            var result = (IAction)actionMethod.Invoke(actionModule, parameters);
+
+            if (result.ActionType == ActionType.Attack)
+            {
+                enemy.CurrentHealth -= 10;
+            }
+        }
+
+        if (enemy.CurrentHealth <= 0)
+        {
+            Console.WriteLine("Victory");
+        }
+
+        if (dungeonBot.CurrentHealth <= 0)
+        {
+            Console.WriteLine("Defeat");
+        }
     }
 }
