@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using DungeonBot.Models.Display;
 
-namespace DungeonBot.Models
+namespace DungeonBot.Models.Api
 {
     public class CodeCompletionPostResponseModel
     {

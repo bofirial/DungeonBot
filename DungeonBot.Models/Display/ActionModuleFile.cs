@@ -1,4 +1,4 @@
-﻿namespace DungeonBot.Models
+﻿namespace DungeonBot.Models.Display
 {
     public class ActionModuleFile
     {

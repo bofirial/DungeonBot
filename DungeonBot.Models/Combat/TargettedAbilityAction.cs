@@ -1,6 +1,6 @@
-﻿namespace DungeonBot.Models
+﻿namespace DungeonBot.Models.Combat
 {
-    internal class TargettedAbilityAction : ITargettedAbilityAction
+    public class TargettedAbilityAction : ITargettedAbilityAction
     {
         public TargettedAbilityAction(ITarget target, AbilityType abilityType)
         {

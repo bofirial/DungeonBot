@@ -1,7 +1,8 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using DungeonBot.Models;
+using DungeonBot.Models.Api;
+using DungeonBot.Models.Display;
 using Microsoft.JSInterop;
 
 namespace DungeonBot.Client.BusinessLogic

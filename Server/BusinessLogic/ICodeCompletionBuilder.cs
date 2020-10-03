@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using DungeonBot.Models;
+using DungeonBot.Models.Api;
 
 namespace DungeonBot.Server.BusinessLogic
 {

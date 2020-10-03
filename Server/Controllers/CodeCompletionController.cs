@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using DungeonBot.Models;
+using DungeonBot.Models.Api;
 using DungeonBot.Server.BusinessLogic;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +16,6 @@ namespace DungeonBot.Server.Controllers
             _codeCompletionBuilder = codeCompletionBuilder;
         }
 
-        public async Task<CodeCompletionPostResponseModel?> PostAsync([FromBody] CodeCompletionPostRequestModel requestModel)
-        {
-            return await _codeCompletionBuilder.GetCodeCompletionsAsync(requestModel);
-        }
+        public async Task<CodeCompletionPostResponseModel?> PostAsync([FromBody] CodeCompletionPostRequestModel requestModel) => await _codeCompletionBuilder.GetCodeCompletionsAsync(requestModel);
     }
 }

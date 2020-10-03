@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DungeonBot.Models;
+using DungeonBot.Models.Display;
 using Fluxor;
 
 namespace DungeonBot.Client.Store.ActionModule

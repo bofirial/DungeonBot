@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DungeonBot.Models
+namespace DungeonBot.Models.Display
 {
     public class Dungeon
     {

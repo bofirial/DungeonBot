@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using DungeonBot.Models;
+using DungeonBot.Models.Api;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
+using CompletionItem = DungeonBot.Models.Display.CompletionItem;
 
 namespace DungeonBot.Server.BusinessLogic
 {
@@ -54,7 +55,7 @@ namespace DungeonBot.Server.BusinessLogic
                 {
                     if (i.Properties.ContainsKey("SymbolName"))
                     {
-                        return new Models.CompletionItem()
+                        return new CompletionItem()
                         {
                             Label = i.Properties["SymbolName"],
                             InsertText = i.Properties["SymbolName"],
@@ -64,7 +65,7 @@ namespace DungeonBot.Server.BusinessLogic
                     }
                     else
                     {
-                        return new Models.CompletionItem()
+                        return new CompletionItem()
                         {
                             Label = i.DisplayText,
                             InsertText = i.DisplayText,
