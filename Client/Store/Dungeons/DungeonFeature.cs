@@ -2,7 +2,7 @@
 using DungeonBot.Models.Display;
 using Fluxor;
 
-namespace DungeonBot.Client.Store.ActionModule
+namespace DungeonBot.Client.Store.Dungeons
 {
     public class DungeonFeature : Feature<DungeonState>
     {

@@ -1,0 +1,18 @@
+﻿@page "/"
+
+@using Fluxor;
+@using Store.Dungeons;
+@using DungeonBot.Models.Display;
+
+@inject IState<DungeonState> DungeonState
+
+<h1>Dungeons</h1>
+
+<ListAndDetailView TListItem="Dungeon" List="@DungeonState.Value.Dungeons">
+    <ListItemView>
+        @context.Name
+    </ListItemView>
+    <DetailView>
+        <DungeonDetail Value="@context"></DungeonDetail>
+    </DetailView>
+</ListAndDetailView>

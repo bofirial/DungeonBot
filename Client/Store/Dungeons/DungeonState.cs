@@ -2,7 +2,7 @@
 using System.Linq;
 using DungeonBot.Models.Display;
 
-namespace DungeonBot.Client.Store.ActionModule
+namespace DungeonBot.Client.Store.Dungeons
 {
     public class DungeonState
     {
