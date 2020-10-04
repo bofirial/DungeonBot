@@ -1,4 +1,4 @@
-﻿namespace DungeonBot.Models.Display
+﻿namespace DungeonBot.Models.Api
 {
     public class CompletionItem
     {

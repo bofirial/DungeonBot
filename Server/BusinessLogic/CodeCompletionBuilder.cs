@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
-using CompletionItem = DungeonBot.Models.Display.CompletionItem;
+using CompletionItem = DungeonBot.Models.Api.CompletionItem;
 
 namespace DungeonBot.Server.BusinessLogic
 {

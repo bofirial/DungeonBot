@@ -1,11 +1,11 @@
 ﻿@using DungeonBot.Models.Display;
-@using DungeonBot.Models.Combat;
-@using System.Reflection;
 @using Fluxor;
 @using Store.ActionModule;
+@using DungeonBot.Client.Store.Dungeons
 
 @inject IState<ActionModuleState> ActionModuleState
-@inject IJSRuntime JSRuntime
+@inject IState<DungeonState> DungeonState
+@inject IDispatcher Dispatcher
 
 @if (Dungeon != null)
 {
@@ -22,77 +22,51 @@
         </div>
     </div>
 
-    <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="e => StartDungeonAsync(Dungeon)">Start Dungeon</button>
+    <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="e => StartDungeon(Dungeon)">Start Dungeon</button>
 
-    <div class="modal fade" id="dungeonResultModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">@(DungeonResultIsSuccess ? "Success!" : "Defeat")</h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>@(DungeonResultIsSuccess ? "Congratulations!  You have defeated" : "I'm sorry! You were defeated by") the @EnemyName.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <DungeonResultModal @ref="DungeonResultModal" DungeonResult="@DungeonResult" EnemyName="@Dungeon.Encounters.First().Name"></DungeonResultModal>
 }
 
 @code {
-
     [Parameter]
-    public Dungeon? Dungeon { get; set; } = null;
+    public Dungeon? Dungeon { get; set; }
 
-    private bool DungeonResultIsSuccess { get; set; }
+    public DungeonResultModal? DungeonResultModal { get; set; }
 
-    private string EnemyName { get; set; } = string.Empty;
+    public DungeonResult? DungeonResult { get; set; }
 
-    public async Task StartDungeonAsync(Dungeon currentDungeon)
+    public string CurrentDungeonRunId { get; set; } = string.Empty;
+
+    public void StartDungeon(Dungeon currentDungeon)
     {
-        //var assemblyModuleLibrary = ActionModuleState.Value.ActionModuleLibraries.First();
+        CurrentDungeonRunId = Guid.NewGuid().ToString();
 
-        //var assembly = Assembly.Load(assemblyModuleLibrary.Assembly.ToArray());
+        Dispatcher.Dispatch(new RunDungeonAction(currentDungeon, ActionModuleState.Value.ActionModuleLibraries.First(), CurrentDungeonRunId));
+    }
 
-        //var methods = assembly.GetTypes().SelectMany(t => t.GetMethods()).Where(m => m.GetCustomAttributes(typeof(ActionModuleEntrypointAttribute), false).Length > 0);
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
 
-        ////TODO: Error for multiple entry points
-        ////TODO: Error for entry point not found
-        ////TODO: Error for invalid method parameters
-        ////TODO: Error for invalid method return type
+        DungeonState.StateChanged += async (sender, state) =>
+        {
+            if (Dungeon == null || DungeonResultModal == null)
+            {
+                return;
+            }
 
-        //var actionMethod = methods.First();
+            var dungeon = state.Dungeons.First(d => d.Name == Dungeon.Name);
 
-        //var type = actionMethod.DeclaringType;
+            var dungeonResult = dungeon.DungeonResults.FirstOrDefault(d => d.RunId == CurrentDungeonRunId);
 
-        //var actionModule = Activator.CreateInstance(type);
+            if (dungeonResult != null)
+            {
+                CurrentDungeonRunId = string.Empty;
 
-        //var dungeonBot = new Player(assemblyModuleLibrary.Name, 100);
-        //var enemy = new Enemy(currentDungeon.Encounters.First().Name, 80);
+                DungeonResult = dungeonResult;
 
-        //var actionComponent = new ActionComponent();
-        //var sensorComponent = new SensorComponent(enemy);
-
-        //while (dungeonBot.CurrentHealth > 0 && enemy.CurrentHealth > 0)
-        //{
-        //    dungeonBot.CurrentHealth -= 10;
-
-        //    var parameters = new object?[] { actionComponent, sensorComponent };
-
-        //    var result = (IAction)actionMethod.Invoke(actionModule, parameters);
-
-        //    if (result.ActionType == ActionType.Attack)
-        //    {
-        //        enemy.CurrentHealth -= 10;
-        //    }
-        //}
-
-        //EnemyName = enemy.Name;
-        //DungeonResultIsSuccess = enemy.CurrentHealth <= 0;
-
-        //await JSRuntime.InvokeVoidAsync("launchModal", "dungeonResultModal");
+                await DungeonResultModal.ShowModalAsync();
+            }
+        };
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using DungeonBot.Models.Display;
 
 namespace DungeonBot.Models.Api
 {

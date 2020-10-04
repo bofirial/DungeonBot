@@ -1,0 +1,33 @@
+﻿@using DungeonBot.Models.Display
+
+@inject IJSRuntime JSRuntime
+
+    <div class="modal fade" id="dungeonResultModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">@(DungeonResult?.Success ?? false ? "Success!" : "Defeat")</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>@(DungeonResult?.Success ?? false ? "Congratulations!  You have defeated" : "I'm sorry! You were defeated by") the @EnemyName.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@code {
+    [Parameter]
+    public DungeonResult? DungeonResult { get; set; }
+
+    [Parameter]
+    public string EnemyName { get; set; } = string.Empty;
+
+    public async Task ShowModalAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("launchModal", "dungeonResultModal");
+    }
+}
