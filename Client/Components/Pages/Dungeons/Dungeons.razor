@@ -1,20 +1,20 @@
 ﻿@page "/"
 
-    @inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 
-    @using Fluxor;
-    @using Store.Dungeons;
-    @using DungeonBot.Models.Display;
+@using Fluxor;
+@using Store.Dungeons;
+@using DungeonBot.Models.Display;
 
-    @inject IState<DungeonState> DungeonState
+@inject IState<DungeonState> DungeonState
 
 <h1>Dungeons</h1>
 
-<ListAndDetailView TListItem="Dungeon" List="@DungeonState.Value.Dungeons">
-        <ListItemView>
-            @context.Name
-        </ListItemView>
-        <DetailView>
-            <DungeonDetail Dungeon="@context"></DungeonDetail>
-        </DetailView>
-    </ListAndDetailView>
+<ListAndDetailView TListItem="Dungeon" List="@DungeonState.Value.Dungeons" KeyFunction="@((dungeon) => dungeon.Name)">
+    <ListItemView>
+        @context.Name
+    </ListItemView>
+    <DetailView>
+        <DungeonDetail Dungeon="@context"></DungeonDetail>
+    </DetailView>
+</ListAndDetailView>

@@ -3,6 +3,8 @@
 @using Store.ActionModule;
 @using DungeonBot.Client.Store.Dungeons
 
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+
 @inject IState<ActionModuleState> ActionModuleState
 @inject IState<DungeonState> DungeonState
 @inject IDispatcher Dispatcher
@@ -28,6 +30,7 @@
 }
 
 @code {
+
     [Parameter]
     public Dungeon? Dungeon { get; set; }
 
@@ -44,29 +47,24 @@
         Dispatcher.Dispatch(new RunDungeonAction(currentDungeon, ActionModuleState.Value.ActionModuleLibraries.First(), CurrentDungeonRunId));
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnParametersSetAsync()
     {
-        base.OnInitialized();
+        await base.OnParametersSetAsync();
 
-        DungeonState.StateChanged += async (sender, state) =>
+        if (Dungeon == null || DungeonResultModal == null || Dungeon.DungeonResults == null)
         {
-            if (Dungeon == null || DungeonResultModal == null)
-            {
-                return;
-            }
+            return;
+        }
 
-            var dungeon = state.Dungeons.First(d => d.Name == Dungeon.Name);
+        var dungeonResult = Dungeon.DungeonResults.FirstOrDefault(d => d.RunId == CurrentDungeonRunId);
 
-            var dungeonResult = dungeon.DungeonResults.FirstOrDefault(d => d.RunId == CurrentDungeonRunId);
+        if (dungeonResult != null)
+        {
+            CurrentDungeonRunId = string.Empty;
 
-            if (dungeonResult != null)
-            {
-                CurrentDungeonRunId = string.Empty;
+            DungeonResult = dungeonResult;
 
-                DungeonResult = dungeonResult;
-
-                await DungeonResultModal.ShowModalAsync();
-            }
-        };
+            await DungeonResultModal.ShowModalAsync();
+        }
     }
 }
