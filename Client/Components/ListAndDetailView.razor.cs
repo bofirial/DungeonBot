@@ -7,7 +7,7 @@ namespace DungeonBot.Client.Components
     public partial class ListAndDetailView<TListItem> where TListItem : class
     {
         [Parameter]
-        public IEnumerable<TListItem> List { get; set; }
+        public IEnumerable<TListItem>? List { get; set; }
 
         [Parameter]
         public Func<TListItem, string>? KeyFunction { get; set; }

@@ -26,7 +26,7 @@ namespace DungeonBot.Client
                 .AddBrowserConsole()
                 .SetMinimumLevel(LogLevel.Information));
 
-            builder.Services.AddFluxor(options => options.ScanAssemblies(typeof(Program).Assembly));
+            builder.Services.AddFluxor(options => options.ScanAssemblies(typeof(Program).Assembly).UseReduxDevTools());
 
             await builder.Build().RunAsync();
         }
