@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DungeonBot.Models
+namespace DungeonBot.Models.Combat
 {
     public class Enemy : IEnemy
     {

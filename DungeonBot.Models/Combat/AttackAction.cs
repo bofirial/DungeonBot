@@ -1,6 +1,6 @@
-﻿namespace DungeonBot.Models
+﻿namespace DungeonBot.Models.Combat
 {
-    internal class AttackAction : ITargettedAction
+    public class AttackAction : ITargettedAction
     {
         private readonly IEnemy _targetEnemy;
 

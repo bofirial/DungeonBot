@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace DungeonBot.Models
+namespace DungeonBot.Models.Display
 {
     public class ActionModuleLibrary
     {

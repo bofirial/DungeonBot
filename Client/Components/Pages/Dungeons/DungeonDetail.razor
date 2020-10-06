@@ -1,0 +1,70 @@
+﻿@using DungeonBot.Models.Display;
+@using Fluxor;
+@using Store.ActionModule;
+@using DungeonBot.Client.Store.Dungeons
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+
+@inject IState<ActionModuleState> ActionModuleState
+@inject IState<DungeonState> DungeonState
+@inject IDispatcher Dispatcher
+
+@if (Dungeon != null)
+{
+    <h2>@Dungeon.Name</h2>
+    <p>@Dungeon.Description</p>
+
+    <div class="encounters row justify-content-center m-2">
+        <div class="card col-12 col-md-6 col-lg-3">
+            <img src="@Dungeon.Encounters.First().ProfileImageLocation" class="card-img-top" alt="@Dungeon.Encounters.First().Name">
+            <div class="card-body">
+                <h3 class="card-title">@Dungeon.Encounters.First().Name</h3>
+                <p class="card-text">@Dungeon.Encounters.First().Description</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="e => StartDungeon(Dungeon)">Start Dungeon</button>
+
+    <DungeonResultModal @ref="DungeonResultModal" DungeonResult="@DungeonResult" EnemyName="@Dungeon.Encounters.First().Name"></DungeonResultModal>
+}
+
+@code {
+
+    [Parameter]
+    public Dungeon? Dungeon { get; set; }
+
+    public DungeonResultModal? DungeonResultModal { get; set; }
+
+    public DungeonResult? DungeonResult { get; set; }
+
+    public string CurrentDungeonRunId { get; set; } = string.Empty;
+
+    public void StartDungeon(Dungeon currentDungeon)
+    {
+        CurrentDungeonRunId = Guid.NewGuid().ToString();
+
+        Dispatcher.Dispatch(new RunDungeonAction(currentDungeon, ActionModuleState.Value.ActionModuleLibraries.First(), CurrentDungeonRunId));
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Dungeon == null || DungeonResultModal == null || Dungeon.DungeonResults == null)
+        {
+            return;
+        }
+
+        var dungeonResult = Dungeon.DungeonResults.FirstOrDefault(d => d.RunId == CurrentDungeonRunId);
+
+        if (dungeonResult != null)
+        {
+            CurrentDungeonRunId = string.Empty;
+
+            DungeonResult = dungeonResult;
+
+            await DungeonResultModal.ShowModalAsync();
+        }
+    }
+}

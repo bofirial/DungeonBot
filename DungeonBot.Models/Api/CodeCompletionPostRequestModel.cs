@@ -1,4 +1,6 @@
-﻿namespace DungeonBot.Models
+﻿using DungeonBot.Models.Display;
+
+namespace DungeonBot.Models.Api
 {
     public class CodeCompletionPostRequestModel
     {

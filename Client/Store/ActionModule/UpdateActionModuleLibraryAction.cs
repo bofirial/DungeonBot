@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using DungeonBot.Models;
+using DungeonBot.Models.Display;
 
 namespace DungeonBot.Client.Store.ActionModule
 {

@@ -1,4 +1,4 @@
-﻿namespace DungeonBot.Models
+﻿namespace DungeonBot.Models.Combat
 {
     public class SensorComponent : ISensorComponent
     {

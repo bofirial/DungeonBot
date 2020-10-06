@@ -1,8 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using DungeonBot.Client.BusinessLogic;
-using DungeonBot.Models;
+using DungeonBot.Models.Display;
 using Fluxor;
 
 namespace DungeonBot.Client.Store.ActionModule
@@ -25,12 +23,6 @@ namespace DungeonBot.Scripts
         }
     }
 }";
-        private readonly ICSharpCompiler _cSharpCompiler;
-
-        public ActionModuleFeature(ICSharpCompiler cSharpCompiler)
-        {
-            _cSharpCompiler = cSharpCompiler;
-        }
 
         public override string GetName() => nameof(ActionModuleState);
 
