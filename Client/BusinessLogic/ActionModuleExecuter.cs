@@ -14,5 +14,12 @@ namespace DungeonBot.Client.BusinessLogic
 
             return Task.FromResult(result);
         }
+
+        public Task<IAction> ExecuteEnemyActionModule(Enemy enemy, ActionComponent actionComponent, SensorComponent sensorComponent)
+        {
+            var result = enemy.EnemyActionModule.Action(actionComponent, sensorComponent);
+
+            return Task.FromResult(result);
+        }
     }
 }

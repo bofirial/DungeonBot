@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using DungeonBot.Client.BusinessLogic.EnemyActionModules;
 using DungeonBot.Models.Combat;
 using DungeonBot.Models.Display;
 
@@ -17,7 +18,7 @@ namespace DungeonBot.Client.BusinessLogic
 
         public async Task<EncounterResult> RunDungeonEncounterAsync(Player dungeonBot, Encounter encounter)
         {
-            var enemy = new Enemy(encounter.Name, 80);
+            var enemy = CreateEnemy(encounter);
 
             while (!EncounterHasCompleted(dungeonBot, enemy))
             {
@@ -27,5 +28,19 @@ namespace DungeonBot.Client.BusinessLogic
             return new EncounterResult(dungeonBot.CurrentHealth > 0);
         }
 
+        private static Enemy CreateEnemy(Encounter encounter)
+        {
+            switch (encounter.Name)
+            {
+                case "Big Rat":
+                    return new Enemy(encounter.Name, 80, new AttackOnlyActionModule());
+                case "Hungry Dragon Whelp":
+                    return new Enemy(encounter.Name, 100, new AttackOnlyActionModule());
+                case "Wolf King":
+                    return new Enemy(encounter.Name, 80, new AttackOnlyActionModule());
+                default:
+                    throw new System.Exception($"Unknown Enemy: {encounter.Name}");
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface IActionComponent
     {
-        public ITargettedAction Attack(IEnemy targetEnemy);
+        public ITargettedAction Attack(ITarget attackTarget);
 
         public ITargettedAbilityAction UseAbility(ITarget target, AbilityType abilityType);
     }

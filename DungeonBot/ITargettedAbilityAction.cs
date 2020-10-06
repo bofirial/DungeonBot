@@ -1,7 +1,6 @@
 ﻿namespace DungeonBot
 {
-    public interface ITargettedAbilityAction : ITargettedAction
+    public interface ITargettedAbilityAction : ITargettedAction, IAbilityAction
     {
-        public AbilityType AbilityType { get; }
     }
 }
