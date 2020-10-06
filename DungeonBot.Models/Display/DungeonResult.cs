@@ -1,6 +1,6 @@
 ﻿namespace DungeonBot.Models.Display
 {
-    public class DungeonResult
+    public class DungeonResult : ICombatResult
     {
         public string RunId { get; }
 

@@ -36,7 +36,7 @@ namespace DungeonBot.Client.Components
         {
             base.OnParametersSet();
 
-            if (KeyFunction != null && !string.IsNullOrEmpty(CurrentListItemKey) && CurrentListItem != null)
+            if (KeyFunction != null && !string.IsNullOrEmpty(CurrentListItemKey) && CurrentListItem != null && List != null)
             {
                 foreach (var listItem in List)
                 {
