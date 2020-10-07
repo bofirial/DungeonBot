@@ -58,17 +58,16 @@ namespace DungeonBot.Client.BusinessLogic
 
         private static Enemy CreateEnemy(Encounter encounter)
         {
-            switch (encounter.Name)
+            return encounter.Name switch
             {
-                case "Big Rat":
-                    return new Enemy(encounter.Name, 80, new AttackOnlyActionModule());
-                case "Hungry Dragon Whelp":
-                    return new Enemy(encounter.Name, MAX_ROUNDS, new AttackOnlyActionModule());
-                case "Wolf King":
-                    return new Enemy(encounter.Name, 80, new WolfKingActionModule());
-                default:
-                    throw new System.Exception($"Unknown Enemy: {encounter.Name}");
-            }
+                "Big Rat" => new Enemy(encounter.Name, 80, new AttackOnlyActionModule(), new Dictionary<AbilityType, AbilityContext>()),
+                "Hungry Dragon Whelp" => new Enemy(encounter.Name, MAX_ROUNDS, new AttackOnlyActionModule(), new Dictionary<AbilityType, AbilityContext>()),
+                "Wolf King" => new Enemy(encounter.Name, 80, new WolfKingActionModule(), new Dictionary<AbilityType, AbilityContext>() {
+                        { AbilityType.LickWounds, new AbilityContext() { MaximumCooldownRounds = 0 } }
+                    }),
+                //TODO: Specific Exception Types
+                _ => throw new System.Exception($"Unknown Enemy: {encounter.Name}"),
+            };
         }
     }
 }

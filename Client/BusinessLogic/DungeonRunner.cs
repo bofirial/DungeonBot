@@ -22,7 +22,10 @@ namespace DungeonBot.Client.BusinessLogic
         {
             var actionModuleContext = await _actionModuleContextProvider.GetActionModuleContext(runDungeonAction.ActionModuleLibrary);
 
-            var dungeonBot = new Player(runDungeonAction.ActionModuleLibrary.Name, 100, actionModuleContext);
+            var dungeonBot = new Player(runDungeonAction.ActionModuleLibrary.Name, 100, actionModuleContext,
+                new Dictionary<AbilityType, AbilityContext>() {
+                    { AbilityType.HeavySwing, new AbilityContext() { MaximumCooldownRounds = 1 }}
+                });
 
             var encounterResults = new List<EncounterResult>();
 

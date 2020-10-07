@@ -1,8 +1,11 @@
-﻿namespace DungeonBot.Models.Combat
+﻿using System.Collections.Generic;
+
+namespace DungeonBot.Models.Combat
 {
     public class Enemy : CharacterBase, IEnemy
     {
-        public Enemy(string enemyName, int maximumHealth, IEnemyActionModule enemyActionModule) : base(enemyName, maximumHealth)
+        public Enemy(string enemyName, int maximumHealth, IEnemyActionModule enemyActionModule, Dictionary<AbilityType, AbilityContext> abilities) :
+            base(enemyName, maximumHealth, abilities)
         {
             EnemyActionModule = enemyActionModule;
         }
