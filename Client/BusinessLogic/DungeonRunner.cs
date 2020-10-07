@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using DungeonBot.Client.Store.Dungeons;
 using DungeonBot.Models.Combat;
 using DungeonBot.Models.Display;
@@ -22,17 +24,31 @@ namespace DungeonBot.Client.BusinessLogic
 
             var dungeonBot = new Player(runDungeonAction.ActionModuleLibrary.Name, 100, actionModuleContext);
 
+            var encounterResults = new List<EncounterResult>();
+
             foreach (var encounter in runDungeonAction.Dungeon.Encounters)
             {
                 var encounterResult = await _encounterRunner.RunDungeonEncounterAsync(dungeonBot, encounter);
 
+                encounterResults.Add(encounterResult);
+
                 if (!encounterResult.Success)
                 {
-                    return new DungeonResult(runDungeonAction.RunId, false);
+                    return new DungeonResult()
+                    {
+                        RunId = runDungeonAction.RunId,
+                        Success = false,
+                        EncounterResults = encounterResults
+                    };
                 }
             }
 
-            return new DungeonResult(runDungeonAction.RunId, true);
+            return new DungeonResult()
+            {
+                RunId = runDungeonAction.RunId,
+                Success = encounterResults.All(e => e.Success),
+                EncounterResults = encounterResults
+            };
         }
     }
 }

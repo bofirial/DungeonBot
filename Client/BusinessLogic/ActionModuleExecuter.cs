@@ -10,6 +10,8 @@ namespace DungeonBot.Client.BusinessLogic
         {
             var parameters = new object?[] { actionComponent, sensorComponent };
 
+            //TODO: Cancellation Token if method takes too long
+
             var result = (IAction)dungeonBot.ActionModuleContext.ActionModuleEntryPointMethodInfo.Invoke(dungeonBot.ActionModuleContext.ActionModuleObject, parameters);
 
             return Task.FromResult(result);

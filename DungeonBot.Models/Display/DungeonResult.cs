@@ -1,15 +1,13 @@
-﻿namespace DungeonBot.Models.Display
+﻿using System.Collections.Generic;
+
+namespace DungeonBot.Models.Display
 {
-    public class DungeonResult : ICombatResult
+    public class DungeonResult
     {
-        public string RunId { get; }
+        public string RunId { get; set; }
 
-        public bool Success { get; }
+        public bool Success { get; set; }
 
-        public DungeonResult(string runId, bool success)
-        {
-            RunId = runId;
-            Success = success;
-        }
+        public IEnumerable<EncounterResult> EncounterResults { get; set; }
     }
 }
