@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DungeonBot.Models.Combat;
 
 namespace DungeonBot.Client.BusinessLogic
@@ -6,25 +7,38 @@ namespace DungeonBot.Client.BusinessLogic
     public class EncounterRoundRunner : IEncounterRoundRunner
     {
         private readonly IActionModuleExecuter _actionModuleExecuter;
+        private readonly ICombatActionProcessor _combatActionProcessor;
 
-        public EncounterRoundRunner(IActionModuleExecuter actionModuleExecuter)
+        public EncounterRoundRunner(IActionModuleExecuter actionModuleExecuter, ICombatActionProcessor combatActionProcessor)
         {
             _actionModuleExecuter = actionModuleExecuter;
+            _combatActionProcessor = combatActionProcessor;
         }
 
-        public async Task RunEncounterRoundAsync(Player dungeonBot, Enemy enemy)
+        public async Task<EncounterRoundResult> RunEncounterRoundAsync(Player dungeonBot, Enemy enemy, int roundCounter, IEnumerable<EncounterRoundResult> encounterRoundResults)
         {
-            var actionComponent = new ActionComponent();
-            var sensorComponent = new SensorComponent(enemy);
+            var dungeonBotActionComponent = new ActionComponent(dungeonBot);
+            var enemyActionComponent = new ActionComponent(enemy);
+            var sensorComponent = new SensorComponent(dungeonBot, enemy, roundCounter, encounterRoundResults);
 
-            var result = await _actionModuleExecuter.ExecuteActionModule(dungeonBot, actionComponent, sensorComponent);
+            var playerAction = await _actionModuleExecuter.ExecuteActionModule(dungeonBot, dungeonBotActionComponent, sensorComponent);
 
-            dungeonBot.CurrentHealth -= 10;
+            var playerActionResult = _combatActionProcessor.ProcessAction(playerAction, dungeonBot, enemy);
 
-            if (result.ActionType == ActionType.Attack)
+            var enemyAction = await _actionModuleExecuter.ExecuteEnemyActionModule(enemy, enemyActionComponent, sensorComponent);
+
+            var enemyActionResult = _combatActionProcessor.ProcessAction(enemyAction, enemy, dungeonBot);
+
+            return new EncounterRoundResult()
             {
-                enemy.CurrentHealth -= 10;
-            }
+                ActionResults = new List<ActionResult>()
+                {
+                    playerActionResult,
+                    enemyActionResult
+                },
+                DungeonBotCurrentHealth = dungeonBot.CurrentHealth,
+                EnemyCurrentHealth = enemy.CurrentHealth
+            };
         }
     }
 }

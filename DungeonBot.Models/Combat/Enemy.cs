@@ -1,23 +1,15 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace DungeonBot.Models.Combat
 {
-    public class Enemy : IEnemy
+    public class Enemy : CharacterBase, IEnemy
     {
-        public Enemy(string enemyName, int maximumHealth)
+        public Enemy(string enemyName, int maximumHealth, IEnemyActionModule enemyActionModule, Dictionary<AbilityType, AbilityContext> abilities) :
+            base(enemyName, maximumHealth, abilities)
         {
-            Name = enemyName;
-            MaximumHealth = maximumHealth;
-            CurrentHealth = maximumHealth;
-            Id = Guid.NewGuid().ToString();
+            EnemyActionModule = enemyActionModule;
         }
 
-        public string Name { get; }
-
-        public int CurrentHealth { get; set; }
-
-        public int MaximumHealth { get; }
-
-        public string Id { get; }
+        public IEnemyActionModule EnemyActionModule { get; }
     }
 }

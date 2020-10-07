@@ -8,6 +8,6 @@ namespace DungeonBot.Client.BusinessLogic
     {
         Task<EncounterResult> RunDungeonEncounterAsync(Player dungeonBot, Encounter encounter);
 
-        bool EncounterHasCompleted(Player dungeonBot, Enemy enemy);
+        bool EncounterHasCompleted(Player dungeonBot, Enemy enemy, int roundCounter);
     }
 }

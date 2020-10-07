@@ -2,14 +2,14 @@
 {
     public class AttackAction : ITargettedAction
     {
-        private readonly IEnemy _targetEnemy;
+        private readonly ITarget _attackTarget;
 
-        public AttackAction(IEnemy targetEnemy)
+        public AttackAction(ITarget attackTarget)
         {
-            _targetEnemy = targetEnemy;
+            _attackTarget = attackTarget;
         }
 
-        public ITarget Target => _targetEnemy;
+        public ITarget Target => _attackTarget;
 
         public ActionType ActionType => ActionType.Attack;
     }
