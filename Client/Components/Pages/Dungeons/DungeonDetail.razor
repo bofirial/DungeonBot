@@ -24,7 +24,15 @@
         </div>
     </div>
 
-    <button class="btn btn-primary btn-large float-right px-4 mx-2" @onclick="e => StartDungeon(Dungeon)">Start Dungeon</button>
+    <button class="btn btn-primary btn-large px-4 mx-2 @(DungeonButtonDisabled ? "disabled" : string.Empty)"
+            @onclick="e => StartDungeon(Dungeon)">
+        Start Dungeon
+    </button>
+
+    @if (DungeonButtonDisabled)
+    {
+        <p class="text-danger mx-2 p-1">You must save an Action Module Library before you can start the dungeon.</p>
+    }
 
     <DungeonResultModal @ref="DungeonResultModal" DungeonResult="@DungeonResult" EnemyName="@Dungeon.Encounters.First().Name"></DungeonResultModal>
 }
@@ -39,6 +47,10 @@
     public DungeonResult? DungeonResult { get; set; }
 
     public string CurrentDungeonRunId { get; set; } = string.Empty;
+
+    public bool DungeonButtonDisabled => ActionModuleState.Value == null ||
+        !ActionModuleState.Value.ActionModuleLibraries.Any() ||
+        ActionModuleState.Value.ActionModuleLibraries.First().Assembly.Count == 0;
 
     public void StartDungeon(Dungeon currentDungeon)
     {
@@ -56,7 +68,7 @@
             return;
         }
 
-        var dungeonResult = Dungeon.DungeonResults.FirstOrDefault(d => d.RunId == CurrentDungeonRunId);
+        var dungeonResult = Dungeon.DungeonResults.LastOrDefault(d => d.RunId == CurrentDungeonRunId);
 
         if (dungeonResult != null)
         {
