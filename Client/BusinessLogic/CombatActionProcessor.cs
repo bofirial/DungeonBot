@@ -25,6 +25,16 @@ namespace DungeonBot.Client.BusinessLogic
                 ProcessAbilityAction(source, target, actionResult, abilityAction);
             }
 
+            if (source.CurrentHealth < 0)
+            {
+                source.CurrentHealth = 0;
+            }
+
+            if (target.CurrentHealth < 0)
+            {
+                target.CurrentHealth = 0;
+            }
+
             UpdateAbilityCooldowns(action, source);
 
             return actionResult;
