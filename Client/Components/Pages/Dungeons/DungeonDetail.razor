@@ -68,7 +68,7 @@
             return;
         }
 
-        var dungeonResult = Dungeon.DungeonResults.FirstOrDefault(d => d.RunId == CurrentDungeonRunId);
+        var dungeonResult = Dungeon.DungeonResults.LastOrDefault(d => d.RunId == CurrentDungeonRunId);
 
         if (dungeonResult != null)
         {

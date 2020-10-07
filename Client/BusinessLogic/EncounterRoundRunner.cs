@@ -36,6 +36,7 @@ namespace DungeonBot.Client.BusinessLogic
                     playerActionResult,
                     enemyActionResult
                 },
+                Round = roundCounter,
                 DungeonBotCurrentHealth = dungeonBot.CurrentHealth,
                 EnemyCurrentHealth = enemy.CurrentHealth
             };
