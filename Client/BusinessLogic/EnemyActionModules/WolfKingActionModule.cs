@@ -9,7 +9,7 @@ namespace DungeonBot.Client.BusinessLogic.EnemyActionModules
         {
             var previousRoundResult = sensorComponent.EncounterRoundHistory.LastOrDefault();
 
-            if (previousRoundResult != null && previousRoundResult.ActionResults.Any(a => a.Action is IAbilityAction))
+            if (previousRoundResult != null && previousRoundResult.ActionResults.Any(a => a.Action is IAbilityAction && a.Character == sensorComponent.DungeonBot))
             {
                 return actionComponent.UseAbility(sensorComponent.Enemy, AbilityType.LickWounds);
             }

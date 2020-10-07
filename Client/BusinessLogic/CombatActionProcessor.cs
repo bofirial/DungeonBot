@@ -13,7 +13,7 @@ namespace DungeonBot.Client.BusinessLogic
 
         public ActionResult ProcessAction(IAction action, CharacterBase source, CharacterBase target)
         {
-            var actionResult = new ActionResult() { Action = action };
+            var actionResult = new ActionResult() { Action = action, Character = source };
 
             //TODO: Strategy Pattern for ActionTypes?
             if (action.ActionType == ActionType.Attack)
@@ -23,6 +23,16 @@ namespace DungeonBot.Client.BusinessLogic
             else if (action.ActionType == ActionType.Ability && action is IAbilityAction abilityAction)
             {
                 ProcessAbilityAction(source, target, actionResult, abilityAction);
+            }
+
+            if (source.CurrentHealth < 0)
+            {
+                source.CurrentHealth = 0;
+            }
+
+            if (target.CurrentHealth < 0)
+            {
+                target.CurrentHealth = 0;
             }
 
             UpdateAbilityCooldowns(action, source);
@@ -71,7 +81,7 @@ namespace DungeonBot.Client.BusinessLogic
 
                     source.CurrentHealth = source.MaximumHealth;
 
-                    actionResult.DisplayText = $"{source.Name} licked it's wounds because {source.Name} used an ability last turn.";
+                    actionResult.DisplayText = $"{source.Name} licked it's wounds because {target.Name} used an ability last turn.";
                     break;
 
                 default:
