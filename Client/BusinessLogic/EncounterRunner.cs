@@ -21,7 +21,26 @@ namespace DungeonBot.Client.BusinessLogic
         public async Task<EncounterResult> RunDungeonEncounterAsync(Player dungeonBot, Encounter encounter)
         {
             var enemy = CreateEnemy(encounter);
-            var encounterRoundResults = new List<EncounterRoundResult>();
+            var encounterRoundResults = new List<EncounterRoundResult>()
+            {
+                new EncounterRoundResult()
+                {
+                    Round = 0,
+                    DungeonBotCurrentHealth = dungeonBot.CurrentHealth,
+                    EnemyCurrentHealth = enemy.CurrentHealth,
+                    ActionResults = new List<ActionResult>()
+                    {
+                        new ActionResult()
+                        {
+                            DisplayText = $"{dungeonBot.Name} entered combat."
+                        },
+                        new ActionResult()
+                        {
+                            DisplayText = $"{enemy.Name} entered combat."
+                        },
+                    }
+                }
+            };
 
             var roundCounter = 0;
 
