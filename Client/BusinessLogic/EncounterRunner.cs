@@ -40,13 +40,17 @@ namespace DungeonBot.Client.BusinessLogic
                 EncounterRoundResults = encounterRoundResults,
             };
 
-            if (dungeonBot.CurrentHealth <= 0 || roundCounter >= MAX_ROUNDS)
+            if (dungeonBot.CurrentHealth <= 0)
             {
                 encounterResult.ResultDisplayText = $"{enemy.Name} defeated {dungeonBot.Name}.";
             }
             else if (enemy.CurrentHealth <= 0)
             {
                 encounterResult.ResultDisplayText = $"{dungeonBot.Name} defeated {enemy.Name}.";
+            }
+            else if (roundCounter >= MAX_ROUNDS)
+            {
+                encounterResult.ResultDisplayText = $"{dungeonBot.Name} failed to defeat {enemy.Name} in time.";
             }
 
             return encounterResult;
