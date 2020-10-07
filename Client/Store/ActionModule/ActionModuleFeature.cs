@@ -18,7 +18,11 @@ namespace DungeonBot.Scripts
         [ActionModuleEntrypoint]
         public IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent)
         {
-            // return actionComponent.UseAbility(sensorComponent.Enemy, AbilityType.HeavySwing);
+            // if (actionComponent.AbilityIsAvailable(AbilityType.HeavySwing)
+            // {
+            //     return actionComponent.UseAbility(sensorComponent.Enemy, AbilityType.HeavySwing);
+            // }
+
             return actionComponent.Attack(sensorComponent.Enemy);
         }
     }
