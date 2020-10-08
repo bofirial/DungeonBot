@@ -44,10 +44,14 @@
                                     </div>
                                 }
                             </div>
-                            }
-                        }
 
-                    </div>
+                            <div class="alert @(encounterResult.Success ? "alert-success" : "alert-danger") m-3" role="alert">
+                                @encounterResult.ResultDisplayText
+                            </div>
+                        }
+                    }
+
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
