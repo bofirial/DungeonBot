@@ -13,7 +13,7 @@ namespace DungeonBot.Client.Components
         public Func<TListItem, string>? KeyFunction { get; set; }
 
         [Parameter]
-        public RenderFragment<TListItem>? ListItemView { get; set; }
+        public RenderFragment<ListItemViewModel<TListItem>>? ListItemView { get; set; }
 
         [Parameter]
         public RenderFragment<TListItem>? DetailView { get; set; }
