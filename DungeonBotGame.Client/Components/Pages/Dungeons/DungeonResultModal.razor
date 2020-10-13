@@ -1,0 +1,73 @@
+﻿@using DungeonBotGame.Models.Display
+
+@inject IJSRuntime JSRuntime
+
+    <div class="modal fade" id="dungeonResultModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">@(DungeonResult?.Success ?? false ? "Success!" : "Defeat")</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>@(DungeonResult?.Success ?? false ? "Congratulations!  You have defeated" : "I'm sorry! You were defeated by") the @EnemyName.</h6>
+
+                    @if (DungeonResult != null)
+                    {
+                        foreach (var encounterResult in DungeonResult.EncounterResults)
+                        {
+                            var encounterAccordionId = $"dungeonResultAccordion";
+
+                            <div class="accordion" id="@encounterAccordionId">
+                                @foreach (var encounterRoundResult in encounterResult.EncounterRoundResults)
+                                {
+                                    var encounterRoundCollapseId = $"dungeonResultAccordionCollapse{encounterRoundResult.Round}";
+
+                                    <div class="card">
+                                        <div class="card-header p-0" id="headingOne">
+                                            <h2 class="mb-0">
+                                                <button class="btn btn-light btn-block text-left p-3 rounded-0" type="button" data-toggle="collapse" data-target="#@encounterRoundCollapseId" aria-expanded="false" aria-controls="@encounterRoundCollapseId">
+                                                    Round <span class="badge bg-primary rounded-pill">@encounterRoundResult.Round</span> - DungeonBotGame Health <span class="badge bg-success rounded-pill">@encounterRoundResult.DungeonBotCurrentHealth</span> - @EnemyName Health <span class="badge bg-danger rounded-pill">@encounterRoundResult.EnemyCurrentHealth</span>
+                                                </button>
+                                            </h2>
+                                        </div>
+
+                                        <div id="@encounterRoundCollapseId" class="collapse" aria-labelledby="headingOne" data-parent="#@encounterAccordionId">
+                                            <ul class="list-group list-group-flush">
+
+                                                @foreach (var actionResult in encounterRoundResult.ActionResults)
+                                                {
+                                                    <li class="list-group-item">@actionResult.DisplayText</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="alert @(encounterResult.Success ? "alert-success" : "alert-danger") m-3" role="alert">
+                                @encounterResult.ResultDisplayText
+                            </div>
+                        }
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@code {
+    [Parameter]
+    public DungeonResult? DungeonResult { get; set; }
+
+    [Parameter]
+    public string EnemyName { get; set; } = string.Empty;
+
+    public async Task ShowModalAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("launchModal", "dungeonResultModal");
+    }
+}
