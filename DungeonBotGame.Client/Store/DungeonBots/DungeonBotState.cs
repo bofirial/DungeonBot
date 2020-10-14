@@ -6,9 +6,9 @@ namespace DungeonBotGame.Client.Store.DungeonBots
 {
     public class DungeonBotState
     {
-        public IReadOnlyCollection<ActionModuleLibrary> ActionModuleLibraries { get; }
+        public IReadOnlyCollection<ActionModuleLibraryViewModel> ActionModuleLibraries { get; }
 
-        public DungeonBotState(IEnumerable<ActionModuleLibrary> actionModuleLibraries)
+        public DungeonBotState(IEnumerable<ActionModuleLibraryViewModel> actionModuleLibraries)
         {
             ActionModuleLibraries = actionModuleLibraries.ToList().AsReadOnly();
         }

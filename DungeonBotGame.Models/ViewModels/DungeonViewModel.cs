@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DungeonBotGame.Models.Display
+namespace DungeonBotGame.Models.ViewModels
 {
-    public class Dungeon
+    public class DungeonViewModel
     {
         public string Name { get; }
 
         public string Description { get; }
 
-        public IReadOnlyCollection<Encounter> Encounters { get; }
+        public IReadOnlyCollection<EncounterViewModel> Encounters { get; }
 
         public string Status { get; }
 
-        public IReadOnlyCollection<DungeonResult> DungeonResults { get; }
+        public IReadOnlyCollection<DungeonResultViewModel> DungeonResults { get; }
 
-        public Dungeon(string name, string description, IEnumerable<Encounter> encounters, string status, IEnumerable<DungeonResult> dungeonResults)
+        public DungeonViewModel(string name, string description, IEnumerable<EncounterViewModel> encounters, string status, IEnumerable<DungeonResultViewModel> dungeonResults)
         {
             Name = name;
             Description = description;

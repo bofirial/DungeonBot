@@ -40,11 +40,11 @@
 @code {
 
     [Parameter]
-    public Dungeon? Dungeon { get; set; }
+    public DungeonViewModel? Dungeon { get; set; }
 
     public DungeonResultModal? DungeonResultModal { get; set; }
 
-    public DungeonResult? DungeonResult { get; set; }
+    public DungeonResultViewModel? DungeonResult { get; set; }
 
     public string CurrentDungeonRunId { get; set; } = string.Empty;
 
@@ -52,7 +52,7 @@
         !ActionModuleState.Value.ActionModuleLibraries.Any() ||
         ActionModuleState.Value.ActionModuleLibraries.First().Assembly.Count == 0;
 
-    public void StartDungeon(Dungeon currentDungeon)
+    public void StartDungeon(DungeonViewModel currentDungeon)
     {
         CurrentDungeonRunId = Guid.NewGuid().ToString();
 

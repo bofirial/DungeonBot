@@ -6,6 +6,6 @@ namespace DungeonBotGame.Client.BusinessLogic
 {
     public interface IActionModuleContextProvider
     {
-        Task<ActionModuleContext> GetActionModuleContext(ActionModuleLibrary actionModuleLibrary);
+        Task<ActionModuleContext> GetActionModuleContext(ActionModuleLibraryViewModel actionModuleLibrary);
     }
 }

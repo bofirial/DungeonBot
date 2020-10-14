@@ -4,13 +4,13 @@ namespace DungeonBotGame.Client.Store.Dungeons
 {
     public class RunDungeonAction
     {
-        public Dungeon Dungeon { get; }
+        public DungeonViewModel Dungeon { get; }
 
-        public ActionModuleLibrary ActionModuleLibrary { get; }
+        public ActionModuleLibraryViewModel ActionModuleLibrary { get; }
 
         public string RunId { get; }
 
-        public RunDungeonAction(Dungeon dungeon, ActionModuleLibrary actionModuleLibrary, string runId)
+        public RunDungeonAction(DungeonViewModel dungeon, ActionModuleLibraryViewModel actionModuleLibrary, string runId)
         {
             Dungeon = dungeon;
             ActionModuleLibrary = actionModuleLibrary;

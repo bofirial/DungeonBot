@@ -18,7 +18,7 @@ namespace DungeonBotGame.Client.BusinessLogic
 
         public bool EncounterHasCompleted(DungeonBot dungeonBot, Enemy enemy, int roundCounter) => dungeonBot.CurrentHealth <= 0 || enemy.CurrentHealth <= 0 || roundCounter >= MAX_ROUNDS;
 
-        public async Task<EncounterResult> RunDungeonEncounterAsync(DungeonBot dungeonBot, Encounter encounter)
+        public async Task<EncounterResultViewModel> RunDungeonEncounterAsync(DungeonBot dungeonBot, EncounterViewModel encounter)
         {
             var enemy = CreateEnemy(encounter);
             var encounterRoundResults = new List<EncounterRoundResult>()
@@ -53,7 +53,7 @@ namespace DungeonBotGame.Client.BusinessLogic
                 encounterRoundResults.Add(encounterRoundResult);
             }
 
-            var encounterResult = new EncounterResult()
+            var encounterResult = new EncounterResultViewModel()
             {
                 Success = dungeonBot.CurrentHealth > 0 && roundCounter < MAX_ROUNDS,
                 EncounterRoundResults = encounterRoundResults,
@@ -75,7 +75,7 @@ namespace DungeonBotGame.Client.BusinessLogic
             return encounterResult;
         }
 
-        private static Enemy CreateEnemy(Encounter encounter)
+        private static Enemy CreateEnemy(EncounterViewModel encounter)
         {
             return encounter.Name switch
             {

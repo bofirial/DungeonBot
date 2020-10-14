@@ -1,12 +1,12 @@
-﻿namespace DungeonBotGame.Models.Display
+﻿namespace DungeonBotGame.Models.ViewModels
 {
-    public class ActionModuleFile
+    public class ActionModuleFileViewModel
     {
         public string FileName { get; }
 
         public string Content { get; }
 
-        public ActionModuleFile(string fileName, string content)
+        public ActionModuleFileViewModel(string fileName, string content)
         {
             FileName = fileName;
             Content = content;

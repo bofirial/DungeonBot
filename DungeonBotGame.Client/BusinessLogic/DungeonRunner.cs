@@ -18,7 +18,7 @@ namespace DungeonBotGame.Client.BusinessLogic
             _encounterRunner = encounterRunner;
         }
 
-        public async Task<DungeonResult> RunDungeonAsync(RunDungeonAction runDungeonAction)
+        public async Task<DungeonResultViewModel> RunDungeonAsync(RunDungeonAction runDungeonAction)
         {
             var actionModuleContext = await _actionModuleContextProvider.GetActionModuleContext(runDungeonAction.ActionModuleLibrary);
 
@@ -27,7 +27,7 @@ namespace DungeonBotGame.Client.BusinessLogic
                     { AbilityType.HeavySwing, new AbilityContext() { MaximumCooldownRounds = 1 }}
                 });
 
-            var encounterResults = new List<EncounterResult>();
+            var encounterResults = new List<EncounterResultViewModel>();
 
             foreach (var encounter in runDungeonAction.Dungeon.Encounters)
             {
@@ -37,7 +37,7 @@ namespace DungeonBotGame.Client.BusinessLogic
 
                 if (!encounterResult.Success)
                 {
-                    return new DungeonResult()
+                    return new DungeonResultViewModel()
                     {
                         RunId = runDungeonAction.RunId,
                         Success = false,
@@ -46,7 +46,7 @@ namespace DungeonBotGame.Client.BusinessLogic
                 }
             }
 
-            return new DungeonResult()
+            return new DungeonResultViewModel()
             {
                 RunId = runDungeonAction.RunId,
                 Success = encounterResults.All(e => e.Success),

@@ -3,17 +3,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace DungeonBotGame.Models.Display
+namespace DungeonBotGame.Models.ViewModels
 {
-    public class ActionModuleLibrary
+    public class ActionModuleLibraryViewModel
     {
         public string Name { get; }
 
         public ReadOnlyCollection<byte> Assembly { get; }
 
-        public ReadOnlyCollection<ActionModuleFile> ActionModuleFiles { get; }
+        public ReadOnlyCollection<ActionModuleFileViewModel> ActionModuleFiles { get; }
 
-        public ActionModuleLibrary(string name, byte[] assembly, params ActionModuleFile[] actionModuleFiles)
+        public ActionModuleLibraryViewModel(string name, byte[] assembly, params ActionModuleFileViewModel[] actionModuleFiles)
         {
             Name = name;
             Assembly = assembly.ToList().AsReadOnly();
@@ -21,7 +21,7 @@ namespace DungeonBotGame.Models.Display
         }
 
         [JsonConstructor]
-        public ActionModuleLibrary(string name, List<ActionModuleFile> actionModuleFiles)
+        public ActionModuleLibraryViewModel(string name, List<ActionModuleFileViewModel> actionModuleFiles)
         {
             Name = name;
             ActionModuleFiles = actionModuleFiles.AsReadOnly();

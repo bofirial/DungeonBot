@@ -53,7 +53,7 @@
 
 <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@GetValueFromState()" OnSaveAsync="RunAsync" OnCancelAsync="CancelAsync"></DungeonBotCodeEditor>
 
-@inject IState<DungeonBotState> ActionModuleState
+@inject IState<DungeonBotState> DungeonBotState
 
 @inject IDispatcher Dispatcher
 
@@ -63,7 +63,7 @@
 
     private string GetValueFromState()
     {
-        return ActionModuleState.Value.ActionModuleLibraries.First().ActionModuleFiles.First().Content;
+        return DungeonBotState.Value.ActionModuleLibraries.First().ActionModuleFiles.First().Content;
     }
 
     private async Task RunAsync(MemoryStream memoryStream)

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using DungeonBotGame.Models.Combat;
 
-namespace DungeonBotGame.Models.Display
+namespace DungeonBotGame.Models.ViewModels
 {
-    public class EncounterResult
+    public class EncounterResultViewModel
     {
         public bool Success { get; set; }
 

@@ -13,9 +13,9 @@ namespace DungeonBotGame.Client.Store.DungeonBots
 
         public ReadOnlyCollection<byte> Assembly { get; }
 
-        public ReadOnlyCollection<ActionModuleFile> ActionModuleFiles { get; }
+        public ReadOnlyCollection<ActionModuleFileViewModel> ActionModuleFiles { get; }
 
-        public UpdateActionModuleLibraryAction(string newActionModuleLibraryName, string previousActionModuleLibraryName, IEnumerable<byte> assembly, IEnumerable<ActionModuleFile> actionModuleFiles)
+        public UpdateActionModuleLibraryAction(string newActionModuleLibraryName, string previousActionModuleLibraryName, IEnumerable<byte> assembly, IEnumerable<ActionModuleFileViewModel> actionModuleFiles)
         {
             NewActionModuleLibraryName = newActionModuleLibraryName;
             PreviousActionModuleLibraryName = previousActionModuleLibraryName;

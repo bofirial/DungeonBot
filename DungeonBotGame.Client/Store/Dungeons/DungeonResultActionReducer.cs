@@ -8,13 +8,13 @@ namespace DungeonBotGame.Client.Store.Dungeons
     {
         public override DungeonState Reduce(DungeonState state, DungeonResultAction action)
         {
-            var dungeons = new List<Dungeon>();
+            var dungeons = new List<DungeonViewModel>();
 
             foreach (var dungeon in state.Dungeons)
             {
                 if (dungeon == action.Dungeon)
                 {
-                    var dungeonResults = new List<DungeonResult>();
+                    var dungeonResults = new List<DungeonResultViewModel>();
 
                     if (dungeon.DungeonResults != null)
                     {
@@ -23,7 +23,7 @@ namespace DungeonBotGame.Client.Store.Dungeons
 
                     dungeonResults.Add(action.DungeonResult);
 
-                    dungeons.Add(new Dungeon(dungeon.Name, dungeon.Description, dungeon.Encounters, dungeon.Status, dungeonResults));
+                    dungeons.Add(new DungeonViewModel(dungeon.Name, dungeon.Description, dungeon.Encounters, dungeon.Status, dungeonResults));
                 }
                 else
                 {

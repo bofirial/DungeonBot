@@ -9,7 +9,7 @@ namespace DungeonBotGame.Client.BusinessLogic
 {
     public class ActionModuleContextProvider : IActionModuleContextProvider
     {
-        public Task<ActionModuleContext> GetActionModuleContext(ActionModuleLibrary actionModuleLibrary)
+        public Task<ActionModuleContext> GetActionModuleContext(ActionModuleLibraryViewModel actionModuleLibrary)
         {
             var assembly = Assembly.Load(actionModuleLibrary.Assembly.ToArray());
 

@@ -1,6 +1,6 @@
-﻿namespace DungeonBotGame.Models.Display
+﻿namespace DungeonBotGame.Models.ViewModels
 {
-    public class Encounter
+    public class EncounterViewModel
     {
         public string Name { get; }
 
@@ -8,7 +8,7 @@
 
         public string ProfileImageLocation { get; }
 
-        public Encounter(string name, string description, string profileImageLocation)
+        public EncounterViewModel(string name, string description, string profileImageLocation)
         {
             Name = name;
             Description = description;

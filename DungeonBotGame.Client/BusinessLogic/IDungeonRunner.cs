@@ -6,6 +6,6 @@ namespace DungeonBotGame.Client.BusinessLogic
 {
     public interface IDungeonRunner
     {
-        Task<DungeonResult> RunDungeonAsync(RunDungeonAction runDungeonAction);
+        Task<DungeonResultViewModel> RunDungeonAsync(RunDungeonAction runDungeonAction);
     }
 }

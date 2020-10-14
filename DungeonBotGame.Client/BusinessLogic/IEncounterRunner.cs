@@ -6,7 +6,7 @@ namespace DungeonBotGame.Client.BusinessLogic
 {
     public interface IEncounterRunner
     {
-        Task<EncounterResult> RunDungeonEncounterAsync(DungeonBot dungeonBot, Encounter encounter);
+        Task<EncounterResultViewModel> RunDungeonEncounterAsync(DungeonBot dungeonBot, EncounterViewModel encounter);
 
         bool EncounterHasCompleted(DungeonBot dungeonBot, Enemy enemy, int roundCounter);
     }
