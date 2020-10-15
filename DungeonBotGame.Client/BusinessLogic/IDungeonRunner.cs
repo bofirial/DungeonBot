@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using DungeonBotGame.Client.Store.Dungeons;
-using DungeonBotGame.Models.Display;
+using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.BusinessLogic
 {

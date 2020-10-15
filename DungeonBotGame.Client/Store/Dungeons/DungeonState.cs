@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DungeonBotGame.Models.Display;
+using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.Store.Dungeons
 {

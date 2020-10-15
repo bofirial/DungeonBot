@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DungeonBotGame.Models.Display;
+using DungeonBotGame.Models.ViewModels;
 using Fluxor;
 
 namespace DungeonBotGame.Client.Store.Dungeons
