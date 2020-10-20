@@ -1,0 +1,95 @@
+﻿@using System.IO;
+@using System.Reflection;
+@using System.Threading.Tasks;
+@using Fluxor;
+@using DungeonBotGame.Client.BusinessLogic
+@using DungeonBotGame.Client.Store.DungeonBots
+@using DungeonBotGame.Models.ViewModels
+
+@if (DungeonBot != null)
+{
+    <h3>@DungeonBot.Name</h3>
+
+    <div class="row justify-content-center m-2">
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card m-3">
+                <img src="@DungeonBot.ProfileImageLocation" class="card-img-top" alt="@DungeonBot.Name">
+                <div class="card-body">
+                    <h3 class="card-title">@DungeonBot.Name</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card m-3">
+                <div class="card-header">
+                    Abilities
+                </div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var abilityType in DungeonBot.Abilities)
+                    {
+                        var abilityDescription = abilityDescriptionProvider.GetAbilityDescription(abilityType);
+
+                        <li class="list-group-item">
+                            @abilityDescription.Name
+                            @if (abilityDescription.CooldownRounds > 0) { <span class="badge bg-primary float-right">@abilityDescription.CooldownRounds Round Cooldown</span> }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@GetValueFromState()" OnSaveAsync="RunAsync" OnCancelAsync="CancelAsync"></DungeonBotCodeEditor>
+}
+
+@inject IDispatcher Dispatcher
+
+@inject IAbilityDescriptionProvider abilityDescriptionProvider
+
+@code {
+
+    [Parameter]
+    public DungeonBotViewModel? DungeonBot { get; set; }
+
+    public DungeonBotCodeEditor? DungeonBotCodeEditor { get; set; }
+
+    private string GetValueFromState()
+    {
+        if (DungeonBot == null)
+        {
+            return string.Empty;
+        }
+
+        return DungeonBot.ActionModuleLibrary.ActionModuleFiles.First().Content;
+    }
+
+    private async Task RunAsync(MemoryStream memoryStream)
+    {
+        var assembly = Assembly.Load(memoryStream.ToArray());
+
+        if (assembly == null)
+        {
+            throw new Exception("Null Assembly");
+        }
+
+        if (DungeonBotCodeEditor == null || DungeonBot == null)
+        {
+            return;
+        }
+
+        var updateLibraryAction = new UpdateActionModuleLibraryAction(DungeonBot.Name, DungeonBot.Name, memoryStream.ToArray(), new List<ActionModuleFileViewModel>() {
+            new ActionModuleFileViewModel("DungeonBotGame.cs", await DungeonBotCodeEditor.GetValueAsync())
+        });
+
+        Dispatcher.Dispatch(updateLibraryAction);
+    }
+
+    private async Task CancelAsync()
+    {
+        if (DungeonBotCodeEditor != null)
+        {
+            await DungeonBotCodeEditor.SetValueAsync(GetValueFromState());
+        }
+    }
+}
