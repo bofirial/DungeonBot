@@ -5,7 +5,7 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 
-@inject IState<DungeonBotState> ActionModuleState
+@inject IState<DungeonBotState> DungeonBotState
 @inject IState<DungeonState> DungeonState
 @inject IDispatcher Dispatcher
 
@@ -15,11 +15,13 @@
     <p>@Dungeon.Description</p>
 
     <div class="encounters row justify-content-center m-2">
-        <div class="card col-12 col-md-6 col-lg-3">
-            <img src="@Dungeon.Encounters.First().ProfileImageLocation" class="card-img-top" alt="@Dungeon.Encounters.First().Name">
-            <div class="card-body">
-                <h3 class="card-title">@Dungeon.Encounters.First().Name</h3>
-                <p class="card-text">@Dungeon.Encounters.First().Description</p>
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card m-3">
+                <img src="@Dungeon.Encounters.First().ProfileImageLocation" class="card-img-top" alt="@Dungeon.Encounters.First().Name">
+                <div class="card-body">
+                    <h3 class="card-title">@Dungeon.Encounters.First().Name</h3>
+                    <p class="card-text">@Dungeon.Encounters.First().Description</p>
+                </div>
             </div>
         </div>
     </div>
@@ -48,15 +50,15 @@
 
     public string CurrentDungeonRunId { get; set; } = string.Empty;
 
-    public bool DungeonButtonDisabled => ActionModuleState.Value == null ||
-        !ActionModuleState.Value.ActionModuleLibraries.Any() ||
-        ActionModuleState.Value.ActionModuleLibraries.First().Assembly.Count == 0;
+    public bool DungeonButtonDisabled => DungeonBotState.Value == null ||
+        DungeonBotState.Value.DungeonBots.FirstOrDefault().ActionModuleLibrary == null ||
+        DungeonBotState.Value.DungeonBots.FirstOrDefault().ActionModuleLibrary.Assembly.Count == 0;
 
     public void StartDungeon(DungeonViewModel currentDungeon)
     {
         CurrentDungeonRunId = Guid.NewGuid().ToString();
 
-        Dispatcher.Dispatch(new RunDungeonAction(currentDungeon, ActionModuleState.Value.ActionModuleLibraries.First(), CurrentDungeonRunId));
+        Dispatcher.Dispatch(new RunDungeonAction(currentDungeon, DungeonBotState.Value.DungeonBots.FirstOrDefault().ActionModuleLibrary, CurrentDungeonRunId));
     }
 
     protected override async Task OnParametersSetAsync()

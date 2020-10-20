@@ -32,12 +32,17 @@ namespace DungeonBotGame.Scripts
 
         protected override DungeonBotState GetInitialState()
         {
-            return new DungeonBotState(new List<ActionModuleLibraryViewModel>()
+            return new DungeonBotState(new List<DungeonBotViewModel>()
             {
-                new ActionModuleLibraryViewModel(
+                new DungeonBotViewModel(
+                    Guid.NewGuid().ToString(),
                     "DungeonBot001",
-                    Array.Empty<byte>(),
-                    new ActionModuleFileViewModel("DungeonBotGame.cs", DefaultActionModule))
+                    "/images/temp/dungeonbot.png",
+                    new ActionModuleLibraryViewModel("DungeonBot001", Array.Empty<byte>(), new ActionModuleFileViewModel("DungeonBotGame.cs", DefaultActionModule)),
+                    new List<AbilityType>()
+                    {
+                        AbilityType.HeavySwing
+                    })
             });
         }
     }

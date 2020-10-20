@@ -12,6 +12,15 @@ namespace DungeonBotGame.Models.ViewModels
 
         public ActionModuleLibraryViewModel ActionModuleLibrary { get; }
 
-        public IReadOnlyCollection<string> Abilities { get; }
+        public IReadOnlyCollection<AbilityType> Abilities { get; }
+
+        public DungeonBotViewModel(string id, string name, string profileImageLocation, ActionModuleLibraryViewModel actionModuleLibrary, List<AbilityType> abilities)
+        {
+            Id = id;
+            Name = name;
+            ProfileImageLocation = profileImageLocation;
+            ActionModuleLibrary = actionModuleLibrary;
+            Abilities = abilities.AsReadOnly();
+        }
     }
 }

@@ -5,14 +5,14 @@
     {
         <nav class="col-12 col-md-4 col-lg-3">
             <div class="dropdown d-md-none">
-                <a class="btn btn-secondary dropdown-toggle w-100" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-toggle="dropdown" aria-expanded="false">
                     @(CurrentListItem != null ? ListItemView(new ListItemViewModel<TListItem>() { ListItem = CurrentListItem, IsCurrentListItem = true }) : @<span>Select a Dungeon</span>)
-                </a>
+                </button>
                 <ul class="dropdown-menu w-100">
                     @foreach (var listItem in List)
                     {
                         <li class="dropdown-item">
-                            <a class="dropdown-item @(listItem == CurrentListItem ? "active" : string.Empty)" href="#" @onclick="e => SetActiveListItem(listItem)">
+                            <a class="dropdown-item @(listItem == CurrentListItem ? "active" : string.Empty)" href="javascript:void(0);" data-target="#" @onclick="e => SetActiveListItem(listItem)">
                                 @ListItemView(new ListItemViewModel<TListItem>() { ListItem = listItem, IsCurrentListItem = listItem == CurrentListItem })
                             </a>
                         </li>
@@ -23,16 +23,16 @@
             <div class="list-group d-none d-md-block h-100 list-group-flush border-right">
                 @foreach (var listItem in List)
                 {
-                <a class="list-group-item list-group-item-action @(listItem == CurrentListItem ? "active" : string.Empty)" href="#" @onclick="e => SetActiveListItem(listItem)">
+                <button class="list-group-item list-group-item-action @(listItem == CurrentListItem ? "active" : string.Empty)" type="button" @onclick="e => SetActiveListItem(listItem)">
                     @ListItemView(new ListItemViewModel<TListItem>() { ListItem = listItem, IsCurrentListItem = listItem == CurrentListItem })
-                </a>
+                </button>
                 }
             </div>
         </nav>
     }
     @if (DetailView != null && CurrentListItem != null)
     {
-        <section class="p-2 col-12 col-md">
+        <section class="p-3 col-12 col-md-8 col-lg-9">
             @DetailView(CurrentListItem)
         </section>
     }

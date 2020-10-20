@@ -6,11 +6,11 @@ namespace DungeonBotGame.Client.Store.DungeonBots
 {
     public class DungeonBotState
     {
-        public IReadOnlyCollection<ActionModuleLibraryViewModel> ActionModuleLibraries { get; }
+        public IReadOnlyCollection<DungeonBotViewModel> DungeonBots { get; }
 
-        public DungeonBotState(IEnumerable<ActionModuleLibraryViewModel> actionModuleLibraries)
+        public DungeonBotState(IEnumerable<DungeonBotViewModel> dungeonBots)
         {
-            ActionModuleLibraries = actionModuleLibraries.ToList().AsReadOnly();
+            DungeonBots = dungeonBots.ToList().AsReadOnly();
         }
     }
 }

@@ -9,20 +9,17 @@ namespace DungeonBotGame.Client.Store.DungeonBots
     {
         public override DungeonBotState Reduce(DungeonBotState state, UpdateActionModuleLibraryAction action)
         {
-            var actionModuleLibraries = new List<ActionModuleLibraryViewModel>() { new ActionModuleLibraryViewModel(action.NewActionModuleLibraryName, action.Assembly.ToArray(), action.ActionModuleFiles.ToArray())};
+            var currentDungeonBot = state.DungeonBots.First();
 
-            foreach (var actionModuleLibrary in state.ActionModuleLibraries)
-            {
-                var str = string.Join(", ", actionModuleLibrary.Assembly);
-                if (action.NewActionModuleLibraryName != actionModuleLibrary.Name &&
-                    action.PreviousActionModuleLibraryName != actionModuleLibrary.Name &&
-                    actionModuleLibraries.Any(a => a.Name == actionModuleLibrary.Name))
-                {
-                    actionModuleLibraries.Add(actionModuleLibrary);
-                }
-            }
+            var newDungeonBot = new DungeonBotViewModel(
+                currentDungeonBot.Id,
+                currentDungeonBot.Name,
+                currentDungeonBot.ProfileImageLocation,
+                new ActionModuleLibraryViewModel(action.NewActionModuleLibraryName, action.Assembly.ToArray(), action.ActionModuleFiles.ToArray()),
+                currentDungeonBot.Abilities.ToList()
+                );
 
-            return new DungeonBotState(actionModuleLibraries);
+            return new DungeonBotState(new List<DungeonBotViewModel>() { newDungeonBot });
         }
     }
 }
