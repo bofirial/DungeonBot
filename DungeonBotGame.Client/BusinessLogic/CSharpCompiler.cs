@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -11,12 +12,26 @@ namespace DungeonBotGame.Client.BusinessLogic
     public class CSharpCompiler : ICSharpCompiler
     {
         private readonly HttpClient _httpClient;
+        private readonly NavigationManager _navigationManager;
+
+        private const string AbilityExtensionMethodsCode = @"using DungeonBotGame;
+using DungeonBotGame.Models.Combat;
+namespace DungeonBotGame
+{
+    public static class ActionComponentExtensionMethods
+    {
+        public static ITargettedAbilityAction UseHeavySwing(this IActionComponent actionComponent, ITarget target) => ((ActionComponent)actionComponent).UseTargettedAbility(target, AbilityType.HeavySwing);
+
+        public static bool HeavySwingIsAvailable(this IActionComponent actionComponent) => ((ActionComponent)actionComponent).AbilityIsAvailable(AbilityType.HeavySwing);
+    }
+}";
 
         private List<MetadataReference>? References { get; set; }
 
-        public CSharpCompiler(HttpClient httpClient)
+        public CSharpCompiler(HttpClient httpClient, NavigationManager  navigationManager)
         {
             _httpClient = httpClient;
+            _navigationManager = navigationManager;
         }
 
         public async Task<CSharpCompilation> CompileAsync(string code)
@@ -29,6 +44,7 @@ namespace DungeonBotGame.Client.BusinessLogic
             return CSharpCompilation.Create(
                 Path.GetRandomFileName(),
                 new List<SyntaxTree>() {
+                    CSharpSyntaxTree.ParseText(AbilityExtensionMethodsCode, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview)),
                     CSharpSyntaxTree.ParseText(code, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))
                 },
                 References,
@@ -60,7 +76,7 @@ namespace DungeonBotGame.Client.BusinessLogic
                 //"BlazorMonaco.dll",
                 //"DungeonBotGame.Client.dll",
                 "DungeonBotGame.dll",
-                //"DungeonBotGame.Models.dll",
+                "DungeonBotGame.Models.dll",
                 //"Fluxor.Blazor.Web.dll",
                 //"Fluxor.Blazor.Web.ReduxDevTools.dll",
                 //"Fluxor.dll",
@@ -274,7 +290,7 @@ namespace DungeonBotGame.Client.BusinessLogic
 
             foreach (var reference in targetReferences)
             {
-                var stream = await _httpClient.GetStreamAsync(new Uri($"_framework/{reference}"));
+                var stream = await _httpClient.GetStreamAsync(new Uri($"{_navigationManager.BaseUri}_framework/{reference}"));
                 References.Add(MetadataReference.CreateFromStream(stream));
             }
         }

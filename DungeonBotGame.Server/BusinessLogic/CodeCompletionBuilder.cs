@@ -11,6 +11,18 @@ namespace DungeonBotGame.Server.BusinessLogic
 {
     public class CodeCompletionBuilder : ICodeCompletionBuilder
     {
+        private const string AbilityExtensionMethodsCode = @"using DungeonBotGame;
+using DungeonBotGame.Models.Combat;
+namespace DungeonBotGame
+{
+    public static class ActionComponentExtensionMethods
+    {
+        public static ITargettedAbilityAction UseHeavySwing(this IActionComponent actionComponent, ITarget target) => ((ActionComponent)actionComponent).UseTargettedAbility(target, AbilityType.HeavySwing);
+
+        public static bool HeavySwingIsAvailable(this IActionComponent actionComponent) => ((ActionComponent)actionComponent).AbilityIsAvailable(AbilityType.HeavySwing);
+    }
+}";
+
         public async Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(CodeCompletionPostRequestModel requestModel)
         {
             var completionResults = await BuildCompletionServiceAndGetCompletions(requestModel);
@@ -35,6 +47,7 @@ namespace DungeonBotGame.Server.BusinessLogic
                 .WithMetadataReferences(metadataReferences);
 
             var project = workspace.AddProject(projectInfo);
+            workspace.AddDocument(project.Id, "AbilityExtensionMethods.cs", SourceText.From(AbilityExtensionMethodsCode));
             var document = workspace.AddDocument(project.Id, sourceCodeFile.FileName, SourceText.From(sourceCodeFile.Content));
 
             var completionService = CompletionService.GetService(document);

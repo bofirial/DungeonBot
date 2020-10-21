@@ -11,7 +11,8 @@ namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
 
             if (previousRoundResult != null && previousRoundResult.ActionResults.Any(a => a.Action is IAbilityAction && a.Character == sensorComponent.DungeonBot))
             {
-                return actionComponent.UseAbility(AbilityType.LickWounds);
+                //TODO: return actionComponent.UseLickWounds();
+                return new AbilityAction(AbilityType.LickWounds);
             }
 
             return actionComponent.Attack(sensorComponent.DungeonBot);
