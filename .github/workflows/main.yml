@@ -30,7 +30,7 @@ jobs:
 
     - name: DotNet Pack
       if: github.ref == 'refs/heads/main'
-      run: dotnet pack ./DungeonBot/DungeonBot.csproj --configuration Release -o packages --no-build
+      run: dotnet pack ./DungeonBotGame/DungeonBotGame.csproj --configuration Release -o packages --no-build
 
     - name: DotNet NuGet Push
       if: github.ref == 'refs/heads/main'
@@ -38,7 +38,7 @@ jobs:
         
     - name: DotNet Publish
       if: github.ref == 'refs/heads/main'
-      run: dotnet publish ./Server/DungeonBot.Server.csproj -c Release -o publish --no-build
+      run: dotnet publish ./Server/DungeonBotGame.Server.csproj -c Release -o publish --no-build
 
     - name: Azure WebApp
       if: github.ref == 'refs/heads/main'
