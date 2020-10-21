@@ -20,7 +20,7 @@ namespace DungeonBotGame.Scripts
         {
             // if (actionComponent.AbilityIsAvailable(AbilityType.HeavySwing))
             // {
-            //     return actionComponent.UseAbility(sensorComponent.Enemy, AbilityType.HeavySwing);
+            //     return actionComponent.UseTargettedAbility(sensorComponent.Enemy, AbilityType.HeavySwing);
             // }
 
             return actionComponent.Attack(sensorComponent.Enemy);

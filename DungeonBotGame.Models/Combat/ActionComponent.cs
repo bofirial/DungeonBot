@@ -14,6 +14,8 @@
 
         public ITargettedAction Attack(ITarget attackTarget) => new AttackAction(attackTarget);
 
-        public ITargettedAbilityAction UseAbility(ITarget target, AbilityType abilityType) => new TargettedAbilityAction(target, abilityType);
+        public IAbilityAction UseAbility(AbilityType abilityType) => new AbilityAction(abilityType);
+
+        public ITargettedAbilityAction UseTargettedAbility(ITarget target, AbilityType abilityType) => new TargettedAbilityAction(target, abilityType);
     }
 }

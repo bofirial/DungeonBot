@@ -29,7 +29,8 @@ namespace DungeonBotGame.Client.BusinessLogic
             return CSharpCompilation.Create(
                 Path.GetRandomFileName(),
                 new List<SyntaxTree>() {
-                CSharpSyntaxTree.ParseText(code, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))},
+                    CSharpSyntaxTree.ParseText(code, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))
+                },
                 References,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: new[]
                 {
