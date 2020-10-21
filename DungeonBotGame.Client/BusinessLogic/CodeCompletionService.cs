@@ -32,7 +32,14 @@ namespace DungeonBotGame.Client.BusinessLogic
                 TargetFilePosition = currentPosition
             });
 
-            return await response.Content.ReadFromJsonAsync<CodeCompletionPostResponseModel>();
+            var responseModel = await response.Content.ReadFromJsonAsync<CodeCompletionPostResponseModel>();
+
+            if (responseModel == null)
+            {
+                throw new System.Exception("Unable to get Code Completion results");
+            }
+
+            return responseModel;
         }
     }
 }

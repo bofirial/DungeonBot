@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -274,7 +273,7 @@ namespace DungeonBotGame.Client.BusinessLogic
 
             foreach (var reference in targetReferences)
             {
-                var stream = await _httpClient.GetStreamAsync($"_framework/{reference}");
+                var stream = await _httpClient.GetStreamAsync(new Uri($"_framework/{reference}"));
                 References.Add(MetadataReference.CreateFromStream(stream));
             }
         }

@@ -12,9 +12,14 @@ namespace DungeonBotGame.Client.BusinessLogic
 
             //TODO: Cancellation Token if method takes too long
 
-            var result = (IAction)dungeonBot.ActionModuleContext.ActionModuleEntryPointMethodInfo.Invoke(dungeonBot.ActionModuleContext.ActionModuleObject, parameters);
+            var result = dungeonBot.ActionModuleContext.ActionModuleEntryPointMethodInfo.Invoke(dungeonBot.ActionModuleContext.ActionModuleObject, parameters);
 
-            return Task.FromResult(result);
+            if (result != null && result is IAction actionResult)
+            {
+                return Task.FromResult(actionResult);
+            }
+
+            throw new System.Exception("Incorrect result returned from DungeonBot Script.");
         }
 
         public Task<IAction> ExecuteEnemyActionModule(Enemy enemy, ActionComponent actionComponent, SensorComponent sensorComponent)
