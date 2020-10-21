@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DungeonBotGame.Models.ViewModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,28 +14,18 @@ namespace DungeonBotGame.Client.BusinessLogic
     {
         private readonly HttpClient _httpClient;
         private readonly NavigationManager _navigationManager;
-
-        private const string AbilityExtensionMethodsCode = @"using DungeonBotGame;
-using DungeonBotGame.Models.Combat;
-namespace DungeonBotGame
-{
-    public static class ActionComponentExtensionMethods
-    {
-        public static ITargettedAbilityAction UseHeavySwing(this IActionComponent actionComponent, ITarget target) => ((ActionComponent)actionComponent).UseTargettedAbility(target, AbilityType.HeavySwing);
-
-        public static bool HeavySwingIsAvailable(this IActionComponent actionComponent) => ((ActionComponent)actionComponent).AbilityIsAvailable(AbilityType.HeavySwing);
-    }
-}";
+        private readonly IActionComponentAbilityExtensionMethodsClassBuilder _actionComponentAbilityExtensionMethodsClassBuilder;
 
         private List<MetadataReference>? References { get; set; }
 
-        public CSharpCompiler(HttpClient httpClient, NavigationManager  navigationManager)
+        public CSharpCompiler(HttpClient httpClient, NavigationManager  navigationManager, IActionComponentAbilityExtensionMethodsClassBuilder actionComponentAbilityExtensionMethodsClassBuilder)
         {
             _httpClient = httpClient;
             _navigationManager = navigationManager;
+            _actionComponentAbilityExtensionMethodsClassBuilder = actionComponentAbilityExtensionMethodsClassBuilder;
         }
 
-        public async Task<CSharpCompilation> CompileAsync(string code)
+        public async Task<CSharpCompilation> CompileAsync(string code, DungeonBotViewModel dungeonBot)
         {
             if (References == null)
             {
@@ -44,7 +35,7 @@ namespace DungeonBotGame
             return CSharpCompilation.Create(
                 Path.GetRandomFileName(),
                 new List<SyntaxTree>() {
-                    CSharpSyntaxTree.ParseText(AbilityExtensionMethodsCode, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview)),
+                    CSharpSyntaxTree.ParseText(_actionComponentAbilityExtensionMethodsClassBuilder.BuildAbilityExtensionMethodsClass(dungeonBot), CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview)),
                     CSharpSyntaxTree.ParseText(code, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))
                 },
                 References,

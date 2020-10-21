@@ -23,7 +23,7 @@ namespace DungeonBotGame.Client.Store.DungeonBots
         }
         protected override async Task HandleAsync(SaveDungeonBotAction action, IDispatcher dispatcher)
         {
-            var cSharpCompilation = await _cSharpCompiler.CompileAsync(action.Code);
+            var cSharpCompilation = await _cSharpCompiler.CompileAsync(action.Code, action.DungeonBot);
 
             var errorDiagnostics = cSharpCompilation.GetDiagnostics().Where(x => x.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
             if (errorDiagnostics.Any())

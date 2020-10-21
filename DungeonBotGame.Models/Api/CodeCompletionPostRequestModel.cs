@@ -9,5 +9,6 @@ namespace DungeonBotGame.Models.Api
         public string TargetFileName { get; set; } = string.Empty;
 
         public int TargetFilePosition { get; set; }
+        public DungeonBotViewModel DungeonBot { get; set; }
     }
 }

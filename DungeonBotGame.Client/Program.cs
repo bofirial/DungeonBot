@@ -30,6 +30,7 @@ namespace DungeonBotGame.Client
             builder.Services.AddScoped<ICombatValueCalculator, CombatValueCalculator>();
             builder.Services.AddScoped<ICombatActionProcessor, CombatActionProcessor>();
             builder.Services.AddScoped<IAbilityDescriptionProvider, AbilityDescriptionProvider>();
+            builder.Services.AddScoped<IActionComponentAbilityExtensionMethodsClassBuilder, ActionComponentAbilityExtensionMethodsClassBuilder>();
 
             builder.Services.AddLogging(builder => builder
                 .AddBrowserConsole()

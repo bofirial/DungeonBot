@@ -2,6 +2,7 @@
 @using BlazorMonaco.Bridge
 @using DungeonBotGame.Client.BusinessLogic
 @using Microsoft.AspNetCore.Components
+@using DungeonBotGame.Models.ViewModels
 
 <div class="code-editor">
     <MonacoEditor @ref="CSharpEditor" Id="monaco-container" ConstructionOptions="EditorConstructionOptions"></MonacoEditor>
@@ -11,13 +12,19 @@
     [Parameter]
     public string Value { get; set; } = string.Empty;
 
+    [Parameter]
+    public DungeonBotViewModel? DungeonBot { get; set; }
+
     @inject ICodeCompletionService CodeCompletionService
 
     private MonacoEditor? CSharpEditor { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
-        await CodeCompletionService.InitializeCodeEditorAsync();
+        if (DungeonBot != null)
+        {
+            await CodeCompletionService.InitializeCodeEditorAsync(DungeonBot);
+        }
 
         await base.OnInitializedAsync();
     }

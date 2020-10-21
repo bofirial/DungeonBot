@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@GetValueFromState()"></DungeonBotCodeEditor>
+    <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@GetValueFromState()" DungeonBot="DungeonBot"></DungeonBotCodeEditor>
 
     <div class="mt-3">
         <button type="button" class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
