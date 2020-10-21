@@ -1,7 +1,4 @@
-﻿@using System.IO;
-@using System.Reflection;
-@using System.Threading.Tasks;
-@using Microsoft.Extensions.Logging
+﻿@using System.Threading.Tasks;
 @using Fluxor;
 @using DungeonBotGame.Client.BusinessLogic
 @using DungeonBotGame.Client.Store.DungeonBots
@@ -34,7 +31,9 @@
                         <li class="list-group-item">
                             @abilityDescription.Name
                             @if (abilityDescription.CooldownRounds > 0)
-                            {<span class="badge bg-primary float-right">@abilityDescription.CooldownRounds Round Cooldown</span>}
+                            {
+                                <span class="badge bg-primary float-right">@abilityDescription.CooldownRounds Round Cooldown</span>
+                            }
                         </li>
                     }
                 </ul>
@@ -53,10 +52,6 @@
 @inject IDispatcher Dispatcher
 
 @inject IAbilityDescriptionProvider abilityDescriptionProvider
-
-@inject ICSharpCompiler CSharpCompiler
-
-@inject ILogger<DungeonBotCodeEditor> Logger
 
 @code {
 
@@ -77,53 +72,14 @@
 
     private async Task SaveAsync(MouseEventArgs e)
     {
-        if (DungeonBotCodeEditor == null)
+        if (DungeonBotCodeEditor == null || DungeonBot == null)
         {
             return;
         }
 
         var code = await DungeonBotCodeEditor.GetValueAsync();
 
-        var cSharpCompilation = await CSharpCompiler.CompileAsync(code);
-
-        var errorDiagnostics = cSharpCompilation.GetDiagnostics().Where(x => x.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
-        if (errorDiagnostics.Any())
-        {
-            foreach (var diagnostic in errorDiagnostics)
-            {
-                HandleErrorDiagnostic(diagnostic);
-            }
-        }
-
-        using (var compiledLibraryStream = new MemoryStream())
-        {
-            var emitResult = cSharpCompilation.Emit(compiledLibraryStream);
-            if (emitResult.Success)
-            {
-                var assembly = Assembly.Load(compiledLibraryStream.ToArray());
-
-                if (assembly == null)
-                {
-                    throw new Exception("Null Assembly");
-                }
-
-                if (DungeonBotCodeEditor == null || DungeonBot == null)
-                {
-                    return;
-                }
-
-                var updateLibraryAction = new UpdateActionModuleLibraryAction(DungeonBot.Name, DungeonBot.Name, compiledLibraryStream.ToArray(), new List<ActionModuleFileViewModel>() {
-                    new ActionModuleFileViewModel("DungeonBotGame.cs", await DungeonBotCodeEditor.GetValueAsync())
-                });
-
-                Dispatcher.Dispatch(updateLibraryAction);
-            }
-        }
-    }
-
-    private void HandleErrorDiagnostic(Microsoft.CodeAnalysis.Diagnostic diagnostic)
-    {
-        Logger.LogInformation(diagnostic.ToString());
+        Dispatcher.Dispatch(new SaveDungeonBotAction(DungeonBot, code));
     }
 
     private async Task CancelAsync()
