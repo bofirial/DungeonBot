@@ -14,13 +14,20 @@ namespace DungeonBotGame.Client.BusinessLogic
         private readonly IJSRuntime _jsRuntime;
         private readonly HttpClient _httpClient;
 
+        private DungeonBotViewModel? _dungeonBot;
+
         public CodeCompletionService(IJSRuntime jsRuntime, HttpClient httpClient)
         {
             _jsRuntime = jsRuntime;
             _httpClient = httpClient;
         }
 
-        public async Task InitializeCodeEditorAsync() => await _jsRuntime.InvokeVoidAsync("initializeMonacoCodeEditor", DotNetObjectReference.Create(this));
+        public async Task InitializeCodeEditorAsync(DungeonBotViewModel dungeonBot)
+        {
+            _dungeonBot = dungeonBot;
+
+            await _jsRuntime.InvokeVoidAsync("initializeMonacoCodeEditor", DotNetObjectReference.Create(this));
+        }
 
         [JSInvokable]
         public async Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(string sourceCode, int currentPosition)
@@ -29,10 +36,18 @@ namespace DungeonBotGame.Client.BusinessLogic
             {
                 ActionModuleLibrary = new ActionModuleLibraryViewModel(LIBRARY_NAME, System.Array.Empty<byte>(), new ActionModuleFileViewModel(FILE_NAME, sourceCode)),
                 TargetFileName = FILE_NAME,
-                TargetFilePosition = currentPosition
+                TargetFilePosition = currentPosition,
+                DungeonBot = _dungeonBot
             });
 
-            return await response.Content.ReadFromJsonAsync<CodeCompletionPostResponseModel>();
+            var responseModel = await response.Content.ReadFromJsonAsync<CodeCompletionPostResponseModel>();
+
+            if (responseModel == null)
+            {
+                throw new System.Exception("Unable to get Code Completion results");
+            }
+
+            return responseModel;
         }
     }
 }

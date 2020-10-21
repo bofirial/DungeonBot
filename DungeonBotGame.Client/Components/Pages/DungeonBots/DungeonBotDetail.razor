@@ -1,6 +1,4 @@
-﻿@using System.IO;
-@using System.Reflection;
-@using System.Threading.Tasks;
+﻿@using System.Threading.Tasks;
 @using Fluxor;
 @using DungeonBotGame.Client.BusinessLogic
 @using DungeonBotGame.Client.Store.DungeonBots
@@ -32,7 +30,10 @@
 
                         <li class="list-group-item">
                             @abilityDescription.Name
-                            @if (abilityDescription.CooldownRounds > 0) { <span class="badge bg-primary float-right">@abilityDescription.CooldownRounds Round Cooldown</span> }
+                            @if (abilityDescription.CooldownRounds > 0)
+                            {
+                                <span class="badge bg-primary float-right">@abilityDescription.CooldownRounds Round Cooldown</span>
+                            }
                         </li>
                     }
                 </ul>
@@ -40,7 +41,12 @@
         </div>
     </div>
 
-    <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@GetValueFromState()" OnSaveAsync="RunAsync" OnCancelAsync="CancelAsync"></DungeonBotCodeEditor>
+    <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@GetValueFromState()" DungeonBot="DungeonBot"></DungeonBotCodeEditor>
+
+    <div class="mt-3">
+        <button type="button" class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
+        <button type="button" class="btn btn-primary" @onclick="SaveAsync">Save</button>
+    </div>
 }
 
 @inject IDispatcher Dispatcher
@@ -64,25 +70,16 @@
         return DungeonBot.ActionModuleLibrary.ActionModuleFiles.First().Content;
     }
 
-    private async Task RunAsync(MemoryStream memoryStream)
+    private async Task SaveAsync(MouseEventArgs e)
     {
-        var assembly = Assembly.Load(memoryStream.ToArray());
-
-        if (assembly == null)
-        {
-            throw new Exception("Null Assembly");
-        }
-
         if (DungeonBotCodeEditor == null || DungeonBot == null)
         {
             return;
         }
 
-        var updateLibraryAction = new UpdateActionModuleLibraryAction(DungeonBot.Name, DungeonBot.Name, memoryStream.ToArray(), new List<ActionModuleFileViewModel>() {
-            new ActionModuleFileViewModel("DungeonBotGame.cs", await DungeonBotCodeEditor.GetValueAsync())
-        });
+        var code = await DungeonBotCodeEditor.GetValueAsync();
 
-        Dispatcher.Dispatch(updateLibraryAction);
+        Dispatcher.Dispatch(new SaveDungeonBotAction(DungeonBot, code));
     }
 
     private async Task CancelAsync()

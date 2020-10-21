@@ -10,6 +10,7 @@ namespace DungeonBotGame.Models.Combat
             ActionModuleContext = actionModuleContext;
         }
 
+        [Newtonsoft.Json.JsonIgnore]
         public ActionModuleContext ActionModuleContext { get; }
     }
 }

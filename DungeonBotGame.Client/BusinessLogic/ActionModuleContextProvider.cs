@@ -25,6 +25,11 @@ namespace DungeonBotGame.Client.BusinessLogic
 
             var type = actionMethod.DeclaringType;
 
+            if (type == null)
+            {
+                throw new Exception("Failed to get DeclaringType.");
+            }
+
             var actionModule = Activator.CreateInstance(type);
 
             return Task.FromResult(new ActionModuleContext()

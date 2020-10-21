@@ -10,12 +10,15 @@
 
         public int CooldownRounds { get; }
 
-        public AbilityDescriptionViewModel(string name, string description, AbilityType abilityType, int cooldownRounds)
+        public bool IsTargettedAbility { get; set; }
+
+        public AbilityDescriptionViewModel(string name, string description, AbilityType abilityType, int cooldownRounds, bool isTargettedAbility)
         {
             Name = name;
             Description = description;
             AbilityType = abilityType;
             CooldownRounds = cooldownRounds;
+            IsTargettedAbility = isTargettedAbility;
         }
     }
 }

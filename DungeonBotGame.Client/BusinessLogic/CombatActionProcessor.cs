@@ -96,7 +96,7 @@ namespace DungeonBotGame.Client.BusinessLogic
         {
             foreach (var ability in source.Abilities)
             {
-                if (ability.Value.CurrentCooldownRounds > 0 && (!(action is IAbilityAction abilityAction) || ability.Key != abilityAction.AbilityType))
+                if (ability.Value.CurrentCooldownRounds > 0 && (action is not IAbilityAction abilityAction || ability.Key != abilityAction.AbilityType))
                 {
                     ability.Value.CurrentCooldownRounds--;
                 }

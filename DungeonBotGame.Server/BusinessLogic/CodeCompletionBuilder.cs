@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using DungeonBotGame.Client.BusinessLogic;
 using DungeonBotGame.Models.Api;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
@@ -11,6 +12,13 @@ namespace DungeonBotGame.Server.BusinessLogic
 {
     public class CodeCompletionBuilder : ICodeCompletionBuilder
     {
+        private readonly IActionComponentAbilityExtensionMethodsClassBuilder _actionComponentAbilityExtensionMethodsClassBuilder;
+
+        public CodeCompletionBuilder(IActionComponentAbilityExtensionMethodsClassBuilder actionComponentAbilityExtensionMethodsClassBuilder)
+        {
+            _actionComponentAbilityExtensionMethodsClassBuilder = actionComponentAbilityExtensionMethodsClassBuilder;
+        }
+
         public async Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(CodeCompletionPostRequestModel requestModel)
         {
             var completionResults = await BuildCompletionServiceAndGetCompletions(requestModel);
@@ -18,7 +26,7 @@ namespace DungeonBotGame.Server.BusinessLogic
             return BuildCodeCompletionPostResponseModel(completionResults);
         }
 
-        private static async Task<CompletionList> BuildCompletionServiceAndGetCompletions(CodeCompletionPostRequestModel requestModel)
+        private async Task<CompletionList> BuildCompletionServiceAndGetCompletions(CodeCompletionPostRequestModel requestModel)
         {
             var host = MefHostServices.Create(MefHostServices.DefaultAssemblies);
             using var workspace = new AdhocWorkspace(host);
@@ -35,6 +43,7 @@ namespace DungeonBotGame.Server.BusinessLogic
                 .WithMetadataReferences(metadataReferences);
 
             var project = workspace.AddProject(projectInfo);
+            workspace.AddDocument(project.Id, "AbilityExtensionMethods.cs", SourceText.From(_actionComponentAbilityExtensionMethodsClassBuilder.BuildAbilityExtensionMethodsClass(requestModel.DungeonBot)));
             var document = workspace.AddDocument(project.Id, sourceCodeFile.FileName, SourceText.From(sourceCodeFile.Content));
 
             var completionService = CompletionService.GetService(document);

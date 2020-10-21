@@ -51,14 +51,19 @@
     public string CurrentDungeonRunId { get; set; } = string.Empty;
 
     public bool DungeonButtonDisabled => DungeonBotState.Value == null ||
-        DungeonBotState.Value.DungeonBots.FirstOrDefault().ActionModuleLibrary == null ||
-        DungeonBotState.Value.DungeonBots.FirstOrDefault().ActionModuleLibrary.Assembly.Count == 0;
+        DungeonBotState.Value.DungeonBots?.FirstOrDefault()?.ActionModuleLibrary == null ||
+        DungeonBotState.Value.DungeonBots?.FirstOrDefault()?.ActionModuleLibrary?.Assembly?.Count == 0;
 
     public void StartDungeon(DungeonViewModel currentDungeon)
     {
         CurrentDungeonRunId = Guid.NewGuid().ToString();
 
-        Dispatcher.Dispatch(new RunDungeonAction(currentDungeon, DungeonBotState.Value.DungeonBots.FirstOrDefault().ActionModuleLibrary, CurrentDungeonRunId));
+        var actionModuleLibrary = DungeonBotState?.Value?.DungeonBots?.FirstOrDefault()?.ActionModuleLibrary;
+
+        if (actionModuleLibrary != null)
+        {
+            Dispatcher.Dispatch(new RunDungeonAction(currentDungeon, actionModuleLibrary, CurrentDungeonRunId));
+        }
     }
 
     protected override async Task OnParametersSetAsync()
