@@ -15,8 +15,8 @@
     <PackageReference Include="Blazor.Extensions.Logging" Version="1.1.1" />
     <PackageReference Include="BlazorMonaco" Version="1.4.0" />
     <PackageReference Include="BuildWebCompiler" Version="1.12.405" />
-    <PackageReference Include="Fluxor.Blazor.Web" Version="3.7.0" />
-    <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="3.7.0" />
+    <PackageReference Include="Fluxor.Blazor.Web" Version="3.8.0" />
+    <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="3.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0-rc.2.*" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.0-rc.2.*" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
@@ -27,16 +27,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.2">
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.2.31">
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.3.37">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0-rc.2.*" />
-    <PackageReference Include="System.Text.Json" Version="5.0.0-preview.8.20407.11" />
+    <PackageReference Include="System.Text.Json" Version="5.0.0-rc.2.20475.5" />
   </ItemGroup>
 
   <ItemGroup>

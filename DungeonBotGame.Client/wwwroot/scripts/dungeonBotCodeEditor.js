@@ -1,7 +1,7 @@
 require(["vs/editor/editor.main"], function () {
     monaco.languages.registerCompletionItemProvider('csharp', {
         triggerCharacters: [
-            '.' //,
+            '.'
             //';',
             //'(',
             //' ',
