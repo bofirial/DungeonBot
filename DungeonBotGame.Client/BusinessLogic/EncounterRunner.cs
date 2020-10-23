@@ -77,6 +77,10 @@ namespace DungeonBotGame.Client.BusinessLogic
 
         private static Enemy CreateEnemy(EncounterViewModel encounter)
         {
+            var wolfKingModule = new WolfKingActionModule();
+
+            var sourceCode = wolfKingModule.SourceCode;
+
             return encounter.Name switch
             {
                 "Big Rat" => new Enemy(encounter.Name, 80, new AttackOnlyActionModule(), new Dictionary<AbilityType, AbilityContext>()),

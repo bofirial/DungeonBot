@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using DungeonBotGame.Models.Combat;
+using DungeonBotGame.SourceGenerators.Attributes;
 
 namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
 {
-    public class WolfKingActionModule : IEnemyActionModule
+    [GenerateSourceCodePropertyPartialClass]
+    public partial class WolfKingActionModule : IEnemyActionModule
     {
         public IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent)
         {
