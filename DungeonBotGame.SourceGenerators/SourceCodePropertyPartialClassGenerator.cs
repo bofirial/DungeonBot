@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,58 +11,55 @@ namespace DungeonBotGame.SourceGenerators
     [Generator]
     public class SourceCodePropertyPartialClassGenerator : ISourceGenerator
     {
+        private const string GenerateSourceCodePropertyPartialClassAttributeMetadataName = "DungeonBotGame.SourceGenerators.Attributes.GenerateSourceCodePropertyPartialClassAttribute";
+
         public void Execute(GeneratorExecutionContext context)
         {
             var targetAttributeType = context.Compilation.References
-                                    .Select(context.Compilation.GetAssemblyOrModuleSymbol)
-                                    .OfType<IAssemblySymbol>()
-                                    .Select(assemblySymbol => assemblySymbol.GetTypeByMetadataName("DungeonBotGame.SourceGenerators.Attributes.GenerateSourceCodePropertyPartialClassAttribute"))
-                                    .FirstOrDefault(t => t != null);
+                .Select(context.Compilation.GetAssemblyOrModuleSymbol)
+                .OfType<IAssemblySymbol>()
+                .Select(assemblySymbol => assemblySymbol.GetTypeByMetadataName(GenerateSourceCodePropertyPartialClassAttributeMetadataName))
+                .FirstOrDefault(t => t != null);
 
-
-            foreach (var syntaxTree in context.Compilation.SyntaxTrees)
+            if (context.SyntaxReceiver is GenerateSourceCodePropertyPartialClassSyntaxReceiver generateSourceCodePropertyPartialClassSyntaxReceiver)
             {
-                var semanticModel = context.Compilation.GetSemanticModel(syntaxTree);
+                foreach (var (classDeclarationSyntax, attributeSyntax) in generateSourceCodePropertyPartialClassSyntaxReceiver.ClassesToAugment)
+                { 
+                    var semanticModel = context.Compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
 
-                var syntaxRoot = syntaxTree.GetRoot();
-                var attributes = syntaxRoot.DescendantNodes().OfType<AttributeSyntax>();
-
-                foreach (var attribute in attributes)
-                {
-                    if (SymbolEqualityComparer.Default.Equals(semanticModel.GetTypeInfo(attribute).Type, targetAttributeType) &&
-                        attribute.Parent.Parent is ClassDeclarationSyntax classDeclaration)
+                    if (SymbolEqualityComparer.Default.Equals(semanticModel.GetTypeInfo(attributeSyntax).Type, targetAttributeType))
                     {
 
-                        var className = classDeclaration.Identifier.ValueText;
+                        var className = classDeclarationSyntax.Identifier.ValueText;
 
                         var i = 0;
-                        SyntaxNode compilationUnit = classDeclaration;
+                        SyntaxNode compilationUnit = classDeclarationSyntax;
 
                         while (i < 30 && compilationUnit.Parent != null)
                         {
                             compilationUnit = compilationUnit.Parent;
                         }
+                        if (i >= 30)
+                        {
+                            throw new System.Exception("Could not find CompilationUnit");
+                        }
 
-                        var sourceCode = compilationUnit.ToString().Replace("\"", "\"\"");
+                        var sourceCode = compilationUnit.ToFullString().Replace("\"", "\"\"");
 
                         var sourceText = SourceText.From(@$"namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
-                        {{
-                            public partial class { className }
-                            {{
-                                public string SourceCode {{ get; set; }} = @""{ sourceCode }"";
-                            }}
-                        }}", Encoding.UTF8);
+{{
+    public partial class { className }
+    {{
+        public string SourceCode {{ get; }} = @""{ sourceCode }"";
+    }}
+}}", Encoding.UTF8);
 
                         context.AddSource($"{className}.Generated.cs", sourceText);
-
-                        //System.Diagnostics.Debugger.Launch();
                     }
                 }
             }
         }
-        public void Initialize(GeneratorInitializationContext context)
-        {
-            //context.RegisterForSyntaxNotifications(() => new GenerateSourceCodePropertyPartialClassSyntaxReceiver());
-        }
+
+        public void Initialize(GeneratorInitializationContext context) => context.RegisterForSyntaxNotifications(() => new GenerateSourceCodePropertyPartialClassSyntaxReceiver());
     }
 }
