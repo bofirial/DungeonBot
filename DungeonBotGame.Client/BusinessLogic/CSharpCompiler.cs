@@ -16,7 +16,7 @@ namespace DungeonBotGame.Client.BusinessLogic
         private readonly NavigationManager _navigationManager;
         private readonly IActionComponentAbilityExtensionMethodsClassBuilder _actionComponentAbilityExtensionMethodsClassBuilder;
 
-        private List<MetadataReference>? References { get; set; }
+        private List<MetadataReference>? _references;
 
         public CSharpCompiler(HttpClient httpClient, NavigationManager  navigationManager, IActionComponentAbilityExtensionMethodsClassBuilder actionComponentAbilityExtensionMethodsClassBuilder)
         {
@@ -27,9 +27,9 @@ namespace DungeonBotGame.Client.BusinessLogic
 
         public async Task<CSharpCompilation> CompileAsync(string code, DungeonBotViewModel dungeonBot)
         {
-            if (References == null)
+            if (_references == null)
             {
-                await LoadReferencesAsync();
+                _references = await LoadReferencesAsync();
             }
 
             return CSharpCompilation.Create(
@@ -38,7 +38,7 @@ namespace DungeonBotGame.Client.BusinessLogic
                     CSharpSyntaxTree.ParseText(_actionComponentAbilityExtensionMethodsClassBuilder.BuildAbilityExtensionMethodsClass(dungeonBot), CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview)),
                     CSharpSyntaxTree.ParseText(code, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))
                 },
-                References,
+                _references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: new[]
                 {
                     "System",
@@ -57,9 +57,9 @@ namespace DungeonBotGame.Client.BusinessLogic
             );
         }
 
-        private async Task LoadReferencesAsync()
+        private async Task<List<MetadataReference>> LoadReferencesAsync()
         {
-            References = new List<MetadataReference>();
+            var metadataReferences = new List<MetadataReference>();
 
             var targetReferences = new string[]
             {
@@ -282,8 +282,10 @@ namespace DungeonBotGame.Client.BusinessLogic
             foreach (var reference in targetReferences)
             {
                 var stream = await _httpClient.GetStreamAsync(new Uri($"{_navigationManager.BaseUri}_framework/{reference}"));
-                References.Add(MetadataReference.CreateFromStream(stream));
+                metadataReferences.Add(MetadataReference.CreateFromStream(stream));
             }
+
+            return metadataReferences;
         }
     }
 }
