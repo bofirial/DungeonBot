@@ -28,6 +28,7 @@
                     {
                         var abilityDescription = abilityDescriptionProvider.GetAbilityDescription(abilityType);
 
+                        //TODO: Show Description while hovering
                         <li class="list-group-item">
                             @abilityDescription.Name
                             @if (abilityDescription.CooldownRounds > 0)

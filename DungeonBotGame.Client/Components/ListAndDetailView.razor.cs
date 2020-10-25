@@ -18,6 +18,9 @@ namespace DungeonBotGame.Client.Components
         [Parameter]
         public RenderFragment<TListItem>? DetailView { get; set; }
 
+        [Parameter]
+        public string SelectAnItemText { get; set; } = "Select an Item";
+
         private string CurrentListItemKey { get; set; } = string.Empty;
 
         private TListItem? CurrentListItem { get; set; }

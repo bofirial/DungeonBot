@@ -3,24 +3,24 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 
 @using Fluxor;
-@using Store.Dungeons;
+@using Store.Adventures;
 @using DungeonBotGame.Models.ViewModels;
 
-@inject IState<DungeonState> DungeonState
+@inject IState<AdventureState> AdventureState
 
-<h1>Dungeons</h1>
+<h1>Adventures</h1>
 
-<ListAndDetailView TListItem="DungeonViewModel" List="@DungeonState.Value.Dungeons" KeyFunction="@((dungeon) => dungeon.Name)">
+<ListAndDetailView TListItem="AdventureViewModel" List="@AdventureState.Value.Adventures" KeyFunction="@((adventure) => adventure.Name)" SelectAnItemText="Select an Adventure">
     <ListItemView>
         @if (context.ListItem != null)
         {
             @context.ListItem.Name
 
-            if (context.ListItem.DungeonResults != null && context.ListItem.DungeonResults.Any())
+            if (context.ListItem.AdventureResults != null && context.ListItem.AdventureResults.Any())
             {
                 var iconClass = string.Empty;
 
-                if (context.ListItem.DungeonResults.Last().Success)
+                if (context.ListItem.AdventureResults.Last().Success)
                 {
                     if (!context.IsCurrentListItem)
                     {
@@ -46,6 +46,6 @@
         }
     </ListItemView>
     <DetailView>
-        <DungeonDetail Dungeon="@context"></DungeonDetail>
+        <AdventureDetail Adventure="@context"></AdventureDetail>
     </DetailView>
 </ListAndDetailView>

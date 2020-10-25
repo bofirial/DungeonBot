@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DungeonBotGame.Models.ViewModels
 {
-    public class DungeonViewModel
+    public class AdventureViewModel
     {
         public string Name { get; }
 
@@ -13,15 +13,15 @@ namespace DungeonBotGame.Models.ViewModels
 
         public string Status { get; }
 
-        public IReadOnlyCollection<DungeonResultViewModel> DungeonResults { get; }
+        public IReadOnlyCollection<AdventureResultViewModel> AdventureResults { get; }
 
-        public DungeonViewModel(string name, string description, IEnumerable<EncounterViewModel> encounters, string status, IEnumerable<DungeonResultViewModel> dungeonResults)
+        public AdventureViewModel(string name, string description, IEnumerable<EncounterViewModel> encounters, string status, IEnumerable<AdventureResultViewModel> adventureResults)
         {
             Name = name;
             Description = description;
             Encounters = encounters.ToList().AsReadOnly();
             Status = status;
-            DungeonResults = dungeonResults?.ToList().AsReadOnly();
+            AdventureResults = adventureResults?.ToList().AsReadOnly();
         }
     }
 }

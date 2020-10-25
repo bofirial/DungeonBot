@@ -2,17 +2,17 @@
 using DungeonBotGame.Models.ViewModels;
 using Fluxor;
 
-namespace DungeonBotGame.Client.Store.Dungeons
+namespace DungeonBotGame.Client.Store.Adventures
 {
-    public class DungeonFeature : Feature<DungeonState>
+    public class AdventureFeature : Feature<AdventureState>
     {
-        public override string GetName() => nameof(DungeonState);
+        public override string GetName() => nameof(AdventureState);
 
-        protected override DungeonState GetInitialState()
+        protected override AdventureState GetInitialState()
         {
-            return new DungeonState(new List<DungeonViewModel>()
+            return new AdventureState(new List<AdventureViewModel>()
             {
-                new DungeonViewModel("Rat Infestation",
+                new AdventureViewModel("Rat Infestation",
                     "There is one large rat that has taken over an elderly widow's dock in the harbor.  The widow would like to hire us to get rid of it.  She can't pay us much but she has promised all the apple pie we can eat if we can do this for her.",
                     new List<EncounterViewModel>()
                         {
@@ -22,7 +22,7 @@ namespace DungeonBotGame.Client.Store.Dungeons
                     null
                 ),
 
-                 new DungeonViewModel("Rescue the Farmer's Sheep",
+                 new AdventureViewModel("Rescue the Farmer's Sheep",
                     "A dragon whelp has stolen Farmer Lizzy's prized sheep Sweatersmith.  Sweatersmith has been entered into the regional fair this weekend.  Farmer Lizzy is willing to pay us half the prize money if we can rescue Sweatersmith in time.",
                     new List<EncounterViewModel>()
                         {
@@ -32,7 +32,7 @@ namespace DungeonBotGame.Client.Store.Dungeons
                     null
                 ),
 
-                new DungeonViewModel("Skeleton Cave",
+                new AdventureViewModel("Skeleton Cave",
                     "There are some wolves in Skeleton cave.  The cave was known to be home to mighty skeletons hundreds of years ago but adventurers cleared them out.  The wolves are just as dangerous though and need to be defeated before they start attacking the nearby livestock.  The city of Damselville has put a bounty on the Wolf King's head.",
                     new List<EncounterViewModel>()
                         {

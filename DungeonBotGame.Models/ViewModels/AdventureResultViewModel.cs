@@ -2,7 +2,7 @@
 
 namespace DungeonBotGame.Models.ViewModels
 {
-    public class DungeonResultViewModel
+    public class AdventureResultViewModel
     {
         public string RunId { get; set; }
 
