@@ -38,7 +38,7 @@ jobs:
         
     - name: DotNet Publish
       if: github.ref == 'refs/heads/main'
-      run: dotnet publish ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -o publish --no-build
+      run: dotnet publish ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -o publish --no-build --self-contained
 
     - name: Azure WebApp
       if: github.ref == 'refs/heads/main'
