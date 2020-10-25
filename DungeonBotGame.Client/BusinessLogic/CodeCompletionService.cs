@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using DungeonBotGame.Models.Api;
@@ -9,8 +10,6 @@ namespace DungeonBotGame.Client.BusinessLogic
 {
     public class CodeCompletionService : ICodeCompletionService
     {
-        private const string LIBRARY_NAME = "DungeonBot001";
-        private const string FILE_NAME = "DungeonBotGame.cs";
         private readonly IJSRuntime _jsRuntime;
         private readonly HttpClient _httpClient;
 
@@ -32,10 +31,15 @@ namespace DungeonBotGame.Client.BusinessLogic
         [JSInvokable]
         public async Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(string sourceCode, int currentPosition)
         {
+            if (_dungeonBot == null)
+            {
+                throw new InvalidOperationException($"DungeonBot must not be null to look up Code Completions.");
+            }
+
             var response = await _httpClient.PostAsJsonAsync($"api/CodeCompletions", new CodeCompletionPostRequestModel()
             {
-                ActionModuleLibrary = new ActionModuleLibraryViewModel(LIBRARY_NAME, System.Array.Empty<byte>(), new ActionModuleFileViewModel(FILE_NAME, sourceCode)),
-                TargetFileName = FILE_NAME,
+                ActionModuleLibrary = new ActionModuleLibraryViewModel(_dungeonBot.Name, Array.Empty<byte>(), new ActionModuleFileViewModel($"{_dungeonBot.Name}.cs", sourceCode)),
+                TargetFileName = $"{_dungeonBot.Name}.cs",
                 TargetFilePosition = currentPosition,
                 DungeonBot = _dungeonBot
             });
@@ -44,7 +48,7 @@ namespace DungeonBotGame.Client.BusinessLogic
 
             if (responseModel == null)
             {
-                throw new System.Exception("Unable to get Code Completion results");
+                throw new InvalidOperationException("Failure getting Code Completions.");
             }
 
             return responseModel;
