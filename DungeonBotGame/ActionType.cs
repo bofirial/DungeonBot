@@ -2,7 +2,7 @@
 {
     public enum ActionType
     {
-        DoNothing,
+        DoNothing = 0,
         Attack,
         Ability
     }

@@ -2,7 +2,7 @@
 {
     public enum AbilityType
     {
-        HeavySwing,
+        HeavySwing = 1,
         LickWounds
     }
 }
