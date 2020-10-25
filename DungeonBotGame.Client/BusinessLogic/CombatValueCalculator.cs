@@ -1,4 +1,6 @@
-﻿namespace DungeonBotGame.Client.BusinessLogic
+﻿using DungeonBotGame.Client.ErrorHandling;
+
+namespace DungeonBotGame.Client.BusinessLogic
 {
     public class CombatValueCalculator : ICombatValueCalculator
     {
@@ -18,7 +20,7 @@
             {
                 AbilityType.HeavySwing => GetAttackValue(sourceCharacter, targetCharacter) * 3,
                 AbilityType.LickWounds => targetCharacter.MaximumHealth,
-                _ => throw new System.Exception($"Ability Unknown: {abilityType}"),
+                _ => throw new UnknownAbilityException(abilityType)
             };
         }
     }
