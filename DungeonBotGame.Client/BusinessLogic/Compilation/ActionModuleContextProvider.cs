@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
     public class ActionModuleContextProvider : IActionModuleContextProvider
     {

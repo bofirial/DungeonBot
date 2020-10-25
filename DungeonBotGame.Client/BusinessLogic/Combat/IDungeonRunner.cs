@@ -2,7 +2,7 @@
 using DungeonBotGame.Client.Store.Dungeons;
 using DungeonBotGame.Models.ViewModels;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface IDungeonRunner
     {

@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using DungeonBotGame.Models.ViewModels;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
     public class ActionComponentAbilityExtensionMethodsClassBuilder : IActionComponentAbilityExtensionMethodsClassBuilder
     {

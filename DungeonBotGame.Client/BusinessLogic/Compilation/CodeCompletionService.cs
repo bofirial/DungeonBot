@@ -6,7 +6,7 @@ using DungeonBotGame.Models.Api;
 using DungeonBotGame.Models.ViewModels;
 using Microsoft.JSInterop;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
     public class CodeCompletionService : ICodeCompletionService
     {

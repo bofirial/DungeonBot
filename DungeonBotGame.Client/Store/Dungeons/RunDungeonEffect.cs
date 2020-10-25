@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using DungeonBotGame.Client.BusinessLogic;
+using DungeonBotGame.Client.BusinessLogic.Combat;
 using Fluxor;
 
 namespace DungeonBotGame.Client.Store.Dungeons

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DungeonBotGame.Models.Combat;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface IEncounterRoundRunner
     {

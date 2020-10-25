@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
     public class CSharpCompiler : ICSharpCompiler
     {
@@ -18,7 +18,7 @@ namespace DungeonBotGame.Client.BusinessLogic
 
         private List<MetadataReference>? _references;
 
-        public CSharpCompiler(HttpClient httpClient, NavigationManager  navigationManager, IActionComponentAbilityExtensionMethodsClassBuilder actionComponentAbilityExtensionMethodsClassBuilder)
+        public CSharpCompiler(HttpClient httpClient, NavigationManager navigationManager, IActionComponentAbilityExtensionMethodsClassBuilder actionComponentAbilityExtensionMethodsClassBuilder)
         {
             _httpClient = httpClient;
             _navigationManager = navigationManager;

@@ -1,4 +1,5 @@
 ﻿using DungeonBotGame.Client.BusinessLogic;
+using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Server.BusinessLogic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

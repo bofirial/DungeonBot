@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using DungeonBotGame.Client.BusinessLogic;
+using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Models.Api;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;

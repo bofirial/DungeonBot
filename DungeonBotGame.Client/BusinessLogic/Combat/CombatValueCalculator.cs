@@ -1,6 +1,6 @@
 ﻿using DungeonBotGame.Client.ErrorHandling;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public class CombatValueCalculator : ICombatValueCalculator
     {

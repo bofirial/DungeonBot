@@ -1,4 +1,4 @@
-﻿namespace DungeonBotGame.Client.BusinessLogic
+﻿namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatValueCalculator
     {

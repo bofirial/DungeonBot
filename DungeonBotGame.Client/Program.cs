@@ -3,6 +3,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Blazor.Extensions.Logging;
 using DungeonBotGame.Client.BusinessLogic;
+using DungeonBotGame.Client.BusinessLogic.Combat;
+using DungeonBotGame.Client.BusinessLogic.Compilation;
 using Fluxor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;

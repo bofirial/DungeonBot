@@ -2,7 +2,7 @@
 using DungeonBotGame.Models.ViewModels;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
     public interface ICSharpCompiler
     {

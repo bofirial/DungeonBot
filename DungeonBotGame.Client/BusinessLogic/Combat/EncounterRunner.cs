@@ -4,7 +4,7 @@ using DungeonBotGame.Client.BusinessLogic.EnemyActionModules;
 using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public class EncounterRunner : IEncounterRunner
     {

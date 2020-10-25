@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Client.Store.Dungeons;
 using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
-namespace DungeonBotGame.Client.BusinessLogic
+namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public class DungeonRunner : IDungeonRunner
     {
