@@ -15,6 +15,8 @@ namespace DungeonBotGame.Client.BusinessLogic
 
             var methods = assembly.GetTypes().SelectMany(t => t.GetMethods()).Where(m => m.GetCustomAttributes(typeof(ActionModuleEntrypointAttribute), false).Length > 0);
 
+            //TODO: Consider Replacing this Reflection with Source Generator(s) and Analyzer(s)
+
             //TODO: Error for multiple entry points
             //TODO: Error for no entry points
             //TODO: Error for invalid method parameters
