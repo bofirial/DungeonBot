@@ -8,7 +8,7 @@ namespace DungeonBotGame.Models.Combat
         {
             DungeonBot = dungeonBot;
             Enemy = enemy;
-            RoundCounter = roundCounter;
+            Round = roundCounter;
             EncounterRoundHistory = encounterRoundHistory;
         }
 
@@ -16,7 +16,7 @@ namespace DungeonBotGame.Models.Combat
 
         public IEnemy Enemy { get; }
 
-        public int RoundCounter { get; }
+        public int Round { get; }
 
         public IEnumerable<IEncounterRoundResult> EncounterRoundHistory { get; }
     }
