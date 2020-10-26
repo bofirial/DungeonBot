@@ -31,7 +31,7 @@ namespace DungeonBotGame.Client.Store.Adventures
                 }
             }
 
-            return new AdventureState(adventures);
+            return state with { Adventures = adventures };
         }
     }
 }

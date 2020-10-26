@@ -19,7 +19,7 @@ namespace DungeonBotGame.Client.Store.DungeonBots
                 currentDungeonBot.Abilities.ToList()
                 );
 
-            return new DungeonBotState(new List<DungeonBotViewModel>() { newDungeonBot });
+            return state with { DungeonBots = new List<DungeonBotViewModel>() { newDungeonBot } };
         }
     }
 }

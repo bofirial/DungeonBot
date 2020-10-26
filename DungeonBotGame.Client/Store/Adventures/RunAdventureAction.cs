@@ -2,11 +2,11 @@
 
 namespace DungeonBotGame.Client.Store.Adventures
 {
-    public class RunAdventureAction
+    public record RunAdventureAction
     {
-        public AdventureViewModel Adventure { get; }
+        public AdventureViewModel Adventure { get; init; }
 
-        public ActionModuleLibraryViewModel ActionModuleLibrary { get; }
+        public ActionModuleLibraryViewModel ActionModuleLibrary { get; init; }
 
         public string RunId { get; }
 

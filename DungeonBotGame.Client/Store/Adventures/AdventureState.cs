@@ -4,9 +4,9 @@ using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.Store.Adventures
 {
-    public class AdventureState
+    public record AdventureState
     {
-        public IReadOnlyCollection<AdventureViewModel> Adventures { get; }
+        public IReadOnlyCollection<AdventureViewModel> Adventures { get; init; }
 
         public AdventureState(IEnumerable<AdventureViewModel> adventures)
         {

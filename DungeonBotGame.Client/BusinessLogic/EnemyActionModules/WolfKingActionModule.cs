@@ -11,7 +11,7 @@ namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
         {
             var previousRoundResult = sensorComponent.EncounterRoundHistory.LastOrDefault();
 
-            if (previousRoundResult != null && 
+            if (previousRoundResult != null &&
                 previousRoundResult.ActionResults.Any(a => a.Action is IAbilityAction && a.Character == sensorComponent.DungeonBot))
             {
                 return actionComponent.UseLickWounds();
