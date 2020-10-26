@@ -8,6 +8,11 @@ using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
+    public interface IAdventureRunner
+    {
+        Task<AdventureResultViewModel> RunAdventureAsync(RunAdventureAction runAdventureAction);
+    }
+
     public class AdventureRunner : IAdventureRunner
     {
         private readonly IActionModuleContextProvider _actionModuleContextProvider;

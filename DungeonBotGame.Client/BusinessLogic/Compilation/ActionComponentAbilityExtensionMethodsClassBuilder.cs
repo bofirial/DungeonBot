@@ -3,6 +3,11 @@ using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
+    public interface IActionComponentAbilityExtensionMethodsClassBuilder
+    {
+        string BuildAbilityExtensionMethodsClass(DungeonBotViewModel dungeonBot);
+    }
+
     public class ActionComponentAbilityExtensionMethodsClassBuilder : IActionComponentAbilityExtensionMethodsClassBuilder
     {
         private readonly IAbilityDescriptionProvider _abilityDescriptionProvider;

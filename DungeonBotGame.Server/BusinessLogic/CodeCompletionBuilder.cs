@@ -10,6 +10,11 @@ using CompletionItem = DungeonBotGame.Models.Api.CompletionItem;
 
 namespace DungeonBotGame.Server.BusinessLogic
 {
+    public interface ICodeCompletionBuilder
+    {
+        Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(CodeCompletionPostRequestModel requestModel);
+    }
+
     public class CodeCompletionBuilder : ICodeCompletionBuilder
     {
         private readonly IActionComponentAbilityExtensionMethodsClassBuilder _actionComponentAbilityExtensionMethodsClassBuilder;

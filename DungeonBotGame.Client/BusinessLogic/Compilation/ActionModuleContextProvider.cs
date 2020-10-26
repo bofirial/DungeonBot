@@ -7,6 +7,11 @@ using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
+    public interface IActionModuleContextProvider
+    {
+        Task<ActionModuleContext> GetActionModuleContext(ActionModuleLibraryViewModel actionModuleLibrary);
+    }
+
     public class ActionModuleContextProvider : IActionModuleContextProvider
     {
         public Task<ActionModuleContext> GetActionModuleContext(ActionModuleLibraryViewModel actionModuleLibrary)

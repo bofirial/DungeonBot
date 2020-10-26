@@ -4,6 +4,11 @@ using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.BusinessLogic
 {
+    public interface IAbilityDescriptionProvider
+    {
+        AbilityDescriptionViewModel GetAbilityDescription(AbilityType abilityType);
+    }
+
     public class AbilityDescriptionProvider : IAbilityDescriptionProvider
     {
         private readonly Dictionary<AbilityType, AbilityDescriptionViewModel> _abilityDescriptions = new Dictionary<AbilityType, AbilityDescriptionViewModel>()

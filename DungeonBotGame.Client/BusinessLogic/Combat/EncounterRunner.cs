@@ -6,6 +6,13 @@ using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
+    public interface IEncounterRunner
+    {
+        Task<EncounterResultViewModel> RunAdventureEncounterAsync(DungeonBot dungeonBot, EncounterViewModel encounter);
+
+        bool EncounterHasCompleted(DungeonBot dungeonBot, Enemy enemy, int roundCounter);
+    }
+
     public class EncounterRunner : IEncounterRunner
     {
         private const int MAX_ROUNDS = 100;

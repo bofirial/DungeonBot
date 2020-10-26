@@ -2,6 +2,11 @@
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
+    public interface ICombatActionProcessor
+    {
+        ActionResult ProcessAction(IAction action, CharacterBase source, CharacterBase target);
+    }
+
     public class CombatActionProcessor : ICombatActionProcessor
     {
         private readonly ICombatValueCalculator _combatValueCalculator;

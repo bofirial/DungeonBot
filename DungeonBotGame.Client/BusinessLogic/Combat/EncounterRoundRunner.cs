@@ -4,6 +4,11 @@ using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
+    public interface IEncounterRoundRunner
+    {
+        Task<EncounterRoundResult> RunEncounterRoundAsync(DungeonBot dungeonBot, Enemy enemy, int roundCounter, IEnumerable<EncounterRoundResult> encounterRoundResults);
+    }
+
     public class EncounterRoundRunner : IEncounterRoundRunner
     {
         private readonly IActionModuleExecuter _actionModuleExecuter;

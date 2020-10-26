@@ -8,6 +8,13 @@ using Microsoft.JSInterop;
 
 namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
+    public interface ICodeCompletionService
+    {
+        Task InitializeCodeEditorAsync(DungeonBotViewModel dungeonBotViewModel);
+
+        Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(string sourceCode, int currentPosition);
+    }
+
     public class CodeCompletionService : ICodeCompletionService
     {
         private readonly IJSRuntime _jsRuntime;
