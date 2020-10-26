@@ -38,21 +38,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                 if (!encounterResult.Success)
                 {
-                    return new AdventureResultViewModel()
-                    {
-                        RunId = runAdventureAction.RunId,
-                        Success = false,
-                        EncounterResults = encounterResults
-                    };
+                    return new AdventureResultViewModel(runAdventureAction.RunId, success: false, encounterResults);
                 }
             }
 
-            return new AdventureResultViewModel()
-            {
-                RunId = runAdventureAction.RunId,
-                Success = encounterResults.All(e => e.Success),
-                EncounterResults = encounterResults
-            };
+            return new AdventureResultViewModel(runAdventureAction.RunId, success: encounterResults.All(e => e.Success), encounterResults);
         }
     }
 }

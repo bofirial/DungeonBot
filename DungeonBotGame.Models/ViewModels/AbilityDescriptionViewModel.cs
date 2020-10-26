@@ -1,16 +1,16 @@
 ﻿namespace DungeonBotGame.Models.ViewModels
 {
-    public class AbilityDescriptionViewModel
+    public record AbilityDescriptionViewModel
     {
-        public string Name { get; }
+        public string Name { get; init; }
 
-        public string Description { get; }
+        public string Description { get; init; }
 
-        public AbilityType AbilityType { get; }
+        public AbilityType AbilityType { get; init; }
 
-        public int CooldownRounds { get; }
+        public int CooldownRounds { get; init; }
 
-        public bool IsTargettedAbility { get; set; }
+        public bool IsTargettedAbility { get; init; }
 
         public AbilityDescriptionViewModel(string name, string description, AbilityType abilityType, int cooldownRounds, bool isTargettedAbility)
         {

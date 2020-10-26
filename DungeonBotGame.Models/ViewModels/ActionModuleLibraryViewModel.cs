@@ -5,13 +5,13 @@ using Newtonsoft.Json;
 
 namespace DungeonBotGame.Models.ViewModels
 {
-    public class ActionModuleLibraryViewModel
+    public record ActionModuleLibraryViewModel
     {
-        public string Name { get; }
+        public string Name { get; init; }
 
-        public ReadOnlyCollection<byte> Assembly { get; }
+        public ReadOnlyCollection<byte> Assembly { get; init; }
 
-        public ReadOnlyCollection<ActionModuleFileViewModel> ActionModuleFiles { get; }
+        public ReadOnlyCollection<ActionModuleFileViewModel> ActionModuleFiles { get; init; }
 
         public ActionModuleLibraryViewModel(string name, byte[] assembly, params ActionModuleFileViewModel[] actionModuleFiles)
         {

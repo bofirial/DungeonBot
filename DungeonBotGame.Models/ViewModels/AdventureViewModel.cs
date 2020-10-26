@@ -3,17 +3,17 @@ using System.Linq;
 
 namespace DungeonBotGame.Models.ViewModels
 {
-    public class AdventureViewModel
+    public record AdventureViewModel
     {
-        public string Name { get; }
+        public string Name { get; init; }
 
-        public string Description { get; }
+        public string Description { get; init; }
 
-        public IReadOnlyCollection<EncounterViewModel> Encounters { get; }
+        public IReadOnlyCollection<EncounterViewModel> Encounters { get; init; }
 
-        public string Status { get; }
+        public string Status { get; init; }
 
-        public IReadOnlyCollection<AdventureResultViewModel> AdventureResults { get; }
+        public IReadOnlyCollection<AdventureResultViewModel> AdventureResults { get; init; }
 
         public AdventureViewModel(string name, string description, IEnumerable<EncounterViewModel> encounters, string status, IEnumerable<AdventureResultViewModel> adventureResults)
         {

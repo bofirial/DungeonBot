@@ -53,26 +53,22 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 encounterRoundResults.Add(encounterRoundResult);
             }
 
-            var encounterResult = new EncounterResultViewModel()
-            {
-                Success = dungeonBot.CurrentHealth > 0 && roundCounter < MAX_ROUNDS,
-                EncounterRoundResults = encounterRoundResults,
-            };
+            var resultDisplayText = string.Empty;
 
             if (dungeonBot.CurrentHealth <= 0)
             {
-                encounterResult.ResultDisplayText = $"{enemy.Name} defeated {dungeonBot.Name}.";
+                resultDisplayText = $"{enemy.Name} defeated {dungeonBot.Name}.";
             }
             else if (enemy.CurrentHealth <= 0)
             {
-                encounterResult.ResultDisplayText = $"{dungeonBot.Name} defeated {enemy.Name}.";
+                resultDisplayText = $"{dungeonBot.Name} defeated {enemy.Name}.";
             }
             else if (roundCounter >= MAX_ROUNDS)
             {
-                encounterResult.ResultDisplayText = $"{dungeonBot.Name} failed to defeat {enemy.Name} in time.";
+                resultDisplayText = $"{dungeonBot.Name} failed to defeat {enemy.Name} in time.";
             }
 
-            return encounterResult;
+            return new EncounterResultViewModel(success: dungeonBot.CurrentHealth > 0 && roundCounter < MAX_ROUNDS, encounterRoundResults, resultDisplayText);
         }
 
         private static Enemy CreateEnemy(EncounterViewModel encounter)
