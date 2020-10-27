@@ -12,13 +12,16 @@
 
         public bool IsTargettedAbility { get; init; }
 
-        public AbilityDescriptionViewModel(string name, string description, AbilityType abilityType, int cooldownRounds, bool isTargettedAbility)
+        public int StartOfCombatCooldownRounds { get; init; }
+
+        public AbilityDescriptionViewModel(string name, string description, AbilityType abilityType, int cooldownRounds, bool isTargettedAbility, int startOfCombatCooldownRounds)
         {
             Name = name;
             Description = description;
             AbilityType = abilityType;
             CooldownRounds = cooldownRounds;
             IsTargettedAbility = isTargettedAbility;
+            StartOfCombatCooldownRounds = startOfCombatCooldownRounds;
         }
     }
 }

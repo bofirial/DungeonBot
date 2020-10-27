@@ -27,7 +27,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             {
                 AbilityType.HeavySwing => GetAttackValue(sourceCharacter, targetCharacter) * 3,
                 AbilityType.LickWounds => targetCharacter.MaximumHealth,
-                _ => throw new UnknownAbilityException(abilityType)
+                _ => throw new UnknownAbilityTypeException(abilityType)
             };
         }
     }

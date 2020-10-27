@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DungeonBotGame.Client.BusinessLogic.EnemyActionModules;
 using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
@@ -17,17 +16,19 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     {
         private const int MAX_ROUNDS = 100;
         private readonly IEncounterRoundRunner _encounterRoundRunner;
+        private readonly IEnemyFactory _enemyFactory;
 
-        public EncounterRunner(IEncounterRoundRunner encounterRoundRunner)
+        public EncounterRunner(IEncounterRoundRunner encounterRoundRunner, IEnemyFactory enemyFactory)
         {
             _encounterRoundRunner = encounterRoundRunner;
+            _enemyFactory = enemyFactory;
         }
 
         public bool EncounterHasCompleted(DungeonBot dungeonBot, Enemy enemy, int roundCounter) => dungeonBot.CurrentHealth <= 0 || enemy.CurrentHealth <= 0 || roundCounter >= MAX_ROUNDS;
 
         public async Task<EncounterResultViewModel> RunAdventureEncounterAsync(DungeonBot dungeonBot, EncounterViewModel encounter)
         {
-            var enemy = CreateEnemy(encounter);
+            var enemy = _enemyFactory.CreateEnemy(encounter);
             var encounterRoundResults = new List<EncounterRoundResult>()
             {
                 new EncounterRoundResult()
@@ -61,35 +62,25 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
 
             var resultDisplayText = string.Empty;
+            var success = false;
 
             if (dungeonBot.CurrentHealth <= 0)
             {
                 resultDisplayText = $"{enemy.Name} defeated {dungeonBot.Name}.";
+                success = false;
             }
             else if (enemy.CurrentHealth <= 0)
             {
                 resultDisplayText = $"{dungeonBot.Name} defeated {enemy.Name}.";
+                success = true;
             }
             else if (roundCounter >= MAX_ROUNDS)
             {
                 resultDisplayText = $"{dungeonBot.Name} failed to defeat {enemy.Name} in time.";
+                success = false;
             }
 
-            return new EncounterResultViewModel(success: dungeonBot.CurrentHealth > 0 && roundCounter < MAX_ROUNDS, encounterRoundResults, resultDisplayText);
-        }
-
-        private static Enemy CreateEnemy(EncounterViewModel encounter)
-        {
-            return encounter.Name switch
-            {
-                "Big Rat" => new Enemy(encounter.Name, 80, new AttackOnlyActionModule(), new Dictionary<AbilityType, AbilityContext>()),
-                "Hungry Dragon Whelp" => new Enemy(encounter.Name, MAX_ROUNDS, new AttackOnlyActionModule(), new Dictionary<AbilityType, AbilityContext>()),
-                "Wolf King" => new Enemy(encounter.Name, 80, new WolfKingActionModule(), new Dictionary<AbilityType, AbilityContext>() {
-                        { AbilityType.LickWounds, new AbilityContext() { MaximumCooldownRounds = 0 } }
-                    }),
-                //TODO: Specific Exception Types
-                _ => throw new System.Exception($"Unknown Enemy: {encounter.Name}"),
-            };
+            return new EncounterResultViewModel(success: success, encounterRoundResults, resultDisplayText);
         }
     }
 }

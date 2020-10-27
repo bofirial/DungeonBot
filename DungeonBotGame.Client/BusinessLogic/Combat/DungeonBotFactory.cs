@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using DungeonBotGame.Client.BusinessLogic.Compilation;
+﻿using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
@@ -13,12 +12,12 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     public class DungeonBotFactory : IDungeonBotFactory
     {
         private readonly IActionModuleContextProvider _actionModuleContextProvider;
-        private readonly IAbilityDescriptionProvider _abilityDescriptionProvider;
+        private readonly IAbilityContextDictionaryBuilder _abilityContextDictionaryBuilder;
 
-        public DungeonBotFactory(IActionModuleContextProvider actionModuleContextProvider, IAbilityDescriptionProvider abilityDescriptionProvider)
+        public DungeonBotFactory(IActionModuleContextProvider actionModuleContextProvider, IAbilityContextDictionaryBuilder abilityContextDictionaryBuilder)
         {
             _actionModuleContextProvider = actionModuleContextProvider;
-            _abilityDescriptionProvider = abilityDescriptionProvider;
+            _abilityContextDictionaryBuilder = abilityContextDictionaryBuilder;
         }
 
         public DungeonBot CreateCombatDungeonBot(DungeonBotViewModel dungeonBot)
@@ -27,10 +26,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 dungeonBot.Name,
                 100,
                 _actionModuleContextProvider.GetActionModuleContext(dungeonBot.ActionModuleLibrary),
-                dungeonBot.Abilities.ToDictionary(abilityType => abilityType, abilityType => CreateAbilityContext(abilityType))
+                _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(dungeonBot.Abilities)
             );
         }
-
-        private AbilityContext CreateAbilityContext(AbilityType abilityType) => new AbilityContext() { MaximumCooldownRounds = _abilityDescriptionProvider.GetAbilityDescription(abilityType).CooldownRounds };
     }
 }
