@@ -29,12 +29,12 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             var playerAction = await _actionModuleExecuter.ExecuteActionModule(dungeonBot, dungeonBotActionComponent, sensorComponent);
 
             // Targets should be defined in the Action not here
-            var playerActionResult = _combatActionProcessor.ProcessAction(playerAction, dungeonBot, enemy);
+            var playerActionResult = _combatActionProcessor.ProcessAction(playerAction, dungeonBot);
 
             var enemyAction = await _actionModuleExecuter.ExecuteEnemyActionModule(enemy, enemyActionComponent, sensorComponent);
 
             // Targets should be defined in the Action not here
-            var enemyActionResult = _combatActionProcessor.ProcessAction(enemyAction, enemy, dungeonBot);
+            var enemyActionResult = _combatActionProcessor.ProcessAction(enemyAction, enemy);
 
             return new EncounterRoundResult()
             {

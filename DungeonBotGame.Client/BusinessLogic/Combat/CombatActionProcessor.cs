@@ -1,10 +1,11 @@
-﻿using DungeonBotGame.Models.Combat;
+﻿using DungeonBotGame.Client.ErrorHandling;
+using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatActionProcessor
     {
-        ActionResult ProcessAction(IAction action, CharacterBase source, CharacterBase target);
+        ActionResult ProcessAction(IAction action, CharacterBase source);
     }
 
     public class CombatActionProcessor : ICombatActionProcessor
@@ -16,18 +17,21 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _combatValueCalculator = combatValueCalculator;
         }
 
-        public ActionResult ProcessAction(IAction action, CharacterBase source, CharacterBase target)
+        public ActionResult ProcessAction(IAction action, CharacterBase source)
         {
             var actionResult = new ActionResult() { Action = action, Character = source };
 
-            //TODO: Strategy Pattern for ActionTypes?
-            if (action.ActionType == ActionType.Attack)
+            if (action is ITargettedAction targettedAction)
             {
-                ProcessAttackAction(source, target, actionResult);
+                ProcessTargettedAction(action, source, actionResult, targettedAction);
             }
             else if (action.ActionType == ActionType.Ability && action is IAbilityAction abilityAction)
             {
-                ProcessAbilityAction(source, target, actionResult, abilityAction);
+                ProcessAbilityAction(source, null, actionResult, abilityAction);
+            }
+            else
+            {
+                throw new UnknownActionTypeException(action.ActionType);
             }
 
             if (source.CurrentHealth < 0)
@@ -35,14 +39,37 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 source.CurrentHealth = 0;
             }
 
-            if (target.CurrentHealth < 0)
-            {
-                target.CurrentHealth = 0;
-            }
-
             UpdateAbilityCooldowns(action, source);
 
             return actionResult;
+        }
+
+        private void ProcessTargettedAction(IAction action, CharacterBase source, ActionResult actionResult, ITargettedAction targettedAction)
+        {
+            if (targettedAction.Target is CharacterBase target)
+            {
+                if (action.ActionType == ActionType.Attack)
+                {
+                    ProcessAttackAction(source, target, actionResult);
+                }
+                else if (action.ActionType == ActionType.Ability && action is IAbilityAction abilityAction)
+                {
+                    ProcessAbilityAction(source, target, actionResult, abilityAction);
+                }
+                else
+                {
+                    throw new UnknownActionTypeException(action.ActionType);
+                }
+
+                if (target.CurrentHealth < 0)
+                {
+                    target.CurrentHealth = 0;
+                }
+            }
+            else
+            {
+                throw new InvalidTargetException($"Target must be a DungeonBot or Enemy: {targettedAction.Target}");
+            }
         }
 
         private void ProcessAttackAction(CharacterBase source, CharacterBase target, ActionResult actionResult)
@@ -54,26 +81,29 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             actionResult.DisplayText = $"{source.Name} attacked {target.Name} for {attackDamage} damage.";
         }
 
-        private void ProcessAbilityAction(CharacterBase source, CharacterBase target, ActionResult actionResult, IAbilityAction abilityAction)
+        private void ProcessAbilityAction(CharacterBase source, CharacterBase? target, ActionResult actionResult, IAbilityAction abilityAction)
         {
             if (!source.Abilities.ContainsKey(abilityAction.AbilityType))
             {
-                //TODO: Specific Exception Types
-                throw new System.Exception($"{source.Name} does not have access to the ability {abilityAction.AbilityType}.");
+                throw new AbilityNotAvailableException($"{source.Name} does not have access to the ability {abilityAction.AbilityType}.");
             }
 
             var abilityContext = source.Abilities[abilityAction.AbilityType];
 
             if (abilityContext.CurrentCooldownRounds > 0)
             {
-                //TODO: Specific Exception Types
-                throw new System.Exception($"{source.Name} must wait another {abilityContext.CurrentCooldownRounds} rounds before {abilityAction.AbilityType} is available.");
+                throw new AbilityNotAvailableException($"{source.Name} must wait another {abilityContext.CurrentCooldownRounds} rounds before {abilityAction.AbilityType} is available.");
             }
 
             //TODO: Strategy Pattern for AbilityTypes?
             switch (abilityAction.AbilityType)
             {
                 case AbilityType.HeavySwing:
+
+                    if (target == null)
+                    {
+                        throw new InvalidTargetException(target);
+                    }
 
                     var abilityDamage = _combatValueCalculator.GetAbilityValue(source, target, abilityAction.AbilityType); ;
 
@@ -86,12 +116,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                     source.CurrentHealth = source.MaximumHealth;
 
-                    actionResult.DisplayText = $"{source.Name} licked it's wounds because {target.Name} used an ability last turn.";
+                    actionResult.DisplayText = $"{source.Name} licked it's wounds because a DungeonBot used an ability last turn.";
                     break;
 
                 default:
-                    //TODO: Specific Exception Types
-                    throw new System.Exception($"Unknown Ability: {abilityAction.AbilityType}");
+                    throw new UnknownAbilityTypeException(abilityAction.AbilityType);
             }
 
             abilityContext.CurrentCooldownRounds = abilityContext.MaximumCooldownRounds;
