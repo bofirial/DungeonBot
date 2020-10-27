@@ -45,7 +45,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
 
             var response = await _httpClient.PostAsJsonAsync($"api/CodeCompletions", new CodeCompletionPostRequestModel()
             {
-                ActionModuleLibrary = new ActionModuleLibraryViewModel(_dungeonBot.Name, Array.Empty<byte>(), new ActionModuleFileViewModel($"{_dungeonBot.Name}.cs", sourceCode)),
+                ActionModuleLibrary = new ActionModuleLibraryViewModel(Array.Empty<byte>(), new ActionModuleFileViewModel($"{_dungeonBot.Name}.cs", sourceCode)),
                 TargetFileName = $"{_dungeonBot.Name}.cs",
                 TargetFilePosition = currentPosition,
                 DungeonBot = _dungeonBot

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
@@ -9,12 +8,12 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
     public interface IActionModuleContextProvider
     {
-        Task<ActionModuleContext> GetActionModuleContext(ActionModuleLibraryViewModel actionModuleLibrary);
+        ActionModuleContext GetActionModuleContext(ActionModuleLibraryViewModel actionModuleLibrary);
     }
 
     public class ActionModuleContextProvider : IActionModuleContextProvider
     {
-        public Task<ActionModuleContext> GetActionModuleContext(ActionModuleLibraryViewModel actionModuleLibrary)
+        public ActionModuleContext GetActionModuleContext(ActionModuleLibraryViewModel actionModuleLibrary)
         {
             var assembly = Assembly.Load(actionModuleLibrary.Assembly.ToArray());
 
@@ -39,11 +38,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
 
             var actionModule = Activator.CreateInstance(type);
 
-            return Task.FromResult(new ActionModuleContext()
+            return new ActionModuleContext()
             {
                 ActionModuleObject = actionModule,
                 ActionModuleEntryPointMethodInfo = actionMethod
-            });
+            };
         }
     }
 }

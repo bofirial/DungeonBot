@@ -57,11 +57,11 @@
     {
         CurrentAdventureRunId = Guid.NewGuid().ToString();
 
-        var actionModuleLibrary = DungeonBotState?.Value?.DungeonBots?.FirstOrDefault()?.ActionModuleLibrary;
+        var dungeonBot = DungeonBotState?.Value?.DungeonBots?.FirstOrDefault();
 
-        if (actionModuleLibrary != null)
+        if (dungeonBot != null)
         {
-            Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, actionModuleLibrary, CurrentAdventureRunId));
+            Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, dungeonBot, CurrentAdventureRunId));
         }
     }
 

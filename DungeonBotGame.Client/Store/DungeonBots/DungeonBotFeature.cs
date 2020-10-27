@@ -38,7 +38,7 @@ namespace DungeonBotGame.Scripts
                     Guid.NewGuid().ToString(),
                     "DungeonBot001",
                     "/images/temp/dungeonbot.png",
-                    new ActionModuleLibraryViewModel("DungeonBot001", Array.Empty<byte>(), new ActionModuleFileViewModel("DungeonBotGame.cs", DefaultActionModule)),
+                    new ActionModuleLibraryViewModel(Array.Empty<byte>(), new ActionModuleFileViewModel("DungeonBotGame.cs", DefaultActionModule)),
                     new List<AbilityType>()
                     {
                         AbilityType.HeavySwing

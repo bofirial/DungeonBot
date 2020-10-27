@@ -6,14 +6,14 @@ namespace DungeonBotGame.Client.Store.Adventures
     {
         public AdventureViewModel Adventure { get; init; }
 
-        public ActionModuleLibraryViewModel ActionModuleLibrary { get; init; }
+        public DungeonBotViewModel DungeonBot { get; init; }
 
         public string RunId { get; }
 
-        public RunAdventureAction(AdventureViewModel adventure, ActionModuleLibraryViewModel actionModuleLibrary, string runId)
+        public RunAdventureAction(AdventureViewModel adventure, DungeonBotViewModel actionModuleLibrary, string runId)
         {
             Adventure = adventure;
-            ActionModuleLibrary = actionModuleLibrary;
+            DungeonBot = actionModuleLibrary;
             RunId = runId;
         }
     }
