@@ -11,15 +11,12 @@ namespace DungeonBotGame.Client.Store.DungeonBots
         {
             var currentDungeonBot = state.DungeonBots.First();
 
-            var newDungeonBot = new DungeonBotViewModel(
-                currentDungeonBot.Id,
-                currentDungeonBot.Name,
-                currentDungeonBot.ProfileImageLocation,
-                new ActionModuleLibraryViewModel(action.NewActionModuleLibraryName, action.Assembly.ToArray(), action.ActionModuleFiles.ToArray()),
-                currentDungeonBot.Abilities.ToList()
-                );
-
-            return new DungeonBotState(new List<DungeonBotViewModel>() { newDungeonBot });
+            return state with
+            {
+                DungeonBots = new List<DungeonBotViewModel>() {
+                    currentDungeonBot with { ActionModuleLibrary = new ActionModuleLibraryViewModel(action.Assembly.ToArray(), action.ActionModuleFiles.ToArray()) }
+                }
+            };
         }
     }
 }

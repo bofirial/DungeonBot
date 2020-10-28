@@ -3,6 +3,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Blazor.Extensions.Logging;
 using DungeonBotGame.Client.BusinessLogic;
+using DungeonBotGame.Client.BusinessLogic.Combat;
+using DungeonBotGame.Client.BusinessLogic.Compilation;
 using Fluxor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +24,7 @@ namespace DungeonBotGame.Client
             builder.Services.AddScoped<ICSharpCompiler, CSharpCompiler>();
             builder.Services.AddScoped<ICodeCompletionService, CodeCompletionService>();
 
-            builder.Services.AddScoped<IDungeonRunner, DungeonRunner>();
+            builder.Services.AddScoped<IAdventureRunner, AdventureRunner>();
             builder.Services.AddScoped<IEncounterRunner, EncounterRunner>();
             builder.Services.AddScoped<IEncounterRoundRunner, EncounterRoundRunner>();
             builder.Services.AddScoped<IActionModuleContextProvider, ActionModuleContextProvider>();

@@ -8,7 +8,7 @@ namespace DungeonBotGame
 
         public IEnemy Enemy { get; }
 
-        public int RoundCounter { get; }
+        public int Round { get; }
 
         public IEnumerable<IEncounterRoundResult> EncounterRoundHistory { get; }
     }

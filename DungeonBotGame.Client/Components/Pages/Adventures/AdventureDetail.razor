@@ -1,0 +1,88 @@
+﻿@using DungeonBotGame.Models.ViewModels;
+@using Fluxor;
+@using DungeonBotGame.Client.Store.DungeonBots;
+@using DungeonBotGame.Client.Store.Adventures;
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+
+@inject IState<DungeonBotState> DungeonBotState
+@inject IDispatcher Dispatcher
+
+@if (Adventure != null)
+{
+    <h2>@Adventure.Name</h2>
+    <p>@Adventure.Description</p>
+
+    <div class="encounters row justify-content-center m-2">
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="card m-3">
+                <img src="@Adventure.Encounters.First().ProfileImageLocation" class="card-img-top" alt="@Adventure.Encounters.First().Name">
+                <div class="card-body">
+                    <h3 class="card-title">@Adventure.Encounters.First().Name</h3>
+                    <p class="card-text">@Adventure.Encounters.First().Description</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary btn-large px-4 mx-2 @(AdventureButtonDisabled ? "disabled" : string.Empty)"
+            @onclick="e => StartAdventure(Adventure)">
+        Start Adventure
+    </button>
+
+    @if (AdventureButtonDisabled)
+    {
+        <p class="text-danger mx-2 p-1">You must save an Action Module Library before you can start the adventure.</p>
+    }
+
+    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult" EnemyName="@Adventure.Encounters.First().Name"></AdventureResultModal>
+}
+
+@code {
+
+    [Parameter]
+    public AdventureViewModel? Adventure { get; set; }
+
+    public AdventureResultModal? AdventureResultModal { get; set; }
+
+    public AdventureResultViewModel? AdventureResult { get; set; }
+
+    public string CurrentAdventureRunId { get; set; } = string.Empty;
+
+    public bool AdventureButtonDisabled => DungeonBotState.Value == null ||
+        DungeonBotState.Value.DungeonBots?.FirstOrDefault()?.ActionModuleLibrary == null ||
+        DungeonBotState.Value.DungeonBots?.FirstOrDefault()?.ActionModuleLibrary?.Assembly?.Count == 0;
+
+    public void StartAdventure(AdventureViewModel currentAdventure)
+    {
+        CurrentAdventureRunId = Guid.NewGuid().ToString();
+
+        var dungeonBot = DungeonBotState?.Value?.DungeonBots?.FirstOrDefault();
+
+        if (dungeonBot != null)
+        {
+            Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, dungeonBot, CurrentAdventureRunId));
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Adventure == null || AdventureResultModal == null || Adventure.AdventureResults == null)
+        {
+            return;
+        }
+
+        var adventureResult = Adventure.AdventureResults.LastOrDefault(d => d.RunId == CurrentAdventureRunId);
+
+        if (adventureResult != null)
+        {
+            CurrentAdventureRunId = string.Empty;
+
+            AdventureResult = adventureResult;
+
+            await AdventureResultModal.ShowModalAsync();
+        }
+    }
+}

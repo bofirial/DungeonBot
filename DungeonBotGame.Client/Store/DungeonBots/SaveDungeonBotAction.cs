@@ -2,11 +2,11 @@
 
 namespace DungeonBotGame.Client.Store.DungeonBots
 {
-    public class SaveDungeonBotAction
+    public record SaveDungeonBotAction
     {
-        public DungeonBotViewModel DungeonBot { get; }
+        public DungeonBotViewModel DungeonBot { get; init; }
 
-        public string Code { get; }
+        public string Code { get; init; }
 
         public SaveDungeonBotAction(DungeonBotViewModel dungeonBot, string code)
         {

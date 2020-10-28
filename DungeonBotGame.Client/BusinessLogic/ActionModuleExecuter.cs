@@ -4,6 +4,12 @@ using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic
 {
+    public interface IActionModuleExecuter
+    {
+        Task<IAction> ExecuteActionModule(DungeonBot dungeonBot, ActionComponent actionComponent, SensorComponent sensorComponent);
+        Task<IAction> ExecuteEnemyActionModule(Enemy enemy, ActionComponent actionComponent, SensorComponent sensorComponent);
+    }
+
     public class ActionModuleExecuter : IActionModuleExecuter
     {
         public Task<IAction> ExecuteActionModule(DungeonBot dungeonBot, ActionComponent actionComponent, SensorComponent sensorComponent)

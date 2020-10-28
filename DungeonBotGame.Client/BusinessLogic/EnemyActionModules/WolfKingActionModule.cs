@@ -11,10 +11,10 @@ namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
         {
             var previousRoundResult = sensorComponent.EncounterRoundHistory.LastOrDefault();
 
-            if (previousRoundResult != null && previousRoundResult.ActionResults.Any(a => a.Action is IAbilityAction && a.Character == sensorComponent.DungeonBot))
+            if (previousRoundResult != null &&
+                previousRoundResult.ActionResults.Any(a => a.Action is IAbilityAction && a.Character == sensorComponent.DungeonBot))
             {
-                //TODO: return actionComponent.UseLickWounds();
-                return new AbilityAction(AbilityType.LickWounds);
+                return actionComponent.UseLickWounds();
             }
 
             return actionComponent.Attack(sensorComponent.DungeonBot);

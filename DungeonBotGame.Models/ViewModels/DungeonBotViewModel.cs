@@ -2,17 +2,17 @@
 
 namespace DungeonBotGame.Models.ViewModels
 {
-    public class DungeonBotViewModel
+    public record DungeonBotViewModel
     {
-        public string Id { get; }
+        public string Id { get; init; }
 
-        public string Name { get; }
+        public string Name { get; init; }
 
-        public string ProfileImageLocation { get; }
+        public string ProfileImageLocation { get; init; }
 
-        public ActionModuleLibraryViewModel ActionModuleLibrary { get; }
+        public ActionModuleLibraryViewModel ActionModuleLibrary { get; init; }
 
-        public IReadOnlyCollection<AbilityType> Abilities { get; }
+        public IReadOnlyCollection<AbilityType> Abilities { get; init; }
 
         public DungeonBotViewModel(string id, string name, string profileImageLocation, ActionModuleLibraryViewModel actionModuleLibrary, List<AbilityType> abilities)
         {

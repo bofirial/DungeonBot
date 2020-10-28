@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using DungeonBotGame.Client.BusinessLogic;
+using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Models.Api;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
@@ -10,6 +10,11 @@ using CompletionItem = DungeonBotGame.Models.Api.CompletionItem;
 
 namespace DungeonBotGame.Server.BusinessLogic
 {
+    public interface ICodeCompletionBuilder
+    {
+        Task<CodeCompletionPostResponseModel> GetCodeCompletionsAsync(CodeCompletionPostRequestModel requestModel);
+    }
+
     public class CodeCompletionBuilder : ICodeCompletionBuilder
     {
         private readonly IActionComponentAbilityExtensionMethodsClassBuilder _actionComponentAbilityExtensionMethodsClassBuilder;
