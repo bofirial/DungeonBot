@@ -78,3 +78,6 @@ app {
 
 .monaco-editor-container {
   height: 400px; }
+
+.pixel-image {
+  image-rendering: pixelated; }

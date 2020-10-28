@@ -33,6 +33,9 @@ namespace DungeonBotGame.Client
             builder.Services.AddScoped<ICombatActionProcessor, CombatActionProcessor>();
             builder.Services.AddScoped<IAbilityDescriptionProvider, AbilityDescriptionProvider>();
             builder.Services.AddScoped<IActionComponentAbilityExtensionMethodsClassBuilder, ActionComponentAbilityExtensionMethodsClassBuilder>();
+            builder.Services.AddScoped<IDungeonBotFactory, DungeonBotFactory>();
+            builder.Services.AddScoped<IEnemyFactory, EnemyFactory>();
+            builder.Services.AddScoped<IAbilityContextDictionaryBuilder, AbilityContextDictionaryBuilder>();
 
             builder.Services.AddLogging(builder => builder
                 .AddBrowserConsole()
