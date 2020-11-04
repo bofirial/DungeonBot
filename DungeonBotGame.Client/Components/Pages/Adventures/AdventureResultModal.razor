@@ -1,9 +1,10 @@
 ﻿@using DungeonBotGame.Models.ViewModels
+@using DungeonBotGame.Models.Combat;
 
 @inject IJSRuntime JSRuntime
 
 <div class="modal fade" id="adventureResultModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="modalTitle">@(AdventureResult?.Success == true ? "Victory" : "Defeat")</h3>
@@ -13,67 +14,63 @@
 
                 @if (AdventureResult != null)
                 {
-                    var encounterNumber = 1;
-
                     <h4 class="m-2">Encounters</h4>
 
-                    <div class="accordion" id="encountersAccordion">
+                    <Accordion Id="encountersAccordion" TListItem="EncounterResultViewModel" List="AdventureResult.EncounterResults"
+                               HeadingIdFunction="@((e) => $"encounterAccordionHeading-{e.Order}")"
+                               CollapseSectionIdFunction="@((e) => $"encounterAccordionCollapseSection-{e.Order}")"
+                               IsCollapsedInitiallyFunction="@((e) => e.Order != 1)">
+                        <HeadingView Context="encounterResult">@encounterResult.Name</HeadingView>
+                        <CollapseSectionView Context="encounterResult">
 
-                        @foreach (var encounterResult in AdventureResult.EncounterResults)
-                        {
-                            var encounterCollapseHeading = $"EncounterAccordionHeading-{encounterNumber}";
-                            var encounterCollapseId = $"EncounterAccordionCollapseId-{encounterNumber}";
-                            var combatLogAccordionId = $"CombatLogAccordionId-{encounterNumber}";
+                            <CollapsePanel CssClass="my-2" HeadingId="@($"combatLogPanelHeading-{encounterResult.Order}")" CollapseSectionId="@($"combatLogPanel-{encounterResult.Order}")" IsCollapsedInitially="false">
+                                <HeadingView>Combat Log</HeadingView>
+                                <CollapseSectionView>
+                                    <Accordion Id="@($"combatLogAccordionId-{encounterResult.Order}")" TListItem="EncounterRoundResult" List="encounterResult.EncounterRoundResults">
+                                        <HeadingView Context="encounterRoundResult">Round <span class="badge bg-primary rounded-pill">@encounterRoundResult.Round</span> - DungeonBotGame Health <span class="badge bg-success rounded-pill">@encounterRoundResult.DungeonBotCurrentHealth</span> - @EnemyName Health <span class="badge bg-danger rounded-pill">@encounterRoundResult.EnemyCurrentHealth</span></HeadingView>
+                                        <CollapseSectionView Context="encounterRoundResult">
+                                            <ul class="list-group list-group-flush">
 
-                            <div class="card">
-                                <div class="card-header p-0" id="@encounterCollapseHeading">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-light btn-block text-left p-3 rounded-0" type="button" data-toggle="collapse" data-target="#@encounterCollapseId" aria-expanded="@(encounterNumber == 1 ? "true" : "false")" aria-controls="@encounterCollapseId">
-                                            @encounterResult.ResultDisplayText @*TODO: Encounter Name*@
-                                        </button>
-                                    </h2>
-                                </div>
-
-                                <div id="@encounterCollapseId" class="collapse @(encounterNumber == 1 ? "show" : string.Empty) m-3" aria-labelledby="@encounterCollapseHeading" data-parent="#encountersAccordion">
-
-                                    <div class="accordion" id="@combatLogAccordionId">
-                                        @foreach (var encounterRoundResult in encounterResult.EncounterRoundResults)
-                                        {
-                                            var encounterRoundCollapseId = $"adventureResultAccordionCollapse{encounterRoundResult.Round}";
-                                            var encounterRoundCollapseHeading = $"adventureResultAccordionCollapseHeading{encounterRoundResult.Round}";
-
-                                            <div class="card">
-                                                <div class="card-header p-0" id="@encounterRoundCollapseHeading">
-                                                    <h2 class="mb-0">
-                                                        <button class="btn btn-light btn-block text-left p-3 rounded-0" type="button" data-toggle="collapse" data-target="#@encounterRoundCollapseId" aria-expanded="false" aria-controls="@encounterRoundCollapseId">
-                                                            Round <span class="badge bg-primary rounded-pill">@encounterRoundResult.Round</span> - DungeonBotGame Health <span class="badge bg-success rounded-pill">@encounterRoundResult.DungeonBotCurrentHealth</span> - @EnemyName Health <span class="badge bg-danger rounded-pill">@encounterRoundResult.EnemyCurrentHealth</span>
-                                                        </button>
-                                                    </h2>
-                                                </div>
-
-                                                <div id="@encounterRoundCollapseId" class="collapse" aria-labelledby="@encounterRoundCollapseHeading" data-parent="#@combatLogAccordionId">
-                                                    <ul class="list-group list-group-flush">
-
-                                                        @foreach (var actionResult in encounterRoundResult.ActionResults)
-                                                        {
-                                                            <li class="list-group-item">@actionResult.DisplayText</li>
-                                                        }
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
+                                                @foreach (var actionResult in encounterRoundResult.ActionResults)
+                                                {
+                                                    <li class="list-group-item">@actionResult.DisplayText</li>
+                                                }
+                                            </ul>
+                                        </CollapseSectionView>
+                                    </Accordion>
 
                                     <div class="alert @(encounterResult.Success ? "alert-success" : "alert-danger") m-3" role="alert">
                                         @encounterResult.ResultDisplayText
                                     </div>
-                                </div>
-                            </div>
-                            encounterNumber++;
-                        }
-                    </div>
-                }
+                                </CollapseSectionView>
+                            </CollapsePanel>
 
+                            <CollapsePanel CssClass="my-2" HeadingId="@($"actionModulePanelHeading-{encounterResult.Order}")" CollapseSectionId="@($"actionModulePanel-{encounterResult.Order}")" IsCollapsedInitially="true">
+                                <HeadingView>Action Modules</HeadingView>
+                                <CollapseSectionView>
+                                    @foreach (var character in encounterResult.Characters)
+                                    {
+                                        // Sets a CSS Class on the Code Editor when the Panel is Showing to redraw the Code Editor
+                                        Action setCodeEditorCssClass = () =>
+                                        {
+                                            if (!CharacterPanelHasExpanded.ContainsKey(character.Id))
+                                            {
+                                                CharacterPanelHasExpanded.Add(character.Id, "has-expanded");
+                                            }
+                                        };
+
+                                        <CollapsePanel CssClass="my-2" HeadingId="@($"characterPanelHeading-{character.Id}")" CollapseSectionId="@($"characterPanel-{character.Id}")" IsCollapsedInitially="true" OnShow="@setCodeEditorCssClass">
+                                            <HeadingView>@character.Name</HeadingView>
+                                            <CollapseSectionView>
+                                                <DungeonBotCodeEditor CssClass="@(CharacterPanelHasExpanded.ContainsKey(character.Id) ? CharacterPanelHasExpanded[character.Id] : string.Empty)" Value="@character.SourceCode" ReadOnly="true"></DungeonBotCodeEditor>
+                                            </CollapseSectionView>
+                                        </CollapsePanel>
+                                    }
+                                </CollapseSectionView>
+                            </CollapsePanel>
+                        </CollapseSectionView>
+                    </Accordion>
+                }
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -88,6 +85,8 @@
 
     [Parameter]
     public string EnemyName { get; set; } = string.Empty;
+
+    public Dictionary<string, string> CharacterPanelHasExpanded { get; set; } = new Dictionary<string, string>();
 
     public async Task ShowModalAsync()
     {

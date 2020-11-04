@@ -1,4 +1,5 @@
-﻿using DungeonBotGame.Client.BusinessLogic.Compilation;
+﻿using System.Linq;
+using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
@@ -25,6 +26,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             return new DungeonBot(
                 dungeonBot.Name,
                 100,
+                dungeonBot.ActionModuleLibrary.ActionModuleFiles.First().Content,
                 _actionModuleContextProvider.GetActionModuleContext(dungeonBot.ActionModuleLibrary),
                 _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(dungeonBot.Abilities)
             );

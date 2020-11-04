@@ -5,7 +5,7 @@ namespace DungeonBotGame.Models.Combat
     public class Enemy : CharacterBase, IEnemy
     {
         public Enemy(string enemyName, int maximumHealth, IEnemyActionModule enemyActionModule, Dictionary<AbilityType, AbilityContext> abilities) :
-            base(enemyName, maximumHealth, abilities)
+            base(enemyName, maximumHealth, enemyActionModule.SourceCode, abilities)
         {
             EnemyActionModule = enemyActionModule;
         }

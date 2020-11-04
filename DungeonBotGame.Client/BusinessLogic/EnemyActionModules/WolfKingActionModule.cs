@@ -7,6 +7,7 @@ namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
     [GenerateSourceCodePropertyPartialClass]
     public partial class WolfKingActionModule : IEnemyActionModule
     {
+        [ActionModuleEntrypoint]
         public IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent)
         {
             var previousRoundResult = sensorComponent.EncounterRoundHistory.LastOrDefault();
