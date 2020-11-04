@@ -5,10 +5,11 @@ namespace DungeonBotGame.Models.Combat
 {
     public abstract class CharacterBase : ICharacter
     {
-        public CharacterBase(string characterName, int maximumHealth, Dictionary<AbilityType, AbilityContext> abilities)
+        public CharacterBase(string characterName, int maximumHealth, string sourceCode, Dictionary<AbilityType, AbilityContext> abilities)
         {
             Name = characterName;
             MaximumHealth = maximumHealth;
+            SourceCode = sourceCode;
             CurrentHealth = maximumHealth;
             Id = Guid.NewGuid().ToString();
             Abilities = abilities;
@@ -19,6 +20,8 @@ namespace DungeonBotGame.Models.Combat
         public int CurrentHealth { get; set; }
 
         public int MaximumHealth { get; }
+
+        public string SourceCode { get; }
 
         public Dictionary<AbilityType, AbilityContext> Abilities {get; set;}
 

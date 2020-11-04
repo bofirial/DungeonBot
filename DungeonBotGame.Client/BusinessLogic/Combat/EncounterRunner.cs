@@ -80,7 +80,9 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 success = false;
             }
 
-            return new EncounterResultViewModel(success: success, encounterRoundResults, resultDisplayText);
+            var characters = new List<CharacterBase>() { dungeonBot, enemy };
+
+            return new EncounterResultViewModel(encounter.Name, encounter.Order, success: success, encounterRoundResults, resultDisplayText, characters);
         }
     }
 }

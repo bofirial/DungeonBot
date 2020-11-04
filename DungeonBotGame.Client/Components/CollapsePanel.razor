@@ -1,0 +1,13 @@
+﻿<div class="card @CssClass">
+    <div class="card-header p-0" id="@HeadingId">
+        <h2 class="mb-0">
+            <button class="btn btn-light btn-block text-left p-3 rounded-0" type="button" data-toggle="collapse" data-target="#@CollapseSectionId" aria-expanded="@(IsCollapsedInitially ? "true" : "false")" aria-controls="@CollapseSectionId">
+                @HeadingView
+            </button>
+        </h2>
+    </div>
+
+    <div id="@CollapseSectionId" class="collapse @(!IsCollapsedInitially ? "show" : string.Empty) m-3" aria-labelledby="@HeadingId" @attributes="@(!string.IsNullOrEmpty(ParentAccordionId) ? new Dictionary<string, object> { { "data-parent", $"#{ParentAccordionId}" } }  : new Dictionary<string, object> { })">
+        @CollapseSectionView
+    </div>
+</div>

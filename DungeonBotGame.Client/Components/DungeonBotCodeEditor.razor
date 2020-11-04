@@ -4,13 +4,19 @@
 @using Microsoft.AspNetCore.Components
 @using DungeonBotGame.Models.ViewModels
 
-<div class="code-editor">
-    <MonacoEditor @ref="CSharpEditor" Id="monaco-container" ConstructionOptions="EditorConstructionOptions"></MonacoEditor>
-</div>
+<MonacoEditor @ref="CSharpEditor" CssClass="@CssClass" Id="@Id" ConstructionOptions="EditorConstructionOptions"></MonacoEditor>
 
 @code {
+    public string Id { get; set; } = $"monaco-container-{Guid.NewGuid()}";
+
     [Parameter]
     public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CssClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool ReadOnly { get; set; } = false;
 
     [Parameter]
     public DungeonBotViewModel? DungeonBot { get; set; }
@@ -57,7 +63,8 @@
             AutomaticLayout = true,
             Language = "csharp",
             Theme = "vs-dark",
-            Value = Value
+            Value = Value,
+            ReadOnly = ReadOnly
         };
     }
 }
