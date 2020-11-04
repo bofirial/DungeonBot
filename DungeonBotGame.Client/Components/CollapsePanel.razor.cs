@@ -55,7 +55,6 @@ namespace DungeonBotGame.Client.Components
         [JSInvokable]
         public async Task TriggerEventAsync(string collapsePanelEvent)
         {
-            System.Console.WriteLine($"Event Triggered: {collapsePanelEvent}");
             switch (collapsePanelEvent)
             {
                 case "shown.bs.collapse":
