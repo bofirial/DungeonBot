@@ -26,11 +26,11 @@ jobs:
           dotnet-version: "5.0"
 
       - name: Dotnet Build
-        run: dotnet build ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release
+        run: dotnet build ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -r win-x86
 
       - name: DotNet Publish
         if: github.ref == 'refs/heads/main'
-        run: dotnet publish ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -o publish /p:PublishTrimmed=false --no-build
+        run: dotnet publish ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -r win-x86 -o publish /p:PublishTrimmed=false --no-build --self-contained
 
       - name: Azure WebApp
         if: github.ref == 'refs/heads/main'
