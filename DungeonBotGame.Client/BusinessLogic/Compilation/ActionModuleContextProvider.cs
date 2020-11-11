@@ -38,11 +38,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
 
             var actionModule = Activator.CreateInstance(type);
 
-            return new ActionModuleContext()
-            {
-                ActionModuleObject = actionModule,
-                ActionModuleEntryPointMethodInfo = actionMethod
-            };
+            return new ActionModuleContext(actionModule, actionMethod);
         }
     }
 }

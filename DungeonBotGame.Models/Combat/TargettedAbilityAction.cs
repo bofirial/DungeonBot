@@ -1,6 +1,6 @@
 ﻿namespace DungeonBotGame.Models.Combat
 {
-    public class TargettedAbilityAction : ITargettedAbilityAction
+    public record TargettedAbilityAction : ITargettedAbilityAction
     {
         public TargettedAbilityAction(ITarget target, AbilityType abilityType)
         {
@@ -8,9 +8,9 @@
             AbilityType = abilityType;
         }
 
-        public AbilityType AbilityType { get; }
+        public AbilityType AbilityType { get; init; }
 
-        public ITarget Target { get; }
+        public ITarget Target { get; init; }
 
         public ActionType ActionType => ActionType.Ability;
     }

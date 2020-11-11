@@ -26,11 +26,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 {
                     var abilityDescription = _abilityDescriptionProvider.GetAbilityDescription(abilityType);
 
-                    return new AbilityContext()
-                    {
-                        MaximumCooldownRounds = abilityDescription.CooldownRounds,
-                        CurrentCooldownRounds = abilityDescription.StartOfCombatCooldownRounds
-                    };
+                    return new AbilityContext(abilityDescription.CooldownRounds, abilityDescription.StartOfCombatCooldownRounds);
                 });
         }
     }
