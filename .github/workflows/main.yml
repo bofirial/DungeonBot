@@ -15,35 +15,27 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2.3.1
-      with:
-        fetch-depth: 0
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 0
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1.7.2
-      with:
-        dotnet-version: '5.0.100-rc.2.20479.15'
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: "5.0"
 
-    - name: Dotnet Build
-      run: dotnet build ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -r win-x86
+      - name: Dotnet Build
+        run: dotnet build ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release
 
-    #- name: DotNet Pack
-    #  if: github.ref == 'refs/heads/main'
-    #  run: dotnet pack ./DungeonBotGame/DungeonBotGame.csproj --configuration Release -o packages --no-build
+      - name: DotNet Publish
+        if: github.ref == 'refs/heads/main'
+        run: dotnet publish ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -o publish /p:PublishTrimmed=false --no-build
 
-    #- name: DotNet NuGet Push
-    #  if: github.ref == 'refs/heads/main'
-    #  run: dotnet nuget push "**/*.nupkg" -k ${{secrets.NUGET_PASSWORD}} -s https://api.nuget.org/v3/index.json
-        
-    - name: DotNet Publish
-      if: github.ref == 'refs/heads/main'
-      run: dotnet publish ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -r win-x86 -o publish /p:PublishTrimmed=false --no-build --self-contained
-
-    - name: Azure WebApp
-      if: github.ref == 'refs/heads/main'
-      uses: Azure/webapps-deploy@v2
-      with:
-        publish-profile: ${{secrets.SCM_CREDENTIALS}}
-        app-name: DungeonBot
-        package: publish
+      - name: Azure WebApp
+        if: github.ref == 'refs/heads/main'
+        uses: Azure/webapps-deploy@v2
+        with:
+          publish-profile: ${{secrets.SCM_CREDENTIALS}}
+          app-name: DungeonBot
+          package: publish

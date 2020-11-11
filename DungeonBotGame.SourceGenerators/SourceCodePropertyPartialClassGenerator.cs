@@ -1,9 +1,6 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 namespace DungeonBotGame.SourceGenerators
@@ -24,7 +21,7 @@ namespace DungeonBotGame.SourceGenerators
             if (context.SyntaxReceiver is GenerateSourceCodePropertyPartialClassSyntaxReceiver generateSourceCodePropertyPartialClassSyntaxReceiver)
             {
                 foreach (var (classDeclarationSyntax, attributeSyntax) in generateSourceCodePropertyPartialClassSyntaxReceiver.ClassesToAugment)
-                { 
+                {
                     var semanticModel = context.Compilation.GetSemanticModel(classDeclarationSyntax.SyntaxTree);
 
                     if (SymbolEqualityComparer.Default.Equals(semanticModel.GetTypeInfo(attributeSyntax).Type, targetAttributeType))
