@@ -18,9 +18,9 @@ namespace DungeonBotGame.Models.ViewModels
         }
 
         [JsonConstructor]
-        public ActionModuleLibraryViewModel(List<ActionModuleFileViewModel> actionModuleFiles)
+        public ActionModuleLibraryViewModel(IEnumerable<ActionModuleFileViewModel> actionModuleFiles)
         {
-            ActionModuleFiles = actionModuleFiles.AsReadOnly();
+            ActionModuleFiles = actionModuleFiles.ToList().AsReadOnly();
         }
     }
 }

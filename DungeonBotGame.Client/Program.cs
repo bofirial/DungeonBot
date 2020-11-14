@@ -5,6 +5,7 @@ using Blazor.Extensions.Logging;
 using DungeonBotGame.Client.BusinessLogic;
 using DungeonBotGame.Client.BusinessLogic.Combat;
 using DungeonBotGame.Client.BusinessLogic.Compilation;
+using DungeonBotGame.Client.Store;
 using Fluxor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +42,10 @@ namespace DungeonBotGame.Client
                 .AddBrowserConsole()
                 .SetMinimumLevel(LogLevel.Information));
 
-            builder.Services.AddFluxor(options => options.ScanAssemblies(typeof(Program).Assembly).UseReduxDevTools());
+            builder.Services.AddFluxor(options => options
+                .ScanAssemblies(typeof(Program).Assembly)
+                .UseReduxDevTools()
+                .AddMiddleware<LocalStorageMiddleware>());
 
             await builder.Build().RunAsync();
         }
