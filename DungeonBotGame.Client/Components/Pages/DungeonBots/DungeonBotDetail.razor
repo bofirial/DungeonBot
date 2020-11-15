@@ -68,7 +68,7 @@
             return string.Empty;
         }
 
-        return DungeonBot.ActionModuleLibrary.ActionModuleFiles.First().Content;
+        return DungeonBot.ActionModuleFiles.First().Content;
     }
 
     private async Task SaveAsync(MouseEventArgs e)
@@ -79,8 +79,9 @@
         }
 
         var code = await DungeonBotCodeEditor.GetValueAsync();
+        var actionModuleFile = DungeonBot.ActionModuleFiles.First();
 
-        Dispatcher.Dispatch(new SaveDungeonBotAction(DungeonBot, code));
+        Dispatcher.Dispatch(new CompileDungeonBotScriptAction(DungeonBot with { ActionModuleFiles = new List<ActionModuleFileViewModel>() { actionModuleFile with { Content = code } } }));
     }
 
     private async Task CancelAsync()

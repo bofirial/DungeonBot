@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DungeonBotGame.Models.ViewModels;
@@ -12,7 +13,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
 {
     public interface ICSharpCompiler
     {
-        Task<CSharpCompilation> CompileAsync(string code, DungeonBotViewModel dungeonBot);
+        Task<CSharpCompilation> CompileAsync(DungeonBotViewModel dungeonBot);
     }
 
     public class CSharpCompiler : ICSharpCompiler
@@ -30,19 +31,21 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
             _actionComponentAbilityExtensionMethodsClassBuilder = actionComponentAbilityExtensionMethodsClassBuilder;
         }
 
-        public async Task<CSharpCompilation> CompileAsync(string code, DungeonBotViewModel dungeonBot)
+        public async Task<CSharpCompilation> CompileAsync(DungeonBotViewModel dungeonBot)
         {
             if (_references == null)
             {
                 _references = await LoadReferencesAsync();
             }
 
+            var syntaxTrees = dungeonBot.ActionModuleFiles.Select(f => CSharpSyntaxTree.ParseText(f.Content, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))).ToList();
+            syntaxTrees.Add(CSharpSyntaxTree.ParseText(
+                _actionComponentAbilityExtensionMethodsClassBuilder.BuildAbilityExtensionMethodsClass(dungeonBot),
+                CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview)));
+
             return CSharpCompilation.Create(
                 Path.GetRandomFileName(),
-                new List<SyntaxTree>() {
-                    CSharpSyntaxTree.ParseText(_actionComponentAbilityExtensionMethodsClassBuilder.BuildAbilityExtensionMethodsClass(dungeonBot), CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview)),
-                    CSharpSyntaxTree.ParseText(code, CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Preview))
-                },
+                syntaxTrees,
                 _references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, usings: new[]
                 {

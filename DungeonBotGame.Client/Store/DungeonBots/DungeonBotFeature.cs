@@ -38,11 +38,13 @@ namespace DungeonBotGame.Scripts
                     Guid.NewGuid().ToString(),
                     "DungeonBot001",
                     "/images/temp/dungeonbot.png",
-                    new ActionModuleLibraryViewModel(Array.Empty<byte>(), new ActionModuleFileViewModel("DungeonBotGame.cs", DefaultActionModule)),
+                    new List<ActionModuleFileViewModel>() { new ActionModuleFileViewModel("DungeonBot001.cs", DefaultActionModule) },
                     new List<AbilityType>()
                     {
                         AbilityType.HeavySwing
-                    })
+                    },
+                    null,
+                    Array.Empty<ErrorViewModel>())
             });
         }
     }
