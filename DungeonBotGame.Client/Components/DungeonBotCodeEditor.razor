@@ -1,4 +1,5 @@
-﻿@using BlazorMonaco
+﻿@using System.Collections.Immutable
+@using BlazorMonaco
 @using BlazorMonaco.Bridge
 @using DungeonBotGame.Client.BusinessLogic.Compilation
 @using Microsoft.AspNetCore.Components
@@ -10,7 +11,7 @@
     public string Id { get; set; } = $"monaco-container-{Guid.NewGuid()}";
 
     [Parameter]
-    public IEnumerable<ActionModuleFileViewModel> Files { get; set; } = Array.Empty<ActionModuleFileViewModel>();
+    public IImmutableList<ActionModuleFileViewModel> Files { get; set; } = ImmutableList.Create<ActionModuleFileViewModel>();
 
     [Parameter]
     public string CssClass { get; set; } = string.Empty;
@@ -35,24 +36,27 @@
         await base.OnInitializedAsync();
     }
 
-    public async Task<string> GetValueAsync()
+    public async Task<IImmutableList<ActionModuleFileViewModel>> GetValueAsync()
     {
 
         if (CSharpEditor == null)
         {
-            return string.Empty;
+            return Files;
         }
 
-        return await CSharpEditor.GetValue();
+        var code = await CSharpEditor.GetValue();
+        var actionModuleFile = Files.First();
+
+        return ImmutableList.Create(actionModuleFile with { Content = code });
     }
 
-    public async Task SetValueAsync(IEnumerable<ActionModuleFileViewModel> files)
+    public async Task SetValueAsync(IImmutableList<ActionModuleFileViewModel> files)
     {
         Files = files;
 
         if (CSharpEditor != null)
         {
-            await CSharpEditor.SetValue(files.First().Content);
+            await CSharpEditor.SetValue(files[0].Content);
         }
     }
 
@@ -63,8 +67,8 @@
             AutomaticLayout = true,
             Language = "csharp",
             Theme = "vs-dark",
-            Value = Files.First().Content,
+            Value = Files[0].Content,
             ReadOnly = ReadOnly
         };
     }
-}
+    }
