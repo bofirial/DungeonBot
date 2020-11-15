@@ -24,8 +24,6 @@ namespace DungeonBotGame.Client.Store
 
         public async override Task InitializeAsync(IStore store)
         {
-            Console.WriteLine($"Initializing LocalStorageMiddleware ({store.Features.Values.Count()}): {string.Join(", ", store.Features.Values.Select(f => f.GetName()))}");
-
             foreach (var feature in store.Features.Values)
             {
                 if (feature.GetName().StartsWith("@", StringComparison.InvariantCultureIgnoreCase))
