@@ -62,7 +62,7 @@
                                         <CollapsePanel CssClass="my-2" HeadingId="@($"characterPanelHeading-{character.Id}")" CollapseSectionId="@($"characterPanel-{character.Id}")" IsCollapsedInitially="true" OnShow="@setCodeEditorCssClass">
                                             <HeadingView>@character.Name</HeadingView>
                                             <CollapseSectionView>
-                                                <DungeonBotCodeEditor CssClass="@(CharacterPanelHasExpanded.ContainsKey(character.Id) ? CharacterPanelHasExpanded[character.Id] : string.Empty)" Value="@character.SourceCode" ReadOnly="true"></DungeonBotCodeEditor>
+                                                <DungeonBotCodeEditor CssClass="@(CharacterPanelHasExpanded.ContainsKey(character.Id) ? CharacterPanelHasExpanded[character.Id] : string.Empty)" Files="@character.SourceCodeFiles" ReadOnly="true"></DungeonBotCodeEditor>
                                             </CollapseSectionView>
                                         </CollapsePanel>
                                     }

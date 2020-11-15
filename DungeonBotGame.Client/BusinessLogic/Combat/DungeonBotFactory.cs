@@ -22,7 +22,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             return new DungeonBot(
                 dungeonBot.Name,
                 100,
-                dungeonBot.ActionModuleFiles[0].Content,
+                dungeonBot.ActionModuleFiles,
                 dungeonBot.ActionModuleContext,
                 _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(dungeonBot.Abilities)
             );

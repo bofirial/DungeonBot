@@ -10,7 +10,7 @@
     public string Id { get; set; } = $"monaco-container-{Guid.NewGuid()}";
 
     [Parameter]
-    public string Value { get; set; } = string.Empty;
+    public IEnumerable<ActionModuleFileViewModel> Files { get; set; } = Array.Empty<ActionModuleFileViewModel>();
 
     [Parameter]
     public string CssClass { get; set; } = string.Empty;
@@ -46,13 +46,13 @@
         return await CSharpEditor.GetValue();
     }
 
-    public async Task SetValueAsync(string value)
+    public async Task SetValueAsync(IEnumerable<ActionModuleFileViewModel> files)
     {
-        Value = value;
+        Files = files;
 
         if (CSharpEditor != null)
         {
-            await CSharpEditor.SetValue(value);
+            await CSharpEditor.SetValue(files.First().Content);
         }
     }
 
@@ -63,7 +63,7 @@
             AutomaticLayout = true,
             Language = "csharp",
             Theme = "vs-dark",
-            Value = Value,
+            Value = Files.First().Content,
             ReadOnly = ReadOnly
         };
     }

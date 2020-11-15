@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Models.Combat
 {
     public abstract class CharacterBase : ICharacter
     {
-        public CharacterBase(string characterName, int maximumHealth, string sourceCode, Dictionary<AbilityType, AbilityContext> abilities)
+        public CharacterBase(string characterName, int maximumHealth, IImmutableList<ActionModuleFileViewModel> sourceCodeFiles, IDictionary<AbilityType, AbilityContext> abilities)
         {
             Name = characterName;
             MaximumHealth = maximumHealth;
-            SourceCode = sourceCode;
+            SourceCodeFiles = sourceCodeFiles;
             CurrentHealth = maximumHealth;
             Id = Guid.NewGuid().ToString();
             Abilities = abilities;
@@ -21,9 +23,9 @@ namespace DungeonBotGame.Models.Combat
 
         public int MaximumHealth { get; }
 
-        public string SourceCode { get; }
+        public IImmutableList<ActionModuleFileViewModel> SourceCodeFiles { get; }
 
-        public Dictionary<AbilityType, AbilityContext> Abilities {get; set;}
+        public IDictionary<AbilityType, AbilityContext> Abilities { get; }
 
         public string Id { get; }
     }
