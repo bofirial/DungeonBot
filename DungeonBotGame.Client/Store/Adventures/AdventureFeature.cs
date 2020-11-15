@@ -11,8 +11,6 @@ namespace DungeonBotGame.Client.Store.Adventures
 
         protected override AdventureState GetInitialState()
         {
-            System.Console.WriteLine($"Initializing {GetName()}");
-
             return new AdventureState(new List<AdventureViewModel>()
             {
                 new AdventureViewModel("Rat Infestation",
