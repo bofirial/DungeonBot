@@ -3,6 +3,7 @@
 @using DungeonBotGame.Client.BusinessLogic
 @using DungeonBotGame.Client.Store.DungeonBots
 @using DungeonBotGame.Models.ViewModels
+@using System.Collections.Immutable
 
 @if (DungeonBot != null)
 {
@@ -81,7 +82,7 @@
         var code = await DungeonBotCodeEditor.GetValueAsync();
         var actionModuleFile = DungeonBot.ActionModuleFiles.First();
 
-        Dispatcher.Dispatch(new CompileDungeonBotScriptAction(DungeonBot with { ActionModuleFiles = new List<ActionModuleFileViewModel>() { actionModuleFile with { Content = code } } }));
+        Dispatcher.Dispatch(new CompileDungeonBotScriptAction(DungeonBot with { ActionModuleFiles = ImmutableList.Create(actionModuleFile with { Content = code }) }));
     }
 
     private async Task CancelAsync()

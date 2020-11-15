@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 using DungeonBotGame.Models.Combat;
 using Newtonsoft.Json;
 
@@ -10,10 +10,10 @@ namespace DungeonBotGame.Models.ViewModels
             string id,
             string name,
             string profileImageLocation,
-            IReadOnlyCollection<ActionModuleFileViewModel> actionModuleFiles,
-            IReadOnlyCollection<AbilityType> abilities,
+            IImmutableList<ActionModuleFileViewModel> actionModuleFiles,
+            IImmutableList<AbilityType> abilities,
             ActionModuleContext actionModuleContext,
-            IReadOnlyCollection<ErrorViewModel> errors)
+            IImmutableList<ErrorViewModel> errors)
         {
             Id = id;
             Name = name;
@@ -29,9 +29,9 @@ namespace DungeonBotGame.Models.ViewModels
             string id,
             string name,
             string profileImageLocation,
-            IReadOnlyCollection<ActionModuleFileViewModel> actionModuleFiles,
-            IReadOnlyCollection<AbilityType> abilities,
-            IReadOnlyCollection<ErrorViewModel> errors)
+            IImmutableList<ActionModuleFileViewModel> actionModuleFiles,
+            IImmutableList<AbilityType> abilities,
+            IImmutableList<ErrorViewModel> errors)
         {
             Id = id;
             Name = name;
@@ -44,9 +44,9 @@ namespace DungeonBotGame.Models.ViewModels
         public string Id { get; init; }
         public string Name { get; init; }
         public string ProfileImageLocation { get; init; }
-        public IReadOnlyCollection<ActionModuleFileViewModel> ActionModuleFiles { get; init; }
-        public IReadOnlyCollection<AbilityType> Abilities { get; init; }
-        public IReadOnlyCollection<ErrorViewModel> Errors { get; init; }
+        public IImmutableList<ActionModuleFileViewModel> ActionModuleFiles { get; init; }
+        public IImmutableList<AbilityType> Abilities { get; init; }
+        public IImmutableList<ErrorViewModel> Errors { get; init; }
 
         [JsonIgnore]
         public ActionModuleContext ActionModuleContext { get; init; }

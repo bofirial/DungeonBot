@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using DungeonBotGame.Models.ViewModels;
 using Fluxor;
 
@@ -38,13 +39,10 @@ namespace DungeonBotGame.Scripts
                     Guid.NewGuid().ToString(),
                     "DungeonBot001",
                     "/images/temp/dungeonbot.png",
-                    new List<ActionModuleFileViewModel>() { new ActionModuleFileViewModel("DungeonBot001.cs", DefaultActionModule) },
-                    new List<AbilityType>()
-                    {
-                        AbilityType.HeavySwing
-                    },
+                    ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", DefaultActionModule)),
+                    ImmutableList.Create(AbilityType.HeavySwing),
                     null,
-                    Array.Empty<ErrorViewModel>())
+                    ImmutableList.Create<ErrorViewModel>())
             });
         }
     }

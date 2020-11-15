@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.Store.DungeonBots
 {
     public record DungeonBotState
     {
-        public IReadOnlyCollection<DungeonBotViewModel> DungeonBots { get; init; }
+        public IImmutableList<DungeonBotViewModel> DungeonBots { get; init; }
 
         public DungeonBotState(IEnumerable<DungeonBotViewModel> dungeonBots)
         {
-            DungeonBots = dungeonBots.ToList().AsReadOnly();
+            DungeonBots = dungeonBots.ToImmutableList();
         }
     }
 }

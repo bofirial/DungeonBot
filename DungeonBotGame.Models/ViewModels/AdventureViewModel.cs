@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 
 namespace DungeonBotGame.Models.ViewModels
 {
-    public record AdventureViewModel(string Name, string Description, IReadOnlyCollection<EncounterViewModel> Encounters, string Status, IReadOnlyCollection<AdventureResultViewModel> AdventureResults);
+    public record AdventureViewModel(string Name, string Description, IImmutableList<EncounterViewModel> Encounters, string Status, IImmutableList<AdventureResultViewModel> AdventureResults);
 }

@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Immutable;
 
 namespace DungeonBotGame.Models.ViewModels
 {
-    public record AdventureResultViewModel(string RunId, bool Success, ReadOnlyCollection<EncounterResultViewModel> EncounterResults);
+    public record AdventureResultViewModel(string RunId, bool Success, IImmutableList<EncounterResultViewModel> EncounterResults);
 }

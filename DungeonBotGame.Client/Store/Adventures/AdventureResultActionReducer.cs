@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using DungeonBotGame.Models.ViewModels;
 using Fluxor;
 
@@ -23,7 +24,7 @@ namespace DungeonBotGame.Client.Store.Adventures
 
                     adventureResults.Add(action.AdventureResult);
 
-                    adventures.Add(new AdventureViewModel(adventure.Name, adventure.Description, adventure.Encounters, adventure.Status, adventureResults));
+                    adventures.Add(new AdventureViewModel(adventure.Name, adventure.Description, adventure.Encounters, adventure.Status, adventureResults.ToImmutableList()));
                 }
                 else
                 {
@@ -31,7 +32,7 @@ namespace DungeonBotGame.Client.Store.Adventures
                 }
             }
 
-            return state with { Adventures = adventures };
+            return state with { Adventures = adventures.ToImmutableList() };
         }
     }
 }

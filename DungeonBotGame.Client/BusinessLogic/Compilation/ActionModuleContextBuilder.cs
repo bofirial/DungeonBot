@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -35,7 +36,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
             {
                 errors.AddRange(errorDiagnostics.Select(e => new ErrorViewModel(e.ToString())));
 
-                return dungeonBot with { Errors = errors, ActionModuleContext = null };
+                return dungeonBot with { Errors = errors.ToImmutableList(), ActionModuleContext = null };
             }
 
             using var compiledLibraryStream = new MemoryStream();
@@ -48,7 +49,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
 
                 errors.AddRange(emitErrors.Select(e => new ErrorViewModel(e.ToString())));
 
-                return dungeonBot with { Errors = errors, ActionModuleContext = null };
+                return dungeonBot with { Errors = errors.ToImmutableList(), ActionModuleContext = null };
             }
 
             var assembly = Assembly.Load(compiledLibraryStream.ToArray());
@@ -57,7 +58,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
             {
                 errors.Add(new ErrorViewModel("Unable to load the assembly."));
 
-                return dungeonBot with { Errors = errors, ActionModuleContext = null };
+                return dungeonBot with { Errors = errors.ToImmutableList(), ActionModuleContext = null };
             }
 
             var methods = assembly.GetTypes().SelectMany(t => t.GetMethods()).Where(m => m.GetCustomAttributes(typeof(ActionModuleEntrypointAttribute), false).Length > 0);
@@ -78,7 +79,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
             {
                 errors.Add(new ErrorViewModel("Failed to get DeclaringType."));
 
-                return dungeonBot with { Errors = errors, ActionModuleContext = null };
+                return dungeonBot with { Errors = errors.ToImmutableList(), ActionModuleContext = null };
             }
 
             var actionModule = Activator.CreateInstance(type);

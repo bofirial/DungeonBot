@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DungeonBotGame.Models.ViewModels;
+﻿using System.Collections.Immutable;
 using Fluxor;
 
 namespace DungeonBotGame.Client.Store.DungeonBots
@@ -10,7 +9,7 @@ namespace DungeonBotGame.Client.Store.DungeonBots
         {
             return state with
             {
-                DungeonBots = new List<DungeonBotViewModel>() { action.DungeonBot }
+                DungeonBots = ImmutableList.Create(action.DungeonBot)
             };
         }
     }

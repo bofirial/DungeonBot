@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using DungeonBotGame.Client.BusinessLogic.Compilation;
@@ -46,11 +47,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                 if (!encounterResult.Success)
                 {
-                    return new AdventureResultViewModel(runAdventureAction.RunId, Success: false, encounterResults.AsReadOnly());
+                    return new AdventureResultViewModel(runAdventureAction.RunId, Success: false, encounterResults.ToImmutableList());
                 }
             }
 
-            return new AdventureResultViewModel(runAdventureAction.RunId, Success: encounterResults.All(e => e.Success), encounterResults.AsReadOnly());
+            return new AdventureResultViewModel(runAdventureAction.RunId, Success: encounterResults.All(e => e.Success), encounterResults.ToImmutableList());
         }
     }
 }
