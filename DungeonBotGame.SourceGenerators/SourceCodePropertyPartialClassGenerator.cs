@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -38,16 +39,19 @@ namespace DungeonBotGame.SourceGenerators
                         }
                         if (i >= 30)
                         {
-                            throw new System.Exception("Could not find CompilationUnit");
+                            throw new Exception("Could not find ActionModule Class");
                         }
 
                         var sourceCode = compilationUnit.ToFullString().Replace("\"", "\"\"");
 
-                        var sourceText = SourceText.From(@$"namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
+                        var sourceText = SourceText.From(@$"using System.Collections.Immutable;
+using DungeonBotGame.Models.ViewModels;
+
+namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
 {{
     public partial class { className }
     {{
-        public string SourceCode {{ get; }} = @""{ sourceCode }"";
+        public IImmutableList<ActionModuleFileViewModel> SourceCodeFiles {{ get; }} = ImmutableList.Create(new ActionModuleFileViewModel(""EnemyActionModule001.cs"", @""{ sourceCode }""));
     }}
 }}", Encoding.UTF8);
 

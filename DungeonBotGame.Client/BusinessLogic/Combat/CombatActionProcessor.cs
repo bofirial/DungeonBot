@@ -123,16 +123,24 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     throw new UnknownAbilityTypeException(abilityAction.AbilityType);
             }
 
-            abilityContext.CurrentCooldownRounds = abilityContext.MaximumCooldownRounds;
+            source.Abilities[abilityAction.AbilityType] = abilityContext with
+            {
+                CurrentCooldownRounds = abilityContext.MaximumCooldownRounds
+            };
         }
 
         private static void UpdateAbilityCooldowns(IAction action, CharacterBase source)
         {
-            foreach (var ability in source.Abilities)
+            foreach (var abilityType in source.Abilities.Keys)
             {
-                if (ability.Value.CurrentCooldownRounds > 0 && (action is not IAbilityAction abilityAction || ability.Key != abilityAction.AbilityType))
+                var ability = source.Abilities[abilityType];
+
+                if (ability.CurrentCooldownRounds > 0 && (action is not IAbilityAction abilityAction || abilityType != abilityAction.AbilityType))
                 {
-                    ability.Value.CurrentCooldownRounds--;
+                    source.Abilities[abilityType] = ability with
+                    {
+                        CurrentCooldownRounds = ability.CurrentCooldownRounds - 1
+                    };
                 }
             }
         }

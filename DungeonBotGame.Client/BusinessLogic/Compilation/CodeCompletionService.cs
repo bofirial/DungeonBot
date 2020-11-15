@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -42,13 +43,13 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
             {
                 throw new InvalidOperationException($"DungeonBot must not be null to look up Code Completions.");
             }
+            var actionModuleFile = _dungeonBot.ActionModuleFiles[0];
 
             var response = await _httpClient.PostAsJsonAsync($"api/CodeCompletions", new CodeCompletionPostRequestModel()
             {
-                ActionModuleLibrary = new ActionModuleLibraryViewModel(Array.Empty<byte>(), new ActionModuleFileViewModel($"{_dungeonBot.Name}.cs", sourceCode)),
-                TargetFileName = $"{_dungeonBot.Name}.cs",
+                TargetFileName = _dungeonBot.ActionModuleFiles[0].FileName,
                 TargetFilePosition = currentPosition,
-                DungeonBot = _dungeonBot
+                DungeonBot = _dungeonBot with { ActionModuleFiles = ImmutableList.Create(actionModuleFile with { Content = sourceCode }) }
             });
 
             var responseModel = await response.Content.ReadFromJsonAsync<CodeCompletionPostResponseModel>();

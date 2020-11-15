@@ -1,9 +1,12 @@
-﻿namespace DungeonBotGame.Models.Combat
+﻿using System.Collections.Immutable;
+using DungeonBotGame.Models.ViewModels;
+
+namespace DungeonBotGame.Models.Combat
 {
     public interface IEnemyActionModule
     {
         IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent);
 
-        string SourceCode { get; }
+        IImmutableList<ActionModuleFileViewModel> SourceCodeFiles { get; }
     }
 }

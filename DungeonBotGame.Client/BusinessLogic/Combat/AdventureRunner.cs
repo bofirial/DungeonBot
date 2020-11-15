@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Client.Store.Adventures;
 using DungeonBotGame.Models.ViewModels;
 
@@ -15,16 +17,25 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     {
         private readonly IDungeonBotFactory _dungeonBotFactory;
         private readonly IEncounterRunner _encounterRunner;
+        private readonly IActionModuleContextBuilder _actionModuleContextBuilder;
 
-        public AdventureRunner(IDungeonBotFactory dungeonBotFactory, IEncounterRunner encounterRunner)
+        public AdventureRunner(IDungeonBotFactory dungeonBotFactory, IEncounterRunner encounterRunner, IActionModuleContextBuilder actionModuleContextBuilder)
         {
             _dungeonBotFactory = dungeonBotFactory;
             _encounterRunner = encounterRunner;
+            _actionModuleContextBuilder = actionModuleContextBuilder;
         }
 
         public async Task<AdventureResultViewModel> RunAdventureAsync(RunAdventureAction runAdventureAction)
         {
-            var dungeonBot = _dungeonBotFactory.CreateCombatDungeonBot(runAdventureAction.DungeonBot);
+            var dungeonBotViewModel = runAdventureAction.DungeonBot;
+
+            if (dungeonBotViewModel.ActionModuleContext == null)
+            {
+                dungeonBotViewModel = await _actionModuleContextBuilder.BuildActionModuleContextAsync(dungeonBotViewModel);
+            }
+
+            var dungeonBot = _dungeonBotFactory.CreateCombatDungeonBot(dungeonBotViewModel);
 
             var encounterResults = new List<EncounterResultViewModel>();
 
@@ -36,11 +47,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                 if (!encounterResult.Success)
                 {
-                    return new AdventureResultViewModel(runAdventureAction.RunId, success: false, encounterResults);
+                    return new AdventureResultViewModel(runAdventureAction.RunId, Success: false, encounterResults.ToImmutableList());
                 }
             }
 
-            return new AdventureResultViewModel(runAdventureAction.RunId, success: encounterResults.All(e => e.Success), encounterResults);
+            return new AdventureResultViewModel(runAdventureAction.RunId, Success: encounterResults.All(e => e.Success), encounterResults.ToImmutableList());
         }
     }
 }

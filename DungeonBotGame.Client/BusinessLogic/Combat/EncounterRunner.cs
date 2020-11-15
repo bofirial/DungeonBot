@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
@@ -80,9 +81,9 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 success = false;
             }
 
-            var characters = new List<CharacterBase>() { dungeonBot, enemy };
+            var characters = ImmutableList.Create<CharacterBase>(dungeonBot, enemy);
 
-            return new EncounterResultViewModel(encounter.Name, encounter.Order, success: success, encounterRoundResults, resultDisplayText, characters);
+            return new EncounterResultViewModel(encounter.Name, encounter.Order, Success: success, encounterRoundResults.ToImmutableList(), resultDisplayText, characters);
         }
     }
 }

@@ -5,6 +5,7 @@ using Blazor.Extensions.Logging;
 using DungeonBotGame.Client.BusinessLogic;
 using DungeonBotGame.Client.BusinessLogic.Combat;
 using DungeonBotGame.Client.BusinessLogic.Compilation;
+using DungeonBotGame.Client.Store;
 using Fluxor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,7 @@ namespace DungeonBotGame.Client
             builder.Services.AddScoped<IAdventureRunner, AdventureRunner>();
             builder.Services.AddScoped<IEncounterRunner, EncounterRunner>();
             builder.Services.AddScoped<IEncounterRoundRunner, EncounterRoundRunner>();
-            builder.Services.AddScoped<IActionModuleContextProvider, ActionModuleContextProvider>();
+            builder.Services.AddScoped<IActionModuleContextBuilder, ActionModuleContextBuilder>();
             builder.Services.AddScoped<IActionModuleExecuter, ActionModuleExecuter>();
             builder.Services.AddScoped<ICombatValueCalculator, CombatValueCalculator>();
             builder.Services.AddScoped<ICombatActionProcessor, CombatActionProcessor>();
@@ -41,7 +42,10 @@ namespace DungeonBotGame.Client
                 .AddBrowserConsole()
                 .SetMinimumLevel(LogLevel.Information));
 
-            builder.Services.AddFluxor(options => options.ScanAssemblies(typeof(Program).Assembly).UseReduxDevTools());
+            builder.Services.AddFluxor(options => options
+                .ScanAssemblies(typeof(Program).Assembly)
+                .UseReduxDevTools()
+                .AddMiddleware<LocalStorageMiddleware>());
 
             await builder.Build().RunAsync();
         }

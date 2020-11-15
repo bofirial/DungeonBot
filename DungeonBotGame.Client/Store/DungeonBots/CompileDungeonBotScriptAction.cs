@@ -2,5 +2,5 @@
 
 namespace DungeonBotGame.Client.Store.DungeonBots
 {
-    public record SaveDungeonBotAction(DungeonBotViewModel DungeonBot);
+    public record CompileDungeonBotScriptAction(DungeonBotViewModel DungeonBot);
 }

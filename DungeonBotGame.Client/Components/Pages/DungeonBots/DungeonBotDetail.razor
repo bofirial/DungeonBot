@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Value="@GetValueFromState()" DungeonBot="DungeonBot"></DungeonBotCodeEditor>
+    <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Files="@DungeonBot.ActionModuleFiles" DungeonBot="DungeonBot"></DungeonBotCodeEditor>
 
     <div class="mt-3">
         <button type="button" class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
@@ -61,16 +61,6 @@
 
     public DungeonBotCodeEditor? DungeonBotCodeEditor { get; set; }
 
-    private string GetValueFromState()
-    {
-        if (DungeonBot == null)
-        {
-            return string.Empty;
-        }
-
-        return DungeonBot.ActionModuleLibrary.ActionModuleFiles.First().Content;
-    }
-
     private async Task SaveAsync(MouseEventArgs e)
     {
         if (DungeonBotCodeEditor == null || DungeonBot == null)
@@ -78,16 +68,16 @@
             return;
         }
 
-        var code = await DungeonBotCodeEditor.GetValueAsync();
+        var actionModuleFiles = await DungeonBotCodeEditor.GetValueAsync();
 
-        Dispatcher.Dispatch(new SaveDungeonBotAction(DungeonBot, code));
+        Dispatcher.Dispatch(new CompileDungeonBotScriptAction(DungeonBot with { ActionModuleFiles = actionModuleFiles }));
     }
 
     private async Task CancelAsync()
     {
-        if (DungeonBotCodeEditor != null)
+        if (DungeonBotCodeEditor != null && DungeonBot != null)
         {
-            await DungeonBotCodeEditor.SetValueAsync(GetValueFromState());
+            await DungeonBotCodeEditor.SetValueAsync(DungeonBot.ActionModuleFiles);
         }
     }
 }

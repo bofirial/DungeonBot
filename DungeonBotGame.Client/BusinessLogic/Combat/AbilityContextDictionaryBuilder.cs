@@ -6,7 +6,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface IAbilityContextDictionaryBuilder
     {
-        Dictionary<AbilityType, AbilityContext> BuildAbilityContextDictionary(IEnumerable<AbilityType> abilities);
+        IDictionary<AbilityType, AbilityContext> BuildAbilityContextDictionary(IEnumerable<AbilityType> abilities);
     }
 
     public class AbilityContextDictionaryBuilder : IAbilityContextDictionaryBuilder
@@ -18,7 +18,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _abilityDescriptionProvider = abilityDescriptionProvider;
         }
 
-        public Dictionary<AbilityType, AbilityContext> BuildAbilityContextDictionary(IEnumerable<AbilityType> abilities)
+        public IDictionary<AbilityType, AbilityContext> BuildAbilityContextDictionary(IEnumerable<AbilityType> abilities)
         {
             return abilities.ToDictionary(
                 abilityType => abilityType,
@@ -26,11 +26,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 {
                     var abilityDescription = _abilityDescriptionProvider.GetAbilityDescription(abilityType);
 
-                    return new AbilityContext()
-                    {
-                        MaximumCooldownRounds = abilityDescription.CooldownRounds,
-                        CurrentCooldownRounds = abilityDescription.StartOfCombatCooldownRounds
-                    };
+                    return new AbilityContext(abilityDescription.CooldownRounds, abilityDescription.StartOfCombatCooldownRounds);
                 });
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace DungeonBotGame.Models.Combat
 {
-    public class AttackAction : ITargettedAction
+    public record AttackAction : ITargettedAction
     {
         private readonly ITarget _attackTarget;
 
