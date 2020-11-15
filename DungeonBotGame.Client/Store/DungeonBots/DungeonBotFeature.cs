@@ -33,6 +33,8 @@ namespace DungeonBotGame.Scripts
 
         protected override DungeonBotState GetInitialState()
         {
+            Console.WriteLine($"Initializing {GetName()}");
+
             return new DungeonBotState(new List<DungeonBotViewModel>()
             {
                 new DungeonBotViewModel(
