@@ -7,26 +7,38 @@ namespace DungeonBotGame.Models.Combat
 {
     public abstract class CharacterBase : ICharacter
     {
-        public CharacterBase(string characterName, int maximumHealth, IImmutableList<ActionModuleFileViewModel> sourceCodeFiles, IDictionary<AbilityType, AbilityContext> abilities)
+        public CharacterBase(
+            string characterName,
+            short level,
+            short power,
+            short armor,
+            short speed,
+            IImmutableList<ActionModuleFileViewModel> sourceCodeFiles,
+            IDictionary<AbilityType, AbilityContext> abilities)
         {
             Name = characterName;
-            MaximumHealth = maximumHealth;
+            Level = level;
+            Power = power;
+            Armor = armor;
+            Speed = speed;
             SourceCodeFiles = sourceCodeFiles;
-            CurrentHealth = maximumHealth;
             Id = Guid.NewGuid().ToString();
             Abilities = abilities;
         }
 
-        public string Name { get; }
+        public string Id { get; }
 
+        public string Name { get; }
+        public short Level { get; }
+        public short Power { get; }
+        public short Armor { get; }
+        public short Speed { get; }
         public int CurrentHealth { get; set; }
 
-        public int MaximumHealth { get; }
+        public int MaximumHealth { get; set; }
 
         public IImmutableList<ActionModuleFileViewModel> SourceCodeFiles { get; }
 
         public IDictionary<AbilityType, AbilityContext> Abilities { get; }
-
-        public string Id { get; }
     }
 }

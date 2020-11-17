@@ -38,6 +38,10 @@ namespace DungeonBotGame.Scripts
                 new DungeonBotViewModel(
                     Guid.NewGuid().ToString(),
                     "DungeonBot001",
+                    level: 1,
+                    power: 5,
+                    armor: 5,
+                    speed: 5,
                     "/images/temp/dungeonbot.png",
                     ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", DefaultActionModule)),
                     ImmutableList.Create(AbilityType.HeavySwing),

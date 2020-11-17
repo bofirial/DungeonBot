@@ -1,17 +1,23 @@
 ﻿using DungeonBotGame.Client.ErrorHandling;
+using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatValueCalculator
     {
-        int GetAttackValue(ICharacter sourceCharacter, ICharacter targetCharacter);
+        int GetMaximumHealth(CharacterBase character);
 
-        int GetAbilityValue(ICharacter sourceCharacter, ICharacter targetCharacter, AbilityType abilityType);
+        int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter);
+
+        int GetAbilityValue(CharacterBase sourceCharacter, CharacterBase targetCharacter, AbilityType abilityType);
     }
 
     public class CombatValueCalculator : ICombatValueCalculator
     {
-        public int GetAttackValue(ICharacter sourceCharacter, ICharacter targetCharacter)
+
+        public int GetMaximumHealth(CharacterBase character) => 50 + character.Armor * 10;
+
+        public int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter)
         {
             if (sourceCharacter.Name == "Hungry Dragon Whelp" || sourceCharacter.Name == "Wolf King")
             {
@@ -21,7 +27,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             return 10;
         }
 
-        public int GetAbilityValue(ICharacter sourceCharacter, ICharacter targetCharacter, AbilityType abilityType)
+        public int GetAbilityValue(CharacterBase sourceCharacter, CharacterBase targetCharacter, AbilityType abilityType)
         {
             return abilityType switch
             {
