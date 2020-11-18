@@ -33,9 +33,10 @@ namespace DungeonBotGame.Models.Combat
         public short Power { get; }
         public short Armor { get; }
         public short Speed { get; }
-        public int CurrentHealth { get; set; }
 
         public int MaximumHealth { get; set; }
+
+        public int CurrentHealth { get; set; }
 
         public IImmutableList<ActionModuleFileViewModel> SourceCodeFiles { get; }
 

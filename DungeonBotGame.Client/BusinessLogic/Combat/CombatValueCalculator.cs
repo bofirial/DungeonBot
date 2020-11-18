@@ -10,22 +10,16 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter);
 
         int GetAbilityValue(CharacterBase sourceCharacter, CharacterBase targetCharacter, AbilityType abilityType);
+
+        int GetIterationsUntilNextAction(CharacterBase character);
     }
 
     public class CombatValueCalculator : ICombatValueCalculator
     {
 
-        public int GetMaximumHealth(CharacterBase character) => 50 + character.Armor * 10;
+        public int GetMaximumHealth(CharacterBase character) => 100 + character.Armor * 5;
 
-        public int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter)
-        {
-            if (sourceCharacter.Name == "Hungry Dragon Whelp" || sourceCharacter.Name == "Wolf King")
-            {
-                return 15;
-            }
-
-            return 10;
-        }
+        public int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter) => (int)(10 + sourceCharacter.Power * 3.5) - targetCharacter.Armor;
 
         public int GetAbilityValue(CharacterBase sourceCharacter, CharacterBase targetCharacter, AbilityType abilityType)
         {
@@ -36,5 +30,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 _ => throw new UnknownAbilityTypeException(abilityType)
             };
         }
+
+        public int GetIterationsUntilNextAction(CharacterBase character) => 300 - 6 * character.Speed;
     }
 }

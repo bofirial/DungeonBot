@@ -31,9 +31,9 @@
                         //TODO: Show Description while hovering
                         <li class="list-group-item">
                             @abilityDescription.Name
-                            @if (abilityDescription.CooldownRounds > 0)
+                            @if (abilityDescription.CooldownCombatTime > 0)
                             {
-                                <span class="badge bg-primary float-right">@abilityDescription.CooldownRounds Round Cooldown</span>
+                                <span class="badge bg-primary float-right">@abilityDescription.CooldownCombatTime Cooldown</span>
                             }
                         </li>
                     }

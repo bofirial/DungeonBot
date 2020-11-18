@@ -10,15 +10,14 @@ namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
         [ActionModuleEntrypoint]
         public IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent)
         {
-            var previousRoundResult = sensorComponent.EncounterRoundHistory.LastOrDefault();
+            var previousActionResult = sensorComponent.ActionResults.LastOrDefault(a => a.Character is IDungeonBot);
 
-            if (previousRoundResult != null &&
-                previousRoundResult.ActionResults.Any(a => a.Action is IAbilityAction && a.Character == sensorComponent.DungeonBot))
+            if (previousActionResult != null && previousActionResult.Action is IAbilityAction)
             {
                 return actionComponent.UseLickWounds();
             }
 
-            return actionComponent.Attack(sensorComponent.DungeonBot);
+            return actionComponent.Attack(sensorComponent.DungeonBots.First());
         }
     }
 }

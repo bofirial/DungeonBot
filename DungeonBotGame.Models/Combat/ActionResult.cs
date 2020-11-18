@@ -1,11 +1,12 @@
-﻿namespace DungeonBotGame.Models.Combat
+﻿using System.Collections.Immutable;
+
+namespace DungeonBotGame.Models.Combat
 {
-    public class ActionResult : IActionResult
-    {
-        public string DisplayText { get; set; }
-
-        public IAction Action { get; set; }
-
-        public ICharacter Character { get; set; }
-    }
+    public record ActionResult(
+        int CombatTime,
+        ICharacter Character,
+        string DisplayText,
+        IAction Action,
+        IImmutableList<CharacterRecord> Characters,
+        IImmutableList<CombatEvent> NewCombatEvents) : IActionResult;
 }

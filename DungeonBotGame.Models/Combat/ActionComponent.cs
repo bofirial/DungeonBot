@@ -14,7 +14,7 @@ namespace DungeonBotGame.Models.Combat
         public ITargettedAction Attack(ITarget attackTarget) => new AttackAction(attackTarget);
 
         public bool AbilityIsAvailable(AbilityType abilityType) =>
-            _character.Abilities.ContainsKey(abilityType) && _character.Abilities[abilityType].CurrentCooldownRounds == 0;
+            _character.Abilities.ContainsKey(abilityType) && _character.Abilities[abilityType].IsAvailable;
 
 
         [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "May access instance data in the future.")]

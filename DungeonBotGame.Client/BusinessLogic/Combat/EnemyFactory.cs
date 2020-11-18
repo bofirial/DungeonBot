@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using DungeonBotGame.Client.BusinessLogic.EnemyActionModules;
 using DungeonBotGame.Client.ErrorHandling;
 using DungeonBotGame.Models.Combat;
@@ -8,7 +9,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface IEnemyFactory
     {
-        Enemy CreateEnemy(EncounterViewModel encounter);
+        IImmutableList<Enemy> CreateEnemies(EncounterViewModel encounter);
     }
 
     public class EnemyFactory : IEnemyFactory
@@ -22,20 +23,23 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _combatValueCalculator = combatValueCalculator;
         }
 
-        public Enemy CreateEnemy(EncounterViewModel encounter)
+        public IImmutableList<Enemy> CreateEnemies(EncounterViewModel encounter)
         {
-            var enemy = encounter.EnemyType switch
+            var enemies = encounter.EnemyType switch
             {
-                EnemyType.Rat => new Enemy(encounter.Name, level: 1, power: 3, armor: 3, speed: 12, new AttackOnlyActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(Array.Empty<AbilityType>())),
-                EnemyType.Dragon => new Enemy(encounter.Name, level: 1, power: 8, armor: 5, speed: 5, new AttackOnlyActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(Array.Empty<AbilityType>())),
-                EnemyType.Wolf => new Enemy(encounter.Name, level: 1, power: 8, armor: 3, speed: 5, new WolfKingActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(new AbilityType[] { AbilityType.LickWounds })),
+                EnemyType.Rat => ImmutableList.Create(new Enemy(encounter.Name, level: 1, power: 3, armor: 3, speed: 5, new AttackOnlyActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(Array.Empty<AbilityType>()))),
+                EnemyType.Dragon => ImmutableList.Create(new Enemy(encounter.Name, level: 1, power: 8, armor: 5, speed: 5, new AttackOnlyActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(Array.Empty<AbilityType>()))),
+                EnemyType.Wolf => ImmutableList.Create(new Enemy(encounter.Name, level: 1, power: 8, armor: 3, speed: 5, new WolfKingActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(new AbilityType[] { AbilityType.LickWounds }))),
                 _ => throw new UnknownEnemyTypeException(encounter.EnemyType),
             };
 
-            enemy.MaximumHealth = _combatValueCalculator.GetMaximumHealth(enemy);
-            enemy.CurrentHealth = enemy.MaximumHealth;
+            foreach (var enemy in enemies)
+            {
+                enemy.MaximumHealth = _combatValueCalculator.GetMaximumHealth(enemy);
+                enemy.CurrentHealth = enemy.MaximumHealth;
+            }
 
-            return enemy;
+            return enemies;
         }
     }
 }

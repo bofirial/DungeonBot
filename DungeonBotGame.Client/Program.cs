@@ -27,7 +27,6 @@ namespace DungeonBotGame.Client
 
             builder.Services.AddScoped<IAdventureRunner, AdventureRunner>();
             builder.Services.AddScoped<IEncounterRunner, EncounterRunner>();
-            builder.Services.AddScoped<IEncounterRoundRunner, EncounterRoundRunner>();
             builder.Services.AddScoped<IActionModuleContextBuilder, ActionModuleContextBuilder>();
             builder.Services.AddScoped<IActionModuleExecuter, ActionModuleExecuter>();
             builder.Services.AddScoped<ICombatValueCalculator, CombatValueCalculator>();

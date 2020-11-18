@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Models.Api;
@@ -40,8 +42,10 @@ namespace DungeonBotGame.Server.BusinessLogic
 
             var metadataReferences = new MetadataReference[] {
                 MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(System.Console).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(ActionModuleEntrypointAttribute).Assembly.Location)
+                MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(ActionModuleEntrypointAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
+                MetadataReference.CreateFromFile(Assembly.Load(GetSystemRuntimeAssemblyName()).Location)
             };
 
             var projectInfo = ProjectInfo.Create(ProjectId.CreateNewId(), VersionStamp.Create(), "DungeonBotGame", "DungeonBotGame", LanguageNames.CSharp)
@@ -54,6 +58,18 @@ namespace DungeonBotGame.Server.BusinessLogic
             var completionService = CompletionService.GetService(document);
 
             return await completionService.GetCompletionsAsync(document, requestModel.TargetFilePosition);
+        }
+
+        private static string GetSystemRuntimeAssemblyName()
+        {
+            var entryAssembly = Assembly.GetEntryAssembly();
+
+            if (entryAssembly == null)
+            {
+                throw new ApplicationException("How is there no entry assembly?");
+            }
+
+            return entryAssembly.GetReferencedAssemblies().First(a => a?.Name?.Contains("System.Runtime") == true).FullName;
         }
 
         private static CodeCompletionPostResponseModel BuildCodeCompletionPostResponseModel(CompletionList completionResults)

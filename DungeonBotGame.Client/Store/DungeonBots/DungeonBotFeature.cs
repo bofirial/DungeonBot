@@ -9,6 +9,7 @@ namespace DungeonBotGame.Client.Store.DungeonBots
     public class DungeonBotFeature : Feature<DungeonBotState>
     {
         private const string DefaultActionModule = @"using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DungeonBotGame;
 
@@ -19,12 +20,14 @@ namespace DungeonBotGame.Scripts
         [ActionModuleEntrypoint]
         public IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent)
         {
+            var enemy = sensorComponent.Enemies.First();
+
             // if (actionComponent.HeavySwingIsAvailable())
             // {
-            //     return actionComponent.UseHeavySwing(sensorComponent.Enemy);
+            //     return actionComponent.UseHeavySwing(enemy);
             // }
 
-            return actionComponent.Attack(sensorComponent.Enemy);
+            return actionComponent.Attack(enemy);
         }
     }
 }";

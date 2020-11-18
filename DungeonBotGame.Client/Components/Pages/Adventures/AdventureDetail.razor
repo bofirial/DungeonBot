@@ -2,6 +2,7 @@
 @using Fluxor;
 @using DungeonBotGame.Client.Store.DungeonBots;
 @using DungeonBotGame.Client.Store.Adventures;
+@using System.Collections.Immutable
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 
@@ -52,7 +53,7 @@
 
         if (dungeonBot != null)
         {
-            Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, dungeonBot, CurrentAdventureRunId));
+            Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, ImmutableList.Create(dungeonBot), CurrentAdventureRunId));
         }
     }
 

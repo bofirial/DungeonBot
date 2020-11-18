@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Client.Store.Adventures;
+using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
@@ -28,20 +30,32 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public async Task<AdventureResultViewModel> RunAdventureAsync(RunAdventureAction runAdventureAction)
         {
-            var dungeonBotViewModel = runAdventureAction.DungeonBot;
+            var dungeonBotViewModels = runAdventureAction.DungeonBots;
+            var dungeonBots = new List<DungeonBot>();
 
-            if (dungeonBotViewModel.ActionModuleContext == null)
+            foreach (var actionDungeonBotViewModel in dungeonBotViewModels)
             {
-                dungeonBotViewModel = await _actionModuleContextBuilder.BuildActionModuleContextAsync(dungeonBotViewModel);
-            }
+                var dungeonBotViewModel = actionDungeonBotViewModel;
 
-            var dungeonBot = _dungeonBotFactory.CreateCombatDungeonBot(dungeonBotViewModel);
+                if (dungeonBotViewModel.ActionModuleContext == null)
+                {
+                    dungeonBotViewModel = await _actionModuleContextBuilder.BuildActionModuleContextAsync(dungeonBotViewModel);
+
+                    if (dungeonBotViewModel.Errors.Any())
+                    {
+                        //TODO: Handle Compilation Errors Gracefully #87
+                        throw new Exception($"Compilation Error: {string.Join(Environment.NewLine, dungeonBotViewModel.Errors.Select(e => e.ErrorMessage))}");
+                    }
+                }
+
+                dungeonBots.Add(_dungeonBotFactory.CreateCombatDungeonBot(dungeonBotViewModel));
+            }
 
             var encounterResults = new List<EncounterResultViewModel>();
 
             foreach (var encounter in runAdventureAction.Adventure.Encounters)
             {
-                var encounterResult = await _encounterRunner.RunAdventureEncounterAsync(dungeonBot, encounter);
+                var encounterResult = await _encounterRunner.RunAdventureEncounterAsync(dungeonBots.ToImmutableList(), encounter);
 
                 encounterResults.Add(encounterResult);
 
