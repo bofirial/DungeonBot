@@ -1,4 +1,5 @@
-﻿using DungeonBotGame.Models.Combat;
+﻿using System.Linq;
+using DungeonBotGame.Models.Combat;
 using DungeonBotGame.SourceGenerators.Attributes;
 
 namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
@@ -8,6 +9,6 @@ namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
     {
         [ActionModuleEntrypoint]
         public IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent)
-            => actionComponent.Attack(sensorComponent.DungeonBot);
+            => actionComponent.Attack(sensorComponent.DungeonBots.First());
     }
 }

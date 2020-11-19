@@ -26,16 +26,15 @@
                             <CollapsePanel CssClass="my-2" HeadingId="@($"combatLogPanelHeading-{encounterResult.Order}")" CollapseSectionId="@($"combatLogPanel-{encounterResult.Order}")" IsCollapsedInitially="false">
                                 <HeadingView>Combat Log</HeadingView>
                                 <CollapseSectionView>
-                                    <Accordion Id="@($"combatLogAccordionId-{encounterResult.Order}")" TListItem="EncounterRoundResult" List="encounterResult.EncounterRoundResults">
-                                        <HeadingView Context="encounterRoundResult">Round <span class="badge bg-primary rounded-pill">@encounterRoundResult.Round</span> - DungeonBotGame Health <span class="badge bg-success rounded-pill">@encounterRoundResult.DungeonBotCurrentHealth</span> - @EnemyName Health <span class="badge bg-danger rounded-pill">@encounterRoundResult.EnemyCurrentHealth</span></HeadingView>
-                                        <CollapseSectionView Context="encounterRoundResult">
-                                            <ul class="list-group list-group-flush">
-
-                                                @foreach (var actionResult in encounterRoundResult.ActionResults)
-                                                {
-                                                    <li class="list-group-item">@actionResult.DisplayText</li>
-                                                }
-                                            </ul>
+                                    <Accordion Id="@($"combatLogAccordionId-{encounterResult.Order}")" TListItem="ActionResult" List="encounterResult.ActionResults">
+                                        <HeadingView Context="actionResult"><span class="badge bg-primary rounded-pill">@($"{(actionResult.CombatTime / 100.0).ToString("0.00").PadLeft(5)}s")</span> @actionResult.DisplayText</HeadingView>
+                                        <CollapseSectionView Context="actionResult">
+                                            @foreach (var character in actionResult.Characters)
+                                            {
+                                                <div class="alert @(character.IsDungeonBot ? "alert-success" : "alert-danger")" role="alert">
+                                                    @character.Name <span class="badge bg-info rounded-pill">@character.CurrentHealth / @character.MaximumHealth hp</span>
+                                                </div>
+                                            }
                                         </CollapseSectionView>
                                     </Accordion>
 
@@ -82,9 +81,6 @@
 @code {
     [Parameter]
     public AdventureResultViewModel? AdventureResult { get; set; }
-
-    [Parameter]
-    public string EnemyName { get; set; } = string.Empty;
 
     public Dictionary<string, string> CharacterPanelHasExpanded { get; set; } = new Dictionary<string, string>();
 

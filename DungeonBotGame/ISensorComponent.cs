@@ -4,12 +4,12 @@ namespace DungeonBotGame
 {
     public interface ISensorComponent
     {
-        public IDungeonBot DungeonBot { get; }
+        public IEnumerable<IDungeonBot> DungeonBots { get; }
 
-        public IEnemy Enemy { get; }
+        public IEnumerable<IEnemy> Enemies { get; }
 
-        public int Round { get; }
+        public int CombatTime { get; }
 
-        public IEnumerable<IEncounterRoundResult> EncounterRoundHistory { get; }
+        public IEnumerable<IActionResult> ActionResults { get; }
     }
 }

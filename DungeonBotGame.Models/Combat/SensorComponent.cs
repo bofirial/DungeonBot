@@ -2,5 +2,5 @@
 
 namespace DungeonBotGame.Models.Combat
 {
-    public record SensorComponent(IDungeonBot DungeonBot, IEnemy Enemy, int Round, IEnumerable<IEncounterRoundResult> EncounterRoundHistory) : ISensorComponent;
+    public record SensorComponent(IEnumerable<IDungeonBot> DungeonBots, IEnumerable<IEnemy> Enemies, int CombatTime, IEnumerable<IActionResult> ActionResults) : ISensorComponent;
 }

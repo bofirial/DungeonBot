@@ -1,11 +1,13 @@
-﻿using DungeonBotGame.Client.ErrorHandling;
+﻿using System.Collections.Immutable;
+using System.Linq;
+using DungeonBotGame.Client.ErrorHandling;
 using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatActionProcessor
     {
-        ActionResult ProcessAction(IAction action, CharacterBase source);
+        ActionResult ProcessAction(IAction action, CharacterBase source, int combatTime, IImmutableList<CharacterBase> characters);
     }
 
     public class CombatActionProcessor : ICombatActionProcessor
@@ -17,17 +19,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _combatValueCalculator = combatValueCalculator;
         }
 
-        public ActionResult ProcessAction(IAction action, CharacterBase source)
+        public ActionResult ProcessAction(IAction action, CharacterBase source, int combatTime, IImmutableList<CharacterBase> characters)
         {
-            var actionResult = new ActionResult() { Action = action, Character = source };
+            var actionResult = new ActionResult(combatTime, source, string.Empty, action, ImmutableList.Create<CharacterRecord>(), ImmutableList.Create<CombatEvent>());
 
             if (action is ITargettedAction targettedAction)
             {
-                ProcessTargettedAction(action, source, actionResult, targettedAction);
+                actionResult = ProcessTargettedAction(action, source, actionResult, targettedAction);
             }
             else if (action.ActionType == ActionType.Ability && action is IAbilityAction abilityAction)
             {
-                ProcessAbilityAction(source, null, actionResult, abilityAction);
+                actionResult = ProcessAbilityAction(source, null, actionResult, abilityAction);
             }
             else
             {
@@ -39,31 +41,24 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 source.CurrentHealth = 0;
             }
 
-            UpdateAbilityCooldowns(action, source);
-
-            return actionResult;
+            return actionResult with { Characters = characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList() };
         }
 
-        private void ProcessTargettedAction(IAction action, CharacterBase source, ActionResult actionResult, ITargettedAction targettedAction)
+        private ActionResult ProcessTargettedAction(IAction action, CharacterBase source, ActionResult actionResult, ITargettedAction targettedAction)
         {
             if (targettedAction.Target is CharacterBase target)
             {
                 if (action.ActionType == ActionType.Attack)
                 {
-                    ProcessAttackAction(source, target, actionResult);
+                    return ProcessAttackAction(source, target, actionResult);
                 }
                 else if (action.ActionType == ActionType.Ability && action is IAbilityAction abilityAction)
                 {
-                    ProcessAbilityAction(source, target, actionResult, abilityAction);
+                    return ProcessAbilityAction(source, target, actionResult, abilityAction);
                 }
                 else
                 {
                     throw new UnknownActionTypeException(action.ActionType);
-                }
-
-                if (target.CurrentHealth < 0)
-                {
-                    target.CurrentHealth = 0;
                 }
             }
             else
@@ -72,16 +67,21 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
         }
 
-        private void ProcessAttackAction(CharacterBase source, CharacterBase target, ActionResult actionResult)
+        private ActionResult ProcessAttackAction(CharacterBase source, CharacterBase target, ActionResult actionResult)
         {
             var attackDamage = _combatValueCalculator.GetAttackValue(source, target);
 
             target.CurrentHealth -= attackDamage;
 
-            actionResult.DisplayText = $"{source.Name} attacked {target.Name} for {attackDamage} damage.";
+            if (target.CurrentHealth < 0)
+            {
+                target.CurrentHealth = 0;
+            }
+
+            return actionResult with { DisplayText = $"{source.Name} attacked {target.Name} for {attackDamage} damage." };
         }
 
-        private void ProcessAbilityAction(CharacterBase source, CharacterBase? target, ActionResult actionResult, IAbilityAction abilityAction)
+        private ActionResult ProcessAbilityAction(CharacterBase source, CharacterBase? target, ActionResult actionResult, IAbilityAction abilityAction)
         {
             if (!source.Abilities.ContainsKey(abilityAction.AbilityType))
             {
@@ -90,10 +90,12 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
             var abilityContext = source.Abilities[abilityAction.AbilityType];
 
-            if (abilityContext.CurrentCooldownRounds > 0)
+            if (!abilityContext.IsAvailable)
             {
-                throw new AbilityNotAvailableException($"{source.Name} must wait another {abilityContext.CurrentCooldownRounds} rounds before {abilityAction.AbilityType} is available.");
+                throw new AbilityNotAvailableException($"{source.Name} can not use {abilityAction.AbilityType} because it is not ready yet.");
             }
+
+            string? displayText;
 
             //TODO: Strategy Pattern for AbilityTypes?
             switch (abilityAction.AbilityType)
@@ -109,40 +111,46 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                     target.CurrentHealth -= abilityDamage;
 
-                    actionResult.DisplayText = $"{source.Name} took a heavy swing at {target.Name} for {abilityDamage} damage.";
+                    displayText = $"{source.Name} took a heavy swing at {target.Name} for {abilityDamage} damage.";
                     break;
 
                 case AbilityType.LickWounds:
 
                     source.CurrentHealth = source.MaximumHealth;
 
-                    actionResult.DisplayText = $"{source.Name} licked it's wounds because a DungeonBot used an ability last turn.";
+                    displayText = $"{source.Name} licked it's wounds because a DungeonBot used an ability last turn.";
                     break;
 
                 default:
                     throw new UnknownAbilityTypeException(abilityAction.AbilityType);
             }
 
-            source.Abilities[abilityAction.AbilityType] = abilityContext with
+            if (target?.CurrentHealth < 0)
             {
-                CurrentCooldownRounds = abilityContext.MaximumCooldownRounds
-            };
-        }
-
-        private static void UpdateAbilityCooldowns(IAction action, CharacterBase source)
-        {
-            foreach (var abilityType in source.Abilities.Keys)
-            {
-                var ability = source.Abilities[abilityType];
-
-                if (ability.CurrentCooldownRounds > 0 && (action is not IAbilityAction abilityAction || abilityType != abilityAction.AbilityType))
-                {
-                    source.Abilities[abilityType] = ability with
-                    {
-                        CurrentCooldownRounds = ability.CurrentCooldownRounds - 1
-                    };
-                }
+                target.CurrentHealth = 0;
             }
+
+            if (abilityContext.CooldownCombatTime > 0)
+            {
+                source.Abilities[abilityAction.AbilityType] = abilityContext with
+                {
+                    IsAvailable = false
+                };
+
+                return actionResult with
+                {
+                    DisplayText = displayText,
+                    NewCombatEvents = ImmutableList.Create<CombatEvent>(new CombatEvent<AbilityType>(
+                        actionResult.CombatTime + source.Abilities[abilityAction.AbilityType].CooldownCombatTime,
+                        source,
+                        CombatEventType.CooldownReset,
+                        abilityAction.AbilityType))
+                };
+            }
+
+            return actionResult with {
+                DisplayText = displayText
+            };
         }
     }
 }

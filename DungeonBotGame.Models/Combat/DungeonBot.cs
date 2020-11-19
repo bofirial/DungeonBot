@@ -6,8 +6,15 @@ namespace DungeonBotGame.Models.Combat
 {
     public class DungeonBot : CharacterBase, IDungeonBot
     {
-        public DungeonBot(string dungeonBotName, int maximumHealth, IImmutableList<ActionModuleFileViewModel> sourceCodeFiles, ActionModuleContext actionModuleContext, IDictionary<AbilityType, AbilityContext> abilities) :
-            base(dungeonBotName, maximumHealth, sourceCodeFiles, abilities)
+        public DungeonBot(string dungeonBotName,
+            short level,
+            short power,
+            short armor,
+            short speed,
+            IImmutableList<ActionModuleFileViewModel> sourceCodeFiles,
+            ActionModuleContext actionModuleContext,
+            IDictionary<AbilityType, AbilityContext> abilities) :
+            base(dungeonBotName, level, power, armor, speed, sourceCodeFiles, abilities)
         {
             ActionModuleContext = actionModuleContext;
         }

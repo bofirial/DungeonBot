@@ -26,7 +26,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 {
                     var abilityDescription = _abilityDescriptionProvider.GetAbilityDescription(abilityType);
 
-                    return new AbilityContext(abilityDescription.CooldownRounds, abilityDescription.StartOfCombatCooldownRounds);
+                    return new AbilityContext(IsAvailable: true, abilityDescription.CooldownCombatTime);
                 });
         }
     }
