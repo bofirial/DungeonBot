@@ -59,8 +59,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
             while (!EncounterHasCompleted(characters, combatTimer))
             {
-                combatTimer++;
-
                 var processedCombatEvents = new List<CombatEvent>();
                 var newCombatEvents = new List<CombatEvent>();
 
@@ -101,6 +99,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 }
 
                 combatEvents.AddRange(newCombatEvents);
+
+                combatTimer = combatEvents.Min(e => e.CombatTime);
             }
 
             var resultDisplayText = string.Empty;

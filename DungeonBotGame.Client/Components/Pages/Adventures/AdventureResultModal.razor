@@ -27,14 +27,15 @@
                                 <HeadingView>Combat Log</HeadingView>
                                 <CollapseSectionView>
                                     <Accordion Id="@($"combatLogAccordionId-{encounterResult.Order}")" TListItem="ActionResult" List="encounterResult.ActionResults">
-                                        <HeadingView Context="actionResult"><span class="badge bg-primary rounded-pill">@actionResult.CombatTime</span> @actionResult.DisplayText</HeadingView>
+                                        <HeadingView Context="actionResult"><span class="badge bg-primary rounded-pill">@($"{(actionResult.CombatTime / 100.0).ToString("0.00").PadLeft(5)}s")</span> @actionResult.DisplayText</HeadingView>
                                         <CollapseSectionView Context="actionResult">
                                             @foreach (var character in actionResult.Characters)
                                             {
                                                 <div class="alert @(character.IsDungeonBot ? "alert-success" : "alert-danger")" role="alert">
                                                     @character.Name <span class="badge bg-info rounded-pill">@character.CurrentHealth / @character.MaximumHealth hp</span>
                                                 </div>
-                                            }                                        </CollapseSectionView>
+                                            }
+                                        </CollapseSectionView>
                                     </Accordion>
 
                                     <div class="alert @(encounterResult.Success ? "alert-success" : "alert-danger") m-3" role="alert">

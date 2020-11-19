@@ -33,7 +33,7 @@
                             @abilityDescription.Name
                             @if (abilityDescription.CooldownCombatTime > 0)
                             {
-                                <span class="badge bg-primary float-right">@abilityDescription.CooldownCombatTime Cooldown</span>
+                            <span class="badge bg-primary float-right">@($"{(abilityDescription.CooldownCombatTime / 100.0).ToString("0.00").PadLeft(5)}s") Cooldown</span>
                             }
                         </li>
                     }
