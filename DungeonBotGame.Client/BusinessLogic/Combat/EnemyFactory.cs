@@ -30,6 +30,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 EnemyType.Rat => ImmutableList.Create(new Enemy(encounter.Name, level: 1, power: 3, armor: 3, speed: 5, new AttackOnlyActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(Array.Empty<AbilityType>()))),
                 EnemyType.Dragon => ImmutableList.Create(new Enemy(encounter.Name, level: 1, power: 8, armor: 5, speed: 5, new AttackOnlyActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(Array.Empty<AbilityType>()))),
                 EnemyType.Wolf => ImmutableList.Create(new Enemy(encounter.Name, level: 1, power: 8, armor: 3, speed: 5, new WolfKingActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(new AbilityType[] { AbilityType.LickWounds }))),
+                EnemyType.Pixie => ImmutableList.Create(new Enemy(encounter.Name, level: 1, power: 1, armor: 4, speed: 25, new AttackOnlyActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(Array.Empty<AbilityType>()))),
+                EnemyType.Troll => ImmutableList.Create(new Enemy(encounter.Name, level: 1, power: 10, armor: 6, speed: 1, new AttackOnlyActionModule(), _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(Array.Empty<AbilityType>()))),
                 _ => throw new UnknownEnemyTypeException(encounter.EnemyType),
             };
 

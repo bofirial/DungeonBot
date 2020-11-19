@@ -4,6 +4,8 @@
     {
         Rat = 1,
         Dragon,
-        Wolf
+        Wolf,
+        Pixie,
+        Troll
     }
 }

@@ -46,6 +46,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             var enemies = _enemyFactory.CreateEnemies(encounter);
             var characters = CreateCharacterList(dungeonBots, enemies);
 
+            foreach (var character in characters)
+            {
+                ResetAbilityAvailability(character);
+            }
+
             var combatEvents = characters.Select(c => new CombatEvent(_combatValueCalculator.GetIterationsUntilNextAction(c), c, CombatEventType.CharacterAction)).ToList();
 
             var actionResults = characters.Select(c => new ActionResult(
@@ -123,6 +128,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
 
             return new EncounterResultViewModel(encounter.Name, encounter.Order, Success: success, actionResults.ToImmutableList(), resultDisplayText, characters);
+        }
+
+        private static void ResetAbilityAvailability(CharacterBase character)
+        {
+            foreach (var abilityType in character.Abilities.Keys)
+            {
+                character.Abilities[abilityType] = character.Abilities[abilityType] with { IsAvailable = true };
+            }
         }
 
         private async Task ProcessCharacterActionCombatEvent(IImmutableList<DungeonBot> dungeonBots, int combatTimer, IImmutableList<Enemy> enemies, List<ActionResult> actionResults, List<CombatEvent> newCombatEvents, CombatEvent combatEvent)

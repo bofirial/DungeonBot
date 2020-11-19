@@ -32,6 +32,15 @@ namespace DungeonBotGame.Client.Store.Adventures
                     ImmutableList.Create(new EncounterViewModel("Wolf King", 1, "The wolf king waits inside the cave.", "/images/temp/wolf-king.png", EnemyType.Wolf)),
                     "Available",
                     null
+                ),
+
+                new AdventureViewModel("Troll Hill",
+                    "Jack and Jill went up a hill and found a troll.  You must avenge them.  Also there is a pixie.",
+                    ImmutableList.Create(
+                        new EncounterViewModel("Junior Pixie", 1, "The pixie is at the bottom of the hill.", "/images/temp/pixie.png", EnemyType.Pixie),
+                        new EncounterViewModel("Troll", 2, "The troll is on top of the hill pretending to be a king.", "/images/temp/troll.png", EnemyType.Troll)),
+                    "Available",
+                    null
                 )
             });
         }

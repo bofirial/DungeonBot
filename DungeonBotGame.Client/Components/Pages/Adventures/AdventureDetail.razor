@@ -15,15 +15,18 @@
     <p>@Adventure.Description</p>
 
     <div class="encounters row justify-content-center m-2">
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card m-3">
-                <img src="@Adventure.Encounters.First().ProfileImageLocation" class="card-img-top pixel-image" alt="@Adventure.Encounters.First().Name">
-                <div class="card-body">
-                    <h3 class="card-title">@Adventure.Encounters.First().Name</h3>
-                    <p class="card-text">@Adventure.Encounters.First().Description</p>
+        @foreach (var encounter in Adventure.Encounters)
+        {
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card m-3">
+                    <img src="@encounter.ProfileImageLocation" class="card-img-top pixel-image" alt="@encounter.Name">
+                    <div class="card-body">
+                        <h3 class="card-title">@encounter.Name</h3>
+                        <p class="card-text">@encounter.Description</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
 
     <button type="button" class="btn btn-primary btn-large px-4 mx-2"
@@ -31,7 +34,7 @@
         Start Adventure
     </button>
 
-    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult" EnemyName="@Adventure.Encounters.First().Name"></AdventureResultModal>
+    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>
 }
 
 @code {
