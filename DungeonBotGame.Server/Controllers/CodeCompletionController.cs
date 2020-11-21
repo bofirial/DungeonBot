@@ -16,6 +16,6 @@ namespace DungeonBotGame.Server.Controllers
             _codeCompletionBuilder = codeCompletionBuilder;
         }
 
-        public async Task<CodeCompletionPostResponseModel?> PostAsync([FromBody] CodeCompletionPostRequestModel requestModel) => await _codeCompletionBuilder.GetCodeCompletionsAsync(requestModel);
+        public async Task<CodeCompletionPostResponseModel> PostAsync([FromBody] CodeCompletionPostRequestModel requestModel) => await _codeCompletionBuilder.GetCodeCompletionsAsync(requestModel);
     }
 }

@@ -1,11 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 
 namespace DungeonBotGame.Models.Api
 {
-    public class CodeCompletionPostResponseModel
-    {
-        public string ErrorMessage { get; set; } = string.Empty;
-
-        public List<CompletionItem> CompletionItems { get; set; } = new List<CompletionItem>();
-    }
+    public record CodeCompletionPostResponseModel(ImmutableList<CompletionItem> CompletionItems, string ErrorMessage);
 }

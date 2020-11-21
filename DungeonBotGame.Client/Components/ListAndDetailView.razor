@@ -6,14 +6,14 @@
         <nav class="col-12 col-md-4 col-lg-3">
             <div class="dropdown d-md-none">
                 <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-toggle="dropdown" aria-expanded="false">
-                    @(CurrentListItem != null ? ListItemView(new ListItemViewModel<TListItem>() { ListItem = CurrentListItem, IsCurrentListItem = true }) : @<span>@SelectAnItemText</span>)
+                    @(CurrentListItem != null ? ListItemView(new ListItemViewModel<TListItem>(CurrentListItem, true)) : @<span>@SelectAnItemText</span>)
                 </button>
                 <ul class="dropdown-menu w-100">
                     @foreach (var listItem in List)
                     {
                         <li class="dropdown-item">
                             <a class="dropdown-item @(listItem == CurrentListItem ? "active" : string.Empty)" href="javascript:void(0);" data-target="#" @onclick="e => SetActiveListItem(listItem)">
-                                @ListItemView(new ListItemViewModel<TListItem>() { ListItem = listItem, IsCurrentListItem = listItem == CurrentListItem })
+                                @ListItemView(new ListItemViewModel<TListItem>(listItem, listItem == CurrentListItem))
                             </a>
                         </li>
                     }
@@ -24,7 +24,7 @@
                 @foreach (var listItem in List)
                 {
                 <button class="list-group-item list-group-item-action @(listItem == CurrentListItem ? "active" : string.Empty)" type="button" @onclick="e => SetActiveListItem(listItem)">
-                    @ListItemView(new ListItemViewModel<TListItem>() { ListItem = listItem, IsCurrentListItem = listItem == CurrentListItem })
+                    @ListItemView(new ListItemViewModel<TListItem>(listItem, listItem == CurrentListItem))
                 </button>
                 }
             </div>

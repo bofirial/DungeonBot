@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using DungeonBotGame.Models.ViewModels;
 using Fluxor;
@@ -27,6 +26,11 @@ namespace DungeonBotGame.Scripts
             //     return actionComponent.UseHeavySwing(enemy);
             // }
 
+            // if (actionComponent.HeavySwingIsAvailable() && (enemy.Name != ""Wolf King"" || enemy.CurrentHealth <= 60))
+            // {
+            //     return actionComponent.UseHeavySwing(enemy);
+            // }
+
             return actionComponent.Attack(enemy);
         }
     }
@@ -36,8 +40,7 @@ namespace DungeonBotGame.Scripts
 
         protected override DungeonBotState GetInitialState()
         {
-            return new DungeonBotState(new List<DungeonBotViewModel>()
-            {
+            return new DungeonBotState(ImmutableList.Create(
                 new DungeonBotViewModel(
                     Guid.NewGuid().ToString(),
                     "DungeonBot001",
@@ -50,7 +53,7 @@ namespace DungeonBotGame.Scripts
                     ImmutableList.Create(AbilityType.HeavySwing),
                     null,
                     ImmutableList.Create<ErrorViewModel>())
-            });
+            ));
         }
     }
 }

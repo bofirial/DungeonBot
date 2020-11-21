@@ -45,12 +45,10 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
             }
             var actionModuleFile = _dungeonBot.ActionModuleFiles[0];
 
-            var response = await _httpClient.PostAsJsonAsync($"api/CodeCompletions", new CodeCompletionPostRequestModel()
-            {
-                TargetFileName = _dungeonBot.ActionModuleFiles[0].FileName,
-                TargetFilePosition = currentPosition,
-                DungeonBot = _dungeonBot with { ActionModuleFiles = ImmutableList.Create(actionModuleFile with { Content = sourceCode }) }
-            });
+            var response = await _httpClient.PostAsJsonAsync($"api/CodeCompletions", new CodeCompletionPostRequestModel(
+                _dungeonBot.ActionModuleFiles[0].FileName,
+                currentPosition,
+                _dungeonBot with { ActionModuleFiles = ImmutableList.Create(actionModuleFile with { Content = sourceCode }) }));
 
             var responseModel = await response.Content.ReadFromJsonAsync<CodeCompletionPostResponseModel>();
 
