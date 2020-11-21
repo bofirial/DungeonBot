@@ -7,8 +7,7 @@
 
 <h1>Settings</h1>
 
-<button type="button" class="btn btn-danger btn-large px-4 mx-2 mt-2"
-        @onclick="e => ResetAllDataAsync()">
+<button type="button" class="btn btn-danger btn-large px-4 mx-2 mt-2" @onclick="e => ResetAllDataAsync()">
     Reset All Data
 </button>
 
@@ -16,6 +15,7 @@
     public async Task ResetAllDataAsync()
     {
         await JSRuntime.InvokeVoidAsync("localStorage.clear");
+
         NavigationManager.NavigateTo(NavigationManager.BaseUri, forceLoad: true);
     }
 }

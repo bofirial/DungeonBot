@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using DungeonBotGame.Models.ViewModels;
 using Fluxor;
 
@@ -11,8 +10,7 @@ namespace DungeonBotGame.Client.Store.Adventures
 
         protected override AdventureState GetInitialState()
         {
-            return new AdventureState(new List<AdventureViewModel>()
-            {
+            return new AdventureState(ImmutableList.Create(
                 new AdventureViewModel("Rat Infestation",
                     "There is one large rat that has taken over an elderly widow's dock in the harbor.  The widow would like to hire us to get rid of it.  She can't pay us much but she has promised all the apple pie we can eat if we can do this for her.",
                     ImmutableList.Create(new EncounterViewModel("Big Rat", 1, "It's a rat with no friends.", "/images/temp/big-rat.png", EnemyType.Rat)),
@@ -42,7 +40,7 @@ namespace DungeonBotGame.Client.Store.Adventures
                     "Available",
                     null
                 )
-            });
+            ));
         }
     }
 }

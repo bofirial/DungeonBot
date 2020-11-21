@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -76,35 +77,20 @@ namespace DungeonBotGame.Server.BusinessLogic
         {
             if (completionResults == null)
             {
-                return new CodeCompletionPostResponseModel() { ErrorMessage = "No Completions Found" };
+                return new CodeCompletionPostResponseModel(ImmutableList.Create<CompletionItem>(), "No Completions Found");
             }
 
-            return new CodeCompletionPostResponseModel()
+            return new CodeCompletionPostResponseModel(completionResults.Items.Select(i =>
             {
-                CompletionItems = completionResults.Items.Select(i =>
+                if (i.Properties.ContainsKey("SymbolName"))
                 {
-                    if (i.Properties.ContainsKey("SymbolName"))
-                    {
-                        return new CompletionItem()
-                        {
-                            Label = i.Properties["SymbolName"],
-                            InsertText = i.Properties["SymbolName"],
-                            Kind = i.Properties["SymbolKind"],
-                            Detail = i.Properties["SymbolName"]
-                        };
-                    }
-                    else
-                    {
-                        return new CompletionItem()
-                        {
-                            Label = i.DisplayText,
-                            InsertText = i.DisplayText,
-                            Kind = "9",
-                            Detail = i.DisplayText
-                        };
-                    }
-                }).ToList()
-            };
+                    return new CompletionItem(i.Properties["SymbolName"], i.Properties["SymbolName"], i.Properties["SymbolKind"], i.Properties["SymbolName"]);
+                }
+                else
+                {
+                    return new CompletionItem(i.DisplayText, i.DisplayText, "9", i.DisplayText); ;
+                }
+            }).ToImmutableList(), null);
         }
     }
 }

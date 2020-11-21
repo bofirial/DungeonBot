@@ -24,7 +24,7 @@ namespace DungeonBotGame.Client.Store.Adventures
 
                     adventureResults.Add(action.AdventureResult);
 
-                    adventures.Add(new AdventureViewModel(adventure.Name, adventure.Description, adventure.Encounters, adventure.Status, adventureResults.ToImmutableList()));
+                    adventures.Add(adventure with { AdventureResults = adventureResults.ToImmutableList() });
                 }
                 else
                 {
