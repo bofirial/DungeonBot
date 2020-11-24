@@ -21,32 +21,38 @@ namespace DungeonBotGame.Client
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddScoped<IMetadataReferenceProvider, MetadataReferenceProvider>();
 
-            builder.Services.AddScoped<ICSharpCompiler, CSharpCompiler>();
-            builder.Services.AddScoped<ICodeCompletionService, CodeCompletionService>();
+            ConfigureServices(builder.Services);
 
-            builder.Services.AddScoped<IAdventureRunner, AdventureRunner>();
-            builder.Services.AddScoped<IEncounterRunner, EncounterRunner>();
-            builder.Services.AddScoped<IActionModuleContextBuilder, ActionModuleContextBuilder>();
-            builder.Services.AddScoped<IActionModuleExecuter, ActionModuleExecuter>();
-            builder.Services.AddScoped<ICombatValueCalculator, CombatValueCalculator>();
-            builder.Services.AddScoped<ICombatActionProcessor, CombatActionProcessor>();
-            builder.Services.AddScoped<IAbilityDescriptionProvider, AbilityDescriptionProvider>();
-            builder.Services.AddScoped<IActionComponentAbilityExtensionMethodsClassBuilder, ActionComponentAbilityExtensionMethodsClassBuilder>();
-            builder.Services.AddScoped<IDungeonBotFactory, DungeonBotFactory>();
-            builder.Services.AddScoped<IEnemyFactory, EnemyFactory>();
-            builder.Services.AddScoped<IAbilityContextDictionaryBuilder, AbilityContextDictionaryBuilder>();
+            await builder.Build().RunAsync();
+        }
 
-            builder.Services.AddLogging(builder => builder
+        public static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddScoped<ICSharpCompiler, CSharpCompiler>();
+            services.AddScoped<ICodeCompletionService, CodeCompletionService>();
+
+            services.AddScoped<IAdventureRunner, AdventureRunner>();
+            services.AddScoped<IEncounterRunner, EncounterRunner>();
+            services.AddScoped<IActionModuleContextBuilder, ActionModuleContextBuilder>();
+            services.AddScoped<IActionModuleExecuter, ActionModuleExecuter>();
+            services.AddScoped<ICombatValueCalculator, CombatValueCalculator>();
+            services.AddScoped<ICombatActionProcessor, CombatActionProcessor>();
+            services.AddScoped<IAbilityDescriptionProvider, AbilityDescriptionProvider>();
+            services.AddScoped<IActionComponentAbilityExtensionMethodsClassBuilder, ActionComponentAbilityExtensionMethodsClassBuilder>();
+            services.AddScoped<IDungeonBotFactory, DungeonBotFactory>();
+            services.AddScoped<IEnemyFactory, EnemyFactory>();
+            services.AddScoped<IAbilityContextDictionaryBuilder, AbilityContextDictionaryBuilder>();
+
+            services.AddLogging(builder => builder
                 .AddBrowserConsole()
                 .SetMinimumLevel(LogLevel.Information));
 
-            builder.Services.AddFluxor(options => options
+            services.AddFluxor(options => options
                 .ScanAssemblies(typeof(Program).Assembly)
                 .UseReduxDevTools()
                 .AddMiddleware<LocalStorageMiddleware>());
-
-            await builder.Build().RunAsync();
         }
     }
 }
