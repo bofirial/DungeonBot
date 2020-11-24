@@ -9,7 +9,8 @@ namespace DungeonBotGame.Client.Store.DungeonBots
         {
             return state with
             {
-                DungeonBots = ImmutableList.Create(action.DungeonBot)
+                DungeonBots = ImmutableList.Create(action.DungeonBot),
+                IsSaving = false
             };
         }
     }
