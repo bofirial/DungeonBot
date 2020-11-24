@@ -27,6 +27,9 @@ jobs:
 
       - name: Dotnet Build
         run: dotnet build ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -r win-x86
+        
+      - name: DotNet Test
+        run: dotnet test ./DungeonBotGame.Tests/DungeonBotGame.Tests.csproj -c Release
 
       - name: DotNet Publish
         if: github.ref == 'refs/heads/main'
