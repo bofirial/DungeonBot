@@ -20,6 +20,10 @@ namespace DungeonBotGame.Tests
 
         public ServiceProvider ServiceProvider { get; private set; }
 
-        public void Dispose() => ServiceProvider?.Dispose();
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            ServiceProvider?.Dispose();
+        }
     }
 }
