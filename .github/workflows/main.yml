@@ -26,10 +26,10 @@ jobs:
           dotnet-version: "5.0"
 
       - name: Dotnet Build
-        run: dotnet build ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -r win-x86
+        run: dotnet build ./DungeonBotGame.Tests/DungeonBotGame.Tests.csproj -c Release -r win-x86
         
       - name: DotNet Test
-        run: dotnet test ./DungeonBotGame.Tests/DungeonBotGame.Tests.csproj -c Release -r win-x86
+        run: dotnet test ./DungeonBotGame.Tests/DungeonBotGame.Tests.csproj -c Release -r win-x86 --no-build
 
       - name: DotNet Publish
         if: github.ref == 'refs/heads/main'
