@@ -38,7 +38,7 @@ namespace DungeonBotGame.Tests
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Rat")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First();
+            var dungeonBot = initialDungeonBotState.DungeonBots[0];
 
             var runAdventureAction = new RunAdventureAction(adventure, ImmutableList.Create(dungeonBot), Guid.NewGuid().ToString());
 
@@ -59,7 +59,7 @@ namespace DungeonBotGame.Tests
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Dragon")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First();
+            var dungeonBot = initialDungeonBotState.DungeonBots[0];
 
             var runAdventureAction = new RunAdventureAction(adventure, ImmutableList.Create(dungeonBot), Guid.NewGuid().ToString());
 
@@ -80,7 +80,7 @@ namespace DungeonBotGame.Tests
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Dragon")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First() with
+            var dungeonBot = initialDungeonBotState.DungeonBots[0] with
             {
                 ActionModuleFiles = ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", @"using System;
 using System.Linq;
@@ -126,7 +126,7 @@ namespace DungeonBotGame.Scripts
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Wolf")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First();
+            var dungeonBot = initialDungeonBotState.DungeonBots[0];
 
             var runAdventureAction = new RunAdventureAction(adventure, ImmutableList.Create(dungeonBot), Guid.NewGuid().ToString());
 
@@ -147,7 +147,7 @@ namespace DungeonBotGame.Scripts
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Wolf")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First() with
+            var dungeonBot = initialDungeonBotState.DungeonBots[0] with
             {
                 ActionModuleFiles = ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", @"using System;
 using System.Linq;
@@ -193,7 +193,7 @@ namespace DungeonBotGame.Scripts
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Wolf")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First() with
+            var dungeonBot = initialDungeonBotState.DungeonBots[0] with
             {
                 ActionModuleFiles = ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", @"using System;
 using System.Linq;
@@ -239,7 +239,7 @@ namespace DungeonBotGame.Scripts
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Troll")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First();
+            var dungeonBot = initialDungeonBotState.DungeonBots[0];
 
             var runAdventureAction = new RunAdventureAction(adventure, ImmutableList.Create(dungeonBot), Guid.NewGuid().ToString());
 
@@ -260,7 +260,7 @@ namespace DungeonBotGame.Scripts
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Troll")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First() with
+            var dungeonBot = initialDungeonBotState.DungeonBots[0] with
             {
                 ActionModuleFiles = ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", @"using System;
 using System.Linq;
@@ -306,7 +306,7 @@ namespace DungeonBotGame.Scripts
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Bat")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First();
+            var dungeonBot = initialDungeonBotState.DungeonBots[0];
 
             var runAdventureAction = new RunAdventureAction(adventure, ImmutableList.Create(dungeonBot), Guid.NewGuid().ToString());
 
@@ -327,7 +327,7 @@ namespace DungeonBotGame.Scripts
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Bat")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First() with
+            var dungeonBot = initialDungeonBotState.DungeonBots[0] with
             {
                 ActionModuleFiles = ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", @"using System;
 using System.Linq;
@@ -373,7 +373,7 @@ namespace DungeonBotGame.Scripts
             var adventureRunner = serviceProvider.GetService<IAdventureRunner>();
 
             var adventure = initialAdventureState.Adventures.First(a => a.Encounters.Any(e => e.Name.Contains("Bat")));
-            var dungeonBot = initialDungeonBotState.DungeonBots.First() with
+            var dungeonBot = initialDungeonBotState.DungeonBots[0] with
             {
                 ActionModuleFiles = ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", @"using System;
 using System.Linq;
