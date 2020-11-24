@@ -53,7 +53,8 @@ namespace DungeonBotGame.Scripts
                     ImmutableList.Create(AbilityType.HeavySwing),
                     null,
                     ImmutableList.Create<ErrorViewModel>())
-            ));
+                ),
+                false);
         }
     }
 }

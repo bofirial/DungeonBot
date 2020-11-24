@@ -48,6 +48,8 @@
         <button type="button" class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
         <button type="button" class="btn btn-primary" @onclick="SaveAsync">Save</button>
     </div>
+
+    <SpinnerModal @ref="Spinner" ModalTitle="Saving DungeonBot"></SpinnerModal>
 }
 
 @inject IDispatcher Dispatcher
@@ -59,16 +61,23 @@
     [Parameter]
     public DungeonBotViewModel? DungeonBot { get; set; }
 
+    [Parameter]
+    public bool IsSaving { get; set; }
+
     public DungeonBotCodeEditor? DungeonBotCodeEditor { get; set; }
+
+    public SpinnerModal? Spinner { get; set; }
 
     private async Task SaveAsync(MouseEventArgs e)
     {
-        if (DungeonBotCodeEditor == null || DungeonBot == null)
+        if (DungeonBotCodeEditor == null || DungeonBot == null || Spinner == null)
         {
             return;
         }
 
         var actionModuleFiles = await DungeonBotCodeEditor.GetValueAsync();
+
+        await Spinner.StartSpinnerAsync();
 
         Dispatcher.Dispatch(new CompileDungeonBotScriptAction(DungeonBot with { ActionModuleFiles = actionModuleFiles }));
     }
@@ -78,6 +87,16 @@
         if (DungeonBotCodeEditor != null && DungeonBot != null)
         {
             await DungeonBotCodeEditor.SetValueAsync(DungeonBot.ActionModuleFiles);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Spinner != null && !IsSaving)
+        {
+            await Spinner.StopSpinnerAsync();
         }
     }
 }

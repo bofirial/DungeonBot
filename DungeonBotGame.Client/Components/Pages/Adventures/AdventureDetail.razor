@@ -30,11 +30,13 @@
     </div>
 
     <button type="button" class="btn btn-primary btn-large px-4 mx-2"
-            @onclick="e => StartAdventure(Adventure)">
+            @onclick="async e => await StartAdventureAsync(Adventure)">
         Start Adventure
     </button>
 
     <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>
+
+    <SpinnerModal @ref="Spinner" ModalTitle="Starting Adventure"></SpinnerModal>
 }
 
 @code {
@@ -46,16 +48,20 @@
 
     public AdventureResultViewModel? AdventureResult { get; set; }
 
+    public SpinnerModal? Spinner { get; set; }
+
     public string CurrentAdventureRunId { get; set; } = string.Empty;
 
-    public void StartAdventure(AdventureViewModel currentAdventure)
+    public async Task StartAdventureAsync(AdventureViewModel currentAdventure)
     {
         CurrentAdventureRunId = Guid.NewGuid().ToString();
 
         var dungeonBot = DungeonBotState?.Value?.DungeonBots?.FirstOrDefault();
 
-        if (dungeonBot != null)
+        if (dungeonBot != null && Spinner != null)
         {
+            await Spinner.StartSpinnerAsync();
+
             Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, ImmutableList.Create(dungeonBot), CurrentAdventureRunId));
         }
     }
@@ -71,12 +77,13 @@
 
         var adventureResult = Adventure.AdventureResults.LastOrDefault(d => d.RunId == CurrentAdventureRunId);
 
-        if (adventureResult != null)
+        if (adventureResult != null && Spinner != null)
         {
             CurrentAdventureRunId = string.Empty;
 
             AdventureResult = adventureResult;
 
+            await Spinner.StopSpinnerAsync();
             await AdventureResultModal.ShowModalAsync();
         }
     }
