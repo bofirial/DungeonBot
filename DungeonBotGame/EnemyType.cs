@@ -6,6 +6,7 @@
         Dragon,
         Wolf,
         Pixie,
-        Troll
+        Troll,
+        Bat
     }
 }

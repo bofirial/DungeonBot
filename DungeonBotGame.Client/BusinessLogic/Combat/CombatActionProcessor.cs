@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using DungeonBotGame.Client.ErrorHandling;
 using DungeonBotGame.Models.Combat;
@@ -7,7 +9,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatActionProcessor
     {
-        ActionResult ProcessAction(IAction action, CharacterBase source, int combatTime, IImmutableList<CharacterBase> characters);
+        IImmutableList<ActionResult> ProcessAction(IAction action, CharacterBase source, int combatTime, IImmutableList<CharacterBase> characters);
     }
 
     public class CombatActionProcessor : ICombatActionProcessor
@@ -19,9 +21,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _combatValueCalculator = combatValueCalculator;
         }
 
-        public ActionResult ProcessAction(IAction action, CharacterBase source, int combatTime, IImmutableList<CharacterBase> characters)
+        public IImmutableList<ActionResult> ProcessAction(IAction action, CharacterBase source, int combatTime, IImmutableList<CharacterBase> characters)
         {
             var actionResult = new ActionResult(combatTime, source, string.Empty, action, ImmutableList.Create<CharacterRecord>(), ImmutableList.Create<CombatEvent>());
+
+            var fallenCharactersBefore = characters.Where(c => c.CurrentHealth <= 0).ToList();
 
             if (action is ITargettedAction targettedAction)
             {
@@ -41,7 +45,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 source.CurrentHealth = 0;
             }
 
-            return actionResult with { Characters = characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList() };
+            var fallenCharactersAfter = characters.Where(c => c.CurrentHealth <= 0);
+            var newlyFallenCharacters = fallenCharactersAfter.Where(c => !fallenCharactersBefore.Contains(c));
+
+            var actionResults = new List<ActionResult>()
+            {
+                actionResult with { Characters = characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList() }
+            };
+
+            actionResults.AddRange(newlyFallenCharacters.Select(c => new ActionResult(combatTime, c, $"{c.Name} has fallen.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList<CombatEvent>.Empty)));
+
+            return actionResults.ToImmutableList();
         }
 
         private ActionResult ProcessTargettedAction(IAction action, CharacterBase source, ActionResult actionResult, ITargettedAction targettedAction)
