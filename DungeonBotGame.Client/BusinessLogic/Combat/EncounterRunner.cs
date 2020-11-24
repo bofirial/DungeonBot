@@ -140,35 +140,31 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         private async Task ProcessCharacterActionCombatEvent(IImmutableList<DungeonBot> dungeonBots, int combatTimer, IImmutableList<Enemy> enemies, List<ActionResult> actionResults, List<CombatEvent> newCombatEvents, CombatEvent combatEvent)
         {
+            if (combatEvent.Character.CurrentHealth <= 0)
+            {
+                return;
+            }
+
             var actionComponent = new ActionComponent(combatEvent.Character);
 
             var sensorComponent = new SensorComponent(
-                dungeonBots.Cast<IDungeonBot>().ToImmutableList(),
-                enemies.Cast<IEnemy>().ToImmutableList(),
+                dungeonBots.Where(d => d.CurrentHealth > 0).Cast<IDungeonBot>().ToImmutableList(),
+                enemies.Where(e => e.CurrentHealth > 0).Cast<IEnemy>().ToImmutableList(),
                 combatTimer,
                 actionResults.Cast<IActionResult>().ToImmutableList());
 
-            IAction action;
-
-            switch (combatEvent.Character)
+            var action = combatEvent.Character switch
             {
-                case DungeonBot dungeonBot:
-                    action = await _actionModuleExecuter.ExecuteActionModule(dungeonBot, actionComponent, sensorComponent);
+                DungeonBot dungeonBot => await _actionModuleExecuter.ExecuteActionModule(dungeonBot, actionComponent, sensorComponent),
+                Enemy enemy => await _actionModuleExecuter.ExecuteEnemyActionModule(enemy, actionComponent, sensorComponent),
+                _ => throw new UnknownCharacterTypeException($"Unknown Character Type: {combatEvent.Character.GetType()}"),
+            };
 
-                    break;
-                case Enemy enemy:
-                    action = await _actionModuleExecuter.ExecuteEnemyActionModule(enemy, actionComponent, sensorComponent);
+            var newActionResults = _combatActionProcessor.ProcessAction(action, combatEvent.Character, combatTimer, CreateCharacterList(dungeonBots, enemies));
 
-                    break;
-                default:
-                    throw new UnknownCharacterTypeException($"Unknown Character Type: {combatEvent.Character.GetType()}");
-            }
+            newCombatEvents.AddRange(newActionResults.SelectMany(a => a.NewCombatEvents));
 
-            var actionResult = _combatActionProcessor.ProcessAction(action, combatEvent.Character, combatTimer, CreateCharacterList(dungeonBots, enemies));
-
-            newCombatEvents.AddRange(actionResult.NewCombatEvents);
-
-            actionResults.Add(actionResult);
+            actionResults.AddRange(newActionResults);
 
             newCombatEvents.Add(combatEvent with { CombatTime = combatTimer + _combatValueCalculator.GetIterationsUntilNextAction(combatEvent.Character) });
         }

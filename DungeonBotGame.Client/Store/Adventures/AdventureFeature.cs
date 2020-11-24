@@ -39,6 +39,14 @@ namespace DungeonBotGame.Client.Store.Adventures
                         new EncounterViewModel("Troll", 2, "The troll is on top of the hill pretending to be a king.", "/images/temp/troll.png", EnemyType.Troll)),
                     "Available",
                     null
+                ),
+
+                new AdventureViewModel("Batty Cave",
+                    "The bats have gone batty.  We suspect rabies.  Clear out their cave.",
+                    ImmutableList.Create(
+                        new EncounterViewModel("Bat Swarm", 1, "The bats are just inside the cave.", "/images/temp/bats.png", EnemyType.Bat)),
+                    "Available",
+                    null
                 )
             ));
         }
