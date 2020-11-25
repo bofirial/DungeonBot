@@ -3,53 +3,92 @@
 @using DungeonBotGame.Client.BusinessLogic
 @using DungeonBotGame.Client.Store.DungeonBots
 @using DungeonBotGame.Models.ViewModels
+@using DungeonBotGame.Client.ErrorHandling
 
 @if (DungeonBot != null)
 {
-    <h3>@DungeonBot.Name</h3>
+    <form>
+        <div class="row justify-content-center m-2">
+            @foreach (var alert in Alerts)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @alert
+                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            <div class="col-12 col-lg-6 col-xl-4">
+                <div class="card m-3">
+                    <img src="@DungeonBot.ProfileImageLocation" class="card-img-top pixel-image" alt="@DungeonBot.Name">
+                    <div class="card-body">
+                        <h3 class="card-title">@DungeonBot.Name</h3>
+                    </div>
+                </div>
+            </div>
 
-    <div class="row justify-content-center m-2">
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card m-3">
-                <img src="@DungeonBot.ProfileImageLocation" class="card-img-top pixel-image" alt="@DungeonBot.Name">
-                <div class="card-body">
-                    <h3 class="card-title">@DungeonBot.Name</h3>
+            <div class="col-12 col-lg-6 col-xl-4">
+                <div class="card m-3">
+                    <div class="card-header">
+                        Level @DungeonBot.Level @GetClassName()
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="dungeonbot-name" class="form-label">Name</label>
+                            <input type="text" class="form-control @(!DungeonBotNameIsValid() ? "is-invalid" : string.Empty)" id="dungeonbot-name" @bind="DungeonBotName" />
+                            <div class="invalid-feedback">
+                                Please choose a dungeonbot name.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item @(AvailableStatPoints <= 0 ? "list-group-item-light" : "list-group-item-primary")">Available Stat Points: <span class="float-right">@AvailableStatPoints</span></div>
+                        @if (AvailableStatPoints <= 0)
+                        {
+                            <div class="list-group-item">Power: <span class="float-right">@Power</span></div>
+                            <div class="list-group-item">Armor: <span class="float-right">@Armor</span></div>
+                            <div class="list-group-item">Speed: <span class="float-right">@Speed</span></div>
+                        }
+                        else
+                        {
+                            <button type="button" class="list-group-item list-group-item-action" @onclick="e => { Power++; AvailableStatPoints--; }">Power: <span class="float-right">@Power</span></button>
+                            <button type="button" class="list-group-item list-group-item-action" @onclick="e => { Armor++; AvailableStatPoints--; }">Armor: <span class="float-right">@Armor</span></button>
+                            <button type="button" class="list-group-item list-group-item-action" @onclick="e => { Speed++; AvailableStatPoints--; }">Speed: <span class="float-right">@Speed</span></button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6 col-xl-4">
+                <div class="card m-3">
+                    <div class="card-header">
+                        Abilities
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var abilityType in DungeonBot.Abilities)
+                        {
+                            var abilityDescription = abilityDescriptionProvider.GetAbilityDescription(abilityType);
+
+                            <li class="list-group-item list-group-item-action" data-toggle="tooltip" title="@abilityDescription.Description">
+                                @abilityDescription.Name
+                                @if (abilityDescription.CooldownCombatTime > 0)
+                                {
+                                    <span class="badge bg-primary float-right">@($"{(abilityDescription.CooldownCombatTime / 100.0).ToString("0.00").PadLeft(5)}s") Cooldown</span>
+                                }
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card m-3">
-                <div class="card-header">
-                    Abilities
-                </div>
-                <ul class="list-group list-group-flush">
-                    @foreach (var abilityType in DungeonBot.Abilities)
-                    {
-                        var abilityDescription = abilityDescriptionProvider.GetAbilityDescription(abilityType);
+        <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Files="@DungeonBot.ActionModuleFiles" DungeonBot="DungeonBot"></DungeonBotCodeEditor>
 
-                        //TODO: Show Description while hovering
-                        <li class="list-group-item">
-                            @abilityDescription.Name
-                            @if (abilityDescription.CooldownCombatTime > 0)
-                            {
-                            <span class="badge bg-primary float-right">@($"{(abilityDescription.CooldownCombatTime / 100.0).ToString("0.00").PadLeft(5)}s") Cooldown</span>
-                            }
-                        </li>
-                    }
-                </ul>
-            </div>
+        <div class="mt-3">
+            <button type="button" class="btn btn-primary" @onclick="SaveAsync">Save</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
         </div>
-    </div>
 
-    <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Files="@DungeonBot.ActionModuleFiles" DungeonBot="DungeonBot"></DungeonBotCodeEditor>
-
-    <div class="mt-3">
-        <button type="button" class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
-        <button type="button" class="btn btn-primary" @onclick="SaveAsync">Save</button>
-    </div>
-
-    <SpinnerModal @ref="Spinner" ModalTitle="Saving DungeonBot"></SpinnerModal>
+        <SpinnerModal @ref="Spinner" ModalTitle="Saving DungeonBot"></SpinnerModal>
+    </form>
 }
 
 @inject IDispatcher Dispatcher
@@ -68,9 +107,17 @@
 
     public SpinnerModal? Spinner { get; set; }
 
+    public List<string> Alerts { get; set; } = new List<string>();
+
+    public string DungeonBotName { get; set; } = string.Empty;
+    public short AvailableStatPoints { get; set; } = -1;
+    public short Power { get; set; } = -1;
+    public short Armor { get; set; } = -1;
+    public short Speed { get; set; } = -1;
+
     private async Task SaveAsync(MouseEventArgs e)
     {
-        if (DungeonBotCodeEditor == null || DungeonBot == null || Spinner == null)
+        if (DungeonBotCodeEditor == null || DungeonBot == null || Spinner == null || string.IsNullOrEmpty(DungeonBotName))
         {
             return;
         }
@@ -79,13 +126,26 @@
 
         await Spinner.StartSpinnerAsync();
 
-        Dispatcher.Dispatch(new CompileDungeonBotScriptAction(DungeonBot with { ActionModuleFiles = actionModuleFiles }));
+        Dispatcher.Dispatch(new CompileDungeonBotScriptAction(DungeonBot with
+        {
+            ActionModuleFiles = actionModuleFiles,
+            Name = DungeonBotName,
+            AvailableStatPoints = AvailableStatPoints,
+            Power = Power,
+            Armor = Armor,
+            Speed = Speed
+        }));
     }
 
     private async Task CancelAsync()
     {
         if (DungeonBotCodeEditor != null && DungeonBot != null)
         {
+            DungeonBotName = DungeonBot.Name;
+            AvailableStatPoints = DungeonBot.AvailableStatPoints;
+            Power = DungeonBot.Power;
+            Armor = DungeonBot.Armor;
+            Speed = DungeonBot.Speed;
             await DungeonBotCodeEditor.SetValueAsync(DungeonBot.ActionModuleFiles);
         }
     }
@@ -94,9 +154,66 @@
     {
         await base.OnParametersSetAsync();
 
-        if (Spinner != null && !IsSaving)
+        if (DungeonBot != null)
         {
-            await Spinner.StopSpinnerAsync();
+            if (string.IsNullOrEmpty(DungeonBotName))
+            {
+                DungeonBotName = DungeonBot.Name;
+            }
+
+            if (Power == -1)
+            {
+                Power = DungeonBot.Power;
+            }
+
+            if (Armor == -1)
+            {
+                Armor = DungeonBot.Armor;
+            }
+
+            if (Speed == -1)
+            {
+                Speed = DungeonBot.Speed;
+            }
+
+            if (AvailableStatPoints == -1)
+            {
+                AvailableStatPoints = DungeonBot.AvailableStatPoints;
+            }
+
+            if (Spinner != null && !IsSaving)
+            {
+                await Spinner.StopSpinnerAsync();
+
+                Alerts.Insert(0, $"{DungeonBot.Name} was saved successfully!");
+            }
+        }
+    }
+
+    public bool DungeonBotNameIsValid()
+    {
+        return !string.IsNullOrEmpty(DungeonBotName);
+    }
+
+    public string GetClassName()
+    {
+        if (DungeonBot == null)
+        {
+            return string.Empty;
+        }
+
+        switch (DungeonBot.DungeonBotClass)
+        {
+            case DungeonBotClass.WarriorBot:
+                return "Warrior Bot";
+            case DungeonBotClass.ArmorBot:
+                return "Armor Bot";
+            case DungeonBotClass.SorcererBot:
+                return "Sorcerer Bot";
+            case DungeonBotClass.MysticRepairBot:
+                return "Mystic Repair Bot";
+            default:
+                throw new UnknownDungeonBotClassException(DungeonBot.DungeonBotClass);
         }
     }
 }

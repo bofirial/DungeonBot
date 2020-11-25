@@ -11,6 +11,7 @@ namespace DungeonBotGame.Models.ViewModels
             string name,
             DungeonBotClass dungeonBotClass,
             short level,
+            short availableStatPoints,
             short power,
             short armor,
             short speed,
@@ -22,8 +23,9 @@ namespace DungeonBotGame.Models.ViewModels
         {
             Id = id;
             Name = name;
-            Class = dungeonBotClass;
+            DungeonBotClass = dungeonBotClass;
             Level = level;
+            AvailableStatPoints = availableStatPoints;
             Power = power;
             Armor = armor;
             Speed = speed;
@@ -40,6 +42,7 @@ namespace DungeonBotGame.Models.ViewModels
             string name,
             DungeonBotClass dungeonBotClass,
             short level,
+            short availableStatPoints,
             short power,
             short armor,
             short speed,
@@ -50,8 +53,9 @@ namespace DungeonBotGame.Models.ViewModels
         {
             Id = id;
             Name = name;
-            Class = dungeonBotClass;
+            DungeonBotClass = dungeonBotClass;
             Level = level;
+            AvailableStatPoints = availableStatPoints;
             Power = power;
             Armor = armor;
             Speed = speed;
@@ -63,8 +67,9 @@ namespace DungeonBotGame.Models.ViewModels
 
         public string Id { get; init; }
         public string Name { get; init; }
-        public DungeonBotClass Class { get; init; }
+        public DungeonBotClass DungeonBotClass { get; init; }
         public short Level { get; init; }
+        public short AvailableStatPoints { get; init; }
         public short Power { get; init; }
         public short Armor { get; init; }
         public short Speed { get; init; }
