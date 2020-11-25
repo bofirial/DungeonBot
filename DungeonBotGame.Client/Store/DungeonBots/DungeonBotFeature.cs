@@ -44,6 +44,7 @@ namespace DungeonBotGame.Scripts
                 new DungeonBotViewModel(
                     Guid.NewGuid().ToString(),
                     "DungeonBot001",
+                    DungeonBotClass.WarriorBot,
                     level: 1,
                     power: 5,
                     armor: 5,

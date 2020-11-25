@@ -9,6 +9,7 @@ namespace DungeonBotGame.Models.ViewModels
         public DungeonBotViewModel(
             string id,
             string name,
+            DungeonBotClass dungeonBotClass,
             short level,
             short power,
             short armor,
@@ -21,6 +22,7 @@ namespace DungeonBotGame.Models.ViewModels
         {
             Id = id;
             Name = name;
+            Class = dungeonBotClass;
             Level = level;
             Power = power;
             Armor = armor;
@@ -36,6 +38,7 @@ namespace DungeonBotGame.Models.ViewModels
         public DungeonBotViewModel(
             string id,
             string name,
+            DungeonBotClass dungeonBotClass,
             short level,
             short power,
             short armor,
@@ -47,6 +50,7 @@ namespace DungeonBotGame.Models.ViewModels
         {
             Id = id;
             Name = name;
+            Class = dungeonBotClass;
             Level = level;
             Power = power;
             Armor = armor;
@@ -59,6 +63,7 @@ namespace DungeonBotGame.Models.ViewModels
 
         public string Id { get; init; }
         public string Name { get; init; }
+        public DungeonBotClass Class { get; init; }
         public short Level { get; init; }
         public short Power { get; init; }
         public short Armor { get; init; }
