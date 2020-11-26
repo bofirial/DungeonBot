@@ -14,7 +14,8 @@ namespace DungeonBotGame.Models.Combat
             short armor,
             short speed,
             IImmutableList<ActionModuleFileViewModel> sourceCodeFiles,
-            IDictionary<AbilityType, AbilityContext> abilities)
+            IDictionary<AbilityType, AbilityContext> abilities,
+            IList<CombatEffect> combatEffects)
         {
             Name = characterName;
             Level = level;
@@ -24,6 +25,7 @@ namespace DungeonBotGame.Models.Combat
             SourceCodeFiles = sourceCodeFiles;
             Id = Guid.NewGuid().ToString();
             Abilities = abilities;
+            CombatEffects = combatEffects;
         }
 
         public string Id { get; }
@@ -33,13 +35,11 @@ namespace DungeonBotGame.Models.Combat
         public short Power { get; }
         public short Armor { get; }
         public short Speed { get; }
-
-        public int MaximumHealth { get; set; }
-
-        public int CurrentHealth { get; set; }
-
         public IImmutableList<ActionModuleFileViewModel> SourceCodeFiles { get; }
 
+        public int MaximumHealth { get; set; }
+        public int CurrentHealth { get; set; }
         public IDictionary<AbilityType, AbilityContext> Abilities { get; }
+        public IList<CombatEffect> CombatEffects { get; }
     }
 }

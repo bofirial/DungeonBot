@@ -1,4 +1,5 @@
-﻿using DungeonBotGame.Client.ErrorHandling;
+﻿using System.Linq;
+using DungeonBotGame.Client.ErrorHandling;
 using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
@@ -19,7 +20,21 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public int GetMaximumHealth(CharacterBase character) => 100 + character.Armor * 5;
 
-        public int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter) => (int)(10 + sourceCharacter.Power * 3.5) - targetCharacter.Armor;
+        public int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter)
+        {
+            var attackValue = (int)(10 + sourceCharacter.Power * 3.5) - targetCharacter.Armor;
+
+            var attackModifierCombatEffects = sourceCharacter.CombatEffects.Where(c => c.CombatEffectType == CombatEffectType.AttackPercentage).ToList();
+
+            foreach (var attackModifierCombatEffect in attackModifierCombatEffects)
+            {
+                attackValue = (int)(attackValue * (attackModifierCombatEffect.Value / 100.0 ));
+
+                sourceCharacter.CombatEffects.Remove(attackModifierCombatEffect);
+            }
+
+            return attackValue;
+        }
 
         public int GetAbilityValue(CharacterBase sourceCharacter, CharacterBase targetCharacter, AbilityType abilityType)
         {
@@ -31,6 +46,20 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             };
         }
 
-        public int GetIterationsUntilNextAction(CharacterBase character) => 300 - 6 * character.Speed;
+        public int GetIterationsUntilNextAction(CharacterBase character)
+        {
+            var iterationsUntilNextAction = 300 - 6 * character.Speed;
+
+            var iterationsUntilNextActionModifierCombatEffects = character.CombatEffects.Where(c => c.CombatEffectType == CombatEffectType.ActionCombatTimePercentage).ToList();
+
+            foreach (var iterationsUntilNextActionModifierCombatEffect in iterationsUntilNextActionModifierCombatEffects)
+            {
+                iterationsUntilNextAction = (int)(iterationsUntilNextAction * (iterationsUntilNextActionModifierCombatEffect.Value / 100.0 ));
+
+                character.CombatEffects.Remove(iterationsUntilNextActionModifierCombatEffect);
+            }
+
+            return iterationsUntilNextAction;
+        }
     }
 }

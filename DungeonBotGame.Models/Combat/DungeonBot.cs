@@ -13,8 +13,9 @@ namespace DungeonBotGame.Models.Combat
             short speed,
             IImmutableList<ActionModuleFileViewModel> sourceCodeFiles,
             ActionModuleContext actionModuleContext,
-            IDictionary<AbilityType, AbilityContext> abilities) :
-            base(dungeonBotName, level, power, armor, speed, sourceCodeFiles, abilities)
+            IDictionary<AbilityType, AbilityContext> abilities,
+            IList<CombatEffect> combatEffects) :
+            base(dungeonBotName, level, power, armor, speed, sourceCodeFiles, abilities, combatEffects)
         {
             ActionModuleContext = actionModuleContext;
         }

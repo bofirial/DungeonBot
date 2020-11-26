@@ -109,6 +109,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
 
             string? displayText;
+            var newCombatEvents = new List<CombatEvent>();
 
             //TODO: Strategy Pattern for AbilityTypes?
             switch (abilityAction.AbilityType)
@@ -125,6 +126,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     target.CurrentHealth -= abilityDamage;
 
                     displayText = $"{source.Name} took a heavy swing at {target.Name} for {abilityDamage} damage.";
+                    break;
+
+                case AbilityType.AnalyzeSituation:
+
+                    source.CombatEffects.Add(new CombatEffect("Situational Knowledge - Attack Damage", CombatEffectType.AttackPercentage, Value: 200, CombatTime: null, CombatTimeInterval: null));
+                    source.CombatEffects.Add(new CombatEffect("Situational Knowledge - Action Time", CombatEffectType.ActionCombatTimePercentage, Value: 50, CombatTime: null, CombatTimeInterval: null));
+
+                    displayText = $"{source.Name} performs combat analysis.";
                     break;
 
                 case AbilityType.LickWounds:
@@ -150,19 +159,16 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     IsAvailable = false
                 };
 
-                return actionResult with
-                {
-                    DisplayText = displayText,
-                    NewCombatEvents = ImmutableList.Create<CombatEvent>(new CombatEvent<AbilityType>(
+                newCombatEvents.Add(new CombatEvent<AbilityType>(
                         actionResult.CombatTime + source.Abilities[abilityAction.AbilityType].CooldownCombatTime,
                         source,
                         CombatEventType.CooldownReset,
-                        abilityAction.AbilityType))
-                };
+                        abilityAction.AbilityType));
             }
 
             return actionResult with {
-                DisplayText = displayText
+                DisplayText = displayText,
+                NewCombatEvents = newCombatEvents.ToImmutableList()
             };
         }
     }

@@ -10,8 +10,9 @@ namespace DungeonBotGame.Models.Combat
             short armor,
             short speed,
             IEnemyActionModule enemyActionModule,
-            IDictionary<AbilityType, AbilityContext> abilities) :
-            base(enemyName, level, power, armor, speed, enemyActionModule.SourceCodeFiles, abilities)
+            IDictionary<AbilityType, AbilityContext> abilities,
+            IList<CombatEffect> combatEffects) :
+            base(enemyName, level, power, armor, speed, enemyActionModule.SourceCodeFiles, abilities, combatEffects)
         {
             EnemyActionModule = enemyActionModule;
         }
