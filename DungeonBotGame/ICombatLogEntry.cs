@@ -1,6 +1,6 @@
 ﻿namespace DungeonBotGame
 {
-    public interface IActionResult
+    public interface ICombatLogEntry
     {
         public int CombatTime { get; }
 

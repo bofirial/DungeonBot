@@ -7,7 +7,7 @@ namespace DungeonBotGame.Models.ViewModels
         string Name,
         int Order,
         bool Success,
-        IImmutableList<ActionResult> ActionResults,
+        IImmutableList<CombatLogEntry> CombatLog,
         string ResultDisplayText,
         IImmutableList<CharacterBase> Characters);
 }

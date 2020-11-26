@@ -11,8 +11,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     public interface IEncounterRunner
     {
         Task<EncounterResultViewModel> RunAdventureEncounterAsync(IImmutableList<DungeonBot> dungeonBots, EncounterViewModel encounter);
-
-        bool EncounterHasCompleted(IEnumerable<CharacterBase> characters, int combatTimer);
     }
 
     public class EncounterRunner : IEncounterRunner
@@ -31,132 +29,142 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _combatValueCalculator = combatValueCalculator;
         }
 
-        public bool EncounterHasCompleted(IEnumerable<CharacterBase> characters, int combatTimer) =>
-            AllDungeonBotsHaveFallen(characters) ||
-            AllEnemiesHaveFallen(characters) ||
-            combatTimer >= MAX_COMBAT_TIME;
+        private static bool EncounterHasCompleted(CombatContext combatContext) =>
+            AllDungeonBotsHaveFallen(combatContext.Characters) ||
+            AllEnemiesHaveFallen(combatContext.Characters) ||
+            combatContext.CombatTimer >= MAX_COMBAT_TIME;
 
         private static bool AllDungeonBotsHaveFallen(IEnumerable<CharacterBase> characters) => characters.All(c => c.CurrentHealth <= 0 || c is Enemy);
         private static bool AllEnemiesHaveFallen(IEnumerable<CharacterBase> characters) => characters.All(c => c.CurrentHealth <= 0 || c is DungeonBot);
 
         public async Task<EncounterResultViewModel> RunAdventureEncounterAsync(IImmutableList<DungeonBot> dungeonBots, EncounterViewModel encounter)
         {
-            var combatTimer = 0;
+            var combatContext = BuildCombatContext(dungeonBots, encounter);
 
-            var enemies = _enemyFactory.CreateEnemies(encounter);
-            var characters = CreateCharacterList(dungeonBots, enemies);
+            InitializeEncounter(combatContext);
 
-            var actionResults = characters.Select(c => new ActionResult(
-                    combatTimer,
+            while (!EncounterHasCompleted(combatContext))
+            {
+                await ProcessNextCombatEvents(combatContext);
+            }
+
+            return BuildEncounterResult(encounter, combatContext);
+        }
+
+        private async Task ProcessNextCombatEvents(CombatContext combatContext)
+        {
+            var processedCombatEvents = new List<CombatEvent>();
+
+            foreach (var combatEvent in combatContext.CombatEvents)
+            {
+                if (combatContext.CombatTimer >= combatEvent.CombatTime)
+                {
+                    switch (combatEvent.CombatEventType)
+                    {
+                        case CombatEventType.CharacterAction:
+                            await ProcessCharacterActionCombatEvent(combatEvent, combatContext);
+
+                            break;
+
+                        case CombatEventType.CooldownReset:
+
+                            if (combatEvent is CombatEvent<AbilityType> abilityCooldownResetEvent)
+                            {
+                                combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] = combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] with { IsAvailable = true };
+                            }
+
+                            break;
+
+                        case CombatEventType.CombatEffect:
+
+                            if (combatEvent is CombatEvent<CombatEffect> combatEffectEvent)
+                            {
+                                switch (combatEffectEvent.EventData.CombatEffectType)
+                                {
+                                    case CombatEffectType.DamageOverTime:
+
+                                        combatEffectEvent.Character.CurrentHealth -= combatEffectEvent.EventData.Value;
+
+                                        if (combatEffectEvent.EventData.CombatTime <= combatContext.CombatTimer)
+                                        {
+                                            combatEffectEvent.Character.CombatEffects.Remove(combatEffectEvent.EventData);
+                                        }
+                                        else if (combatEffectEvent.EventData.CombatTimeInterval != null)
+                                        {
+                                            combatContext.NewCombatEvents.Add(combatEffectEvent with { CombatTime = combatContext.CombatTimer + combatEffectEvent.EventData.CombatTimeInterval.Value });
+                                        }
+
+                                        combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, combatEffectEvent.Character, $"{combatEffectEvent.Character.Name} takes {combatEffectEvent.EventData.Value} damage from {combatEffectEvent.EventData.Name}.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
+
+                                        break;
+                                }
+                            }
+
+                            break;
+                        default:
+                            throw new UnknownCombatEventTypeException(combatEvent.CombatEventType);
+                    }
+
+                    processedCombatEvents.Add(combatEvent);
+
+                    if (EncounterHasCompleted(combatContext))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            foreach (var processedCombatEvent in processedCombatEvents)
+            {
+                combatContext.CombatEvents.Remove(processedCombatEvent);
+            }
+
+            combatContext.CombatEvents.AddRange(combatContext.NewCombatEvents);
+            combatContext.NewCombatEvents.Clear();
+
+            combatContext.CombatTimer = combatContext.CombatEvents.Min(e => e.CombatTime);
+        }
+
+        private void InitializeEncounter(CombatContext combatContext)
+        {
+            foreach (var character in combatContext.Characters)
+            {
+                ResetAbilityAvailability(character);
+                ResetCombatEffects(character, combatContext);
+                AddInitialCombatEvents(character, combatContext);
+            }
+        }
+
+        private CombatContext BuildCombatContext(IImmutableList<DungeonBot> dungeonBots, EncounterViewModel encounter)
+        {
+            var combatContext = new CombatContext()
+            {
+                DungeonBots = dungeonBots,
+                Enemies = _enemyFactory.CreateEnemies(encounter)
+            };
+
+            combatContext.Characters = CreateCharacterList(combatContext.DungeonBots, combatContext.Enemies);
+            combatContext.CombatLog = combatContext.Characters.Select(c => new CombatLogEntry(
+                    combatContext.CombatTimer,
                     c,
                     $"{c.Name} enters combat.",
                     null,
-                    characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(),
-                    ImmutableList.Create<CombatEvent>()))
+                    combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()))
                 .ToList();
 
-            foreach (var character in characters)
-            {
-                ResetAbilityAvailability(character);
-                ResetCombatEffects(character, actionResults, characters);
-            }
+            combatContext.CombatEvents = new List<CombatEvent>();
+            combatContext.NewCombatEvents = new List<CombatEvent>();
+            return combatContext;
+        }
 
-            var combatEvents = characters.Select(c => new CombatEvent(_combatValueCalculator.GetIterationsUntilNextAction(c), c, CombatEventType.CharacterAction)).ToList();
+        private static List<CharacterBase> CreateCharacterList(IImmutableList<DungeonBot> dungeonBots, IImmutableList<Enemy> enemies)
+        {
+            var characterList = new List<CharacterBase>();
 
-            while (!EncounterHasCompleted(characters, combatTimer))
-            {
-                var processedCombatEvents = new List<CombatEvent>();
-                var newCombatEvents = new List<CombatEvent>();
+            characterList.AddRange(dungeonBots);
+            characterList.AddRange(enemies);
 
-                foreach (var combatEvent in combatEvents)
-                {
-                    if (combatTimer >= combatEvent.CombatTime)
-                    {
-                        switch (combatEvent.CombatEventType)
-                        {
-                            case CombatEventType.CharacterAction:
-                                await ProcessCharacterActionCombatEvent(dungeonBots, combatTimer, enemies, actionResults, newCombatEvents, combatEvent);
-
-                                break;
-
-                            case CombatEventType.CooldownReset:
-
-                                if (combatEvent is CombatEvent<AbilityType> abilityCooldownResetEvent)
-                                {
-                                    combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] = combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] with { IsAvailable = true };
-                                }
-
-                                break;
-
-                            case CombatEventType.CombatEffect:
-
-                                if (combatEvent is CombatEvent<CombatEffect> combatEffectEvent)
-                                {
-                                    switch (combatEffectEvent.EventData.CombatEffectType)
-                                    {
-                                        case CombatEffectType.DamageOverTime:
-
-                                            combatEffectEvent.Character.CurrentHealth -= combatEffectEvent.EventData.Value;
-
-                                            if (combatEffectEvent.EventData.CombatTime <= combatTimer)
-                                            {
-                                                combatEffectEvent.Character.CombatEffects.Remove(combatEffectEvent.EventData);
-                                            }
-                                            else if (combatEffectEvent.EventData.CombatTimeInterval != null)
-                                            {
-                                                newCombatEvents.Add(combatEffectEvent with { CombatTime = combatTimer + combatEffectEvent.EventData.CombatTimeInterval.Value });
-                                            }
-
-                                            actionResults.Add(new ActionResult(combatTimer, combatEffectEvent.Character, $"{combatEffectEvent.Character.Name} takes {combatEffectEvent.EventData.Value} damage from {combatEffectEvent.EventData.Name}.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
-
-                                            break;
-                                    }
-                                }
-
-                                break;
-                            default:
-                                throw new UnknownCombatEventTypeException(combatEvent.CombatEventType);
-                        }
-
-                        processedCombatEvents.Add(combatEvent);
-
-                        if (EncounterHasCompleted(characters, combatTimer))
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                foreach (var processedCombatEvent in processedCombatEvents)
-                {
-                    combatEvents.Remove(processedCombatEvent);
-                }
-
-                combatEvents.AddRange(newCombatEvents);
-
-                combatTimer = combatEvents.Min(e => e.CombatTime);
-            }
-
-            var resultDisplayText = string.Empty;
-            var success = false;
-
-            if (AllDungeonBotsHaveFallen(characters))
-            {
-                resultDisplayText = $"{(enemies.Count > 1 ? "The enemies have" : $"{enemies[0].Name} has")} defeated {(dungeonBots.Count > 1 ? "the DungeonBots" : dungeonBots[0].Name)}.";
-                success = false;
-            }
-            else if (AllEnemiesHaveFallen(characters))
-            {
-                resultDisplayText = $"{(dungeonBots.Count > 1 ? "The DungeonBots have" : $"{dungeonBots[0].Name} has")} defeated {(enemies.Count > 1 ? "the enemies" : enemies[0].Name)}.";
-                success = true;
-            }
-            else if (combatTimer >= MAX_COMBAT_TIME)
-            {
-                resultDisplayText = $"{(dungeonBots.Count > 1 ? "The DungeonBots have" : $"{dungeonBots[0].Name} has")} run out of time to defeat {(enemies.Count > 1 ? "the enemies" : enemies[0].Name)}.";
-                success = false;
-            }
-
-            return new EncounterResultViewModel(encounter.Name, encounter.Order, Success: success, actionResults.ToImmutableList(), resultDisplayText, characters);
+            return characterList.ToList();
         }
 
         private static void ResetAbilityAvailability(CharacterBase character)
@@ -167,14 +175,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
         }
 
-        private static void ResetCombatEffects(CharacterBase character, List<ActionResult> actionResults, IImmutableList<CharacterBase> characters)
+        private static void ResetCombatEffects(CharacterBase character, CombatContext combatContext)
         {
             character.CombatEffects.Clear();
 
-            AddCombatEffectsForPassiveAbilities(character, actionResults, characters);
+            AddCombatEffectsForPassiveAbilities(character, combatContext);
         }
 
-        private static void AddCombatEffectsForPassiveAbilities(CharacterBase character, List<ActionResult> actionResults, IImmutableList<CharacterBase> characters)
+        private void AddInitialCombatEvents(CharacterBase character, CombatContext combatContext) =>
+            combatContext.CombatEvents.Add(new CombatEvent(_combatValueCalculator.GetIterationsUntilNextAction(character), character, CombatEventType.CharacterAction));
+
+        private static void AddCombatEffectsForPassiveAbilities(CharacterBase character, CombatContext combatContext)
         {
             foreach (var abilityType in character.Abilities.Keys)
             {
@@ -185,21 +196,21 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                         character.CombatEffects.Add(new CombatEffect("Element of Surprise - Immediate Action", CombatEffectType.ImmediateAction, Value: 1, CombatTime: null, CombatTimeInterval: null));
                         character.CombatEffects.Add(new CombatEffect("Element of Surprise - Stun Target", CombatEffectType.StunTarget, Value: 200, CombatTime: null, CombatTimeInterval: null));
 
-                        actionResults.Add(new ActionResult(0, character, $"{character.Name} has the element of surprise.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
+                        combatContext.CombatLog.Add(new CombatLogEntry(0, character, $"{character.Name} has the element of surprise.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
 
                         break;
 
                     case AbilityType.SalvageStrikes:
                         character.CombatEffects.Add(new CombatEffect("Salvage Strikes", CombatEffectType.SalvageStrikes, Value: 1, CombatTime: null, CombatTimeInterval: null));
 
-                        actionResults.Add(new ActionResult(0, character, $"{character.Name} prepares their salvage strikes.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
+                        combatContext.CombatLog.Add(new CombatLogEntry(0, character, $"{character.Name} prepares salvage strikes.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
 
                         break;
                 }
             }
         }
 
-        private async Task ProcessCharacterActionCombatEvent(IImmutableList<DungeonBot> dungeonBots, int combatTimer, IImmutableList<Enemy> enemies, List<ActionResult> actionResults, List<CombatEvent> newCombatEvents, CombatEvent combatEvent)
+        private async Task ProcessCharacterActionCombatEvent(CombatEvent combatEvent, CombatContext combatContext)
         {
             if (combatEvent.Character.CurrentHealth <= 0)
             {
@@ -215,8 +226,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 {
                     case CombatEffectType.Stunned:
 
-                        actionResults.Add(new ActionResult(combatTimer, combatEvent.Character, $"{combatEvent.Character.Name} is stunned.", null, CreateCharacterList(dungeonBots, enemies).Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
-                        newCombatEvents.Add(combatEvent with { CombatTime = combatTimer + startOfCharacterActionCombatEffect.Value });
+                        combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, combatEvent.Character, $"{combatEvent.Character.Name} is stunned.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
+                        combatContext.NewCombatEvents.Add(combatEvent with { CombatTime = combatContext.CombatTimer + startOfCharacterActionCombatEffect.Value });
 
                         combatEvent.Character.CombatEffects.Remove(startOfCharacterActionCombatEffect);
 
@@ -227,10 +238,10 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             var actionComponent = new ActionComponent(combatEvent.Character);
 
             var sensorComponent = new SensorComponent(
-                dungeonBots.Where(d => d.CurrentHealth > 0).Cast<IDungeonBot>().ToImmutableList(),
-                enemies.Where(e => e.CurrentHealth > 0).Cast<IEnemy>().ToImmutableList(),
-                combatTimer,
-                actionResults.Cast<IActionResult>().ToImmutableList());
+                combatContext.DungeonBots.Where(d => d.CurrentHealth > 0).Cast<IDungeonBot>().ToImmutableList(),
+                combatContext.Enemies.Where(e => e.CurrentHealth > 0).Cast<IEnemy>().ToImmutableList(),
+                combatContext.CombatTimer,
+                combatContext.CombatLog.Cast<ICombatLogEntry>().ToImmutableList());
 
             var action = combatEvent.Character switch
             {
@@ -239,23 +250,33 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 _ => throw new UnknownCharacterTypeException($"Unknown Character Type: {combatEvent.Character.GetType()}"),
             };
 
-            var newActionResults = _combatActionProcessor.ProcessAction(action, combatEvent.Character, combatTimer, CreateCharacterList(dungeonBots, enemies));
+            _combatActionProcessor.ProcessAction(action, combatEvent.Character, combatContext);
 
-            newCombatEvents.AddRange(newActionResults.SelectMany(a => a.NewCombatEvents));
-
-            actionResults.AddRange(newActionResults);
-
-            newCombatEvents.Add(combatEvent with { CombatTime = combatTimer + _combatValueCalculator.GetIterationsUntilNextAction(combatEvent.Character) });
+            combatContext.NewCombatEvents.Add(combatEvent with { CombatTime = combatContext.CombatTimer + _combatValueCalculator.GetIterationsUntilNextAction(combatEvent.Character) });
         }
 
-        private static IImmutableList<CharacterBase> CreateCharacterList(IImmutableList<DungeonBot> dungeonBots, IImmutableList<Enemy> enemies)
+        private static EncounterResultViewModel BuildEncounterResult(EncounterViewModel encounter, CombatContext combatContext)
         {
-            var characterList = new List<CharacterBase>();
+            var resultDisplayText = string.Empty;
+            var success = false;
 
-            characterList.AddRange(dungeonBots);
-            characterList.AddRange(enemies);
+            if (AllDungeonBotsHaveFallen(combatContext.Characters))
+            {
+                resultDisplayText = $"{(combatContext.Enemies.Count > 1 ? "The enemies have" : $"{combatContext.Enemies[0].Name} has")} defeated {(combatContext.DungeonBots.Count > 1 ? "the DungeonBots" : combatContext.DungeonBots[0].Name)}.";
+                success = false;
+            }
+            else if (AllEnemiesHaveFallen(combatContext.Characters))
+            {
+                resultDisplayText = $"{(combatContext.DungeonBots.Count > 1 ? "The DungeonBots have" : $"{combatContext.DungeonBots[0].Name} has")} defeated {(combatContext.Enemies.Count > 1 ? "the enemies" : combatContext.Enemies[0].Name)}.";
+                success = true;
+            }
+            else if (combatContext.CombatTimer >= MAX_COMBAT_TIME)
+            {
+                resultDisplayText = $"{(combatContext.DungeonBots.Count > 1 ? "The DungeonBots have" : $"{combatContext.DungeonBots[0].Name} has")} run out of time to defeat {(combatContext.Enemies.Count > 1 ? "the enemies" : combatContext.Enemies[0].Name)}.";
+                success = false;
+            }
 
-            return characterList.ToImmutableList();
+            return new EncounterResultViewModel(encounter.Name, encounter.Order, Success: success, combatContext.CombatLog.ToImmutableList(), resultDisplayText, CreateCharacterList(combatContext.DungeonBots, combatContext.Enemies).ToImmutableList());
         }
     }
 }

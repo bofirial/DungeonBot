@@ -20,9 +20,9 @@ namespace DungeonBotGame.Client.BusinessLogic
 
             var result = dungeonBot.ActionModuleContext.ActionModuleEntryPointMethodInfo.Invoke(dungeonBot.ActionModuleContext.ActionModuleObject, parameters);
 
-            if (result != null && result is IAction actionResult)
+            if (result != null && result is IAction action)
             {
-                return Task.FromResult(actionResult);
+                return Task.FromResult(action);
             }
 
             throw new System.Exception("Incorrect result returned from DungeonBot Script.");

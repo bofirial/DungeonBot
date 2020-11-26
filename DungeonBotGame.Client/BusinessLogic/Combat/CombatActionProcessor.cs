@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Linq;
 using DungeonBotGame.Client.ErrorHandling;
 using DungeonBotGame.Models.Combat;
@@ -8,7 +7,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatActionProcessor
     {
-        IImmutableList<ActionResult> ProcessAction(IAction action, CharacterBase source, int combatTime, IImmutableList<CharacterBase> characters);
+        void ProcessAction(IAction action, CharacterBase source, CombatContext combatContext);
     }
 
     public class CombatActionProcessor : ICombatActionProcessor
@@ -20,19 +19,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _combatValueCalculator = combatValueCalculator;
         }
 
-        public IImmutableList<ActionResult> ProcessAction(IAction action, CharacterBase source, int combatTime, IImmutableList<CharacterBase> characters)
+        public void ProcessAction(IAction action, CharacterBase source, CombatContext combatContext)
         {
-            var actionResult = new ActionResult(combatTime, source, string.Empty, action, ImmutableList.Create<CharacterRecord>(), ImmutableList.Create<CombatEvent>());
-
-            var fallenCharactersBefore = characters.Where(c => c.CurrentHealth <= 0).ToList();
+            var fallenCharactersBefore = combatContext.Characters.Where(c => c.CurrentHealth <= 0).ToList();
 
             if (action is ITargettedAction targettedAction)
             {
-                actionResult = ProcessTargettedAction(action, source, actionResult, targettedAction);
+                ProcessTargettedAction(targettedAction, source, combatContext);
             }
             else if (action.ActionType == ActionType.Ability && action is IAbilityAction abilityAction)
             {
-                actionResult = ProcessAbilityAction(source, null, actionResult, abilityAction);
+                ProcessAbilityAction(abilityAction, source, null, combatContext);
             }
             else
             {
@@ -44,15 +41,10 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 source.CurrentHealth = 0;
             }
 
-            var fallenCharactersAfter = characters.Where(c => c.CurrentHealth <= 0);
+            var fallenCharactersAfter = combatContext.Characters.Where(c => c.CurrentHealth <= 0);
             var newlyFallenCharacters = fallenCharactersAfter.Where(c => !fallenCharactersBefore.Contains(c));
 
-            var actionResults = new List<ActionResult>()
-            {
-                actionResult with { Characters = characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList() }
-            };
-
-            actionResults.AddRange(newlyFallenCharacters.Select(c => new ActionResult(combatTime, c, $"{c.Name} has fallen.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList<CombatEvent>.Empty)));
+            combatContext.CombatLog.AddRange(newlyFallenCharacters.Select(c => new CombatLogEntry(combatContext.CombatTimer, c, $"{c.Name} has fallen.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList())));
 
             var removeAfterActionEffectTypes = new CombatEffectType[] { CombatEffectType.StunTarget };
             var removeAfterActionEffects = source.CombatEffects.Where(c => removeAfterActionEffectTypes.Contains(c.CombatEffectType)).ToList();
@@ -61,11 +53,9 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             {
                 source.CombatEffects.Remove(removeAfterActionEffect);
             }
-
-            return actionResults.ToImmutableList();
         }
 
-        private ActionResult ProcessTargettedAction(IAction action, CharacterBase source, ActionResult actionResult, ITargettedAction targettedAction)
+        private void ProcessTargettedAction(ITargettedAction targettedAction, CharacterBase source, CombatContext combatContext)
         {
             if (targettedAction.Target is CharacterBase target)
             {
@@ -84,17 +74,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     }
                 }
 
-                if (action.ActionType == ActionType.Attack)
+                if (targettedAction.ActionType == ActionType.Attack)
                 {
-                    return ProcessAttackAction(source, target, actionResult);
+                    ProcessAttackAction(targettedAction, source, target, combatContext);
                 }
-                else if (action.ActionType == ActionType.Ability && action is IAbilityAction abilityAction)
+                else if (targettedAction.ActionType == ActionType.Ability && targettedAction is IAbilityAction abilityAction)
                 {
-                    return ProcessAbilityAction(source, target, actionResult, abilityAction);
+                    ProcessAbilityAction(abilityAction, source, target, combatContext);
                 }
                 else
                 {
-                    throw new UnknownActionTypeException(action.ActionType);
+                    throw new UnknownActionTypeException(targettedAction.ActionType);
                 }
             }
             else
@@ -103,10 +93,9 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
         }
 
-        private ActionResult ProcessAttackAction(CharacterBase source, CharacterBase target, ActionResult actionResult)
+        private void ProcessAttackAction(IAction action, CharacterBase source, CharacterBase target, CombatContext combatContext)
         {
             var attackDamage = _combatValueCalculator.GetAttackValue(source, target);
-            var newCombatEvents = new List<CombatEvent>();
 
             target.CurrentHealth -= attackDamage;
 
@@ -123,20 +112,20 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 switch (salvageStrikesCombatEffect.CombatEffectType)
                 {
                     case CombatEffectType.SalvageStrikes:
-                        var combatEffect = new CombatEffect("Salvage Strikes", CombatEffectType.DamageOverTime, (short)(attackDamage * 0.05), CombatTime: actionResult.CombatTime + 200, CombatTimeInterval: 100);
+                        var combatEffect = new CombatEffect("Salvage Strikes", CombatEffectType.DamageOverTime, (short)(attackDamage * 0.05), CombatTime: combatContext.CombatTimer + 200, CombatTimeInterval: 100);
                         target.CombatEffects.Add(combatEffect);
 
-                        newCombatEvents.Add(new CombatEvent<CombatEffect>(actionResult.CombatTime + 100, target, CombatEventType.CombatEffect, combatEffect));
+                        combatContext.NewCombatEvents.Add(new CombatEvent<CombatEffect>(combatContext.CombatTimer + 100, target, CombatEventType.CombatEffect, combatEffect));
 
                         source.CurrentHealth += (short)(attackDamage * 0.05);
                         break;
                 }
             }
 
-            return actionResult with { DisplayText = $"{source.Name} attacked {target.Name} for {attackDamage} damage.", NewCombatEvents = newCombatEvents.ToImmutableList() };
+            combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, source, $"{source.Name} attacked {target.Name} for {attackDamage} damage.", action, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
         }
 
-        private ActionResult ProcessAbilityAction(CharacterBase source, CharacterBase? target, ActionResult actionResult, IAbilityAction abilityAction)
+        private void ProcessAbilityAction(IAbilityAction abilityAction, CharacterBase source, CharacterBase? target, CombatContext combatContext)
         {
             if (!source.Abilities.ContainsKey(abilityAction.AbilityType))
             {
@@ -151,7 +140,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
 
             string? displayText;
-            var newCombatEvents = new List<CombatEvent>();
 
             //TODO: Strategy Pattern for AbilityTypes?
             switch (abilityAction.AbilityType)
@@ -201,17 +189,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     IsAvailable = false
                 };
 
-                newCombatEvents.Add(new CombatEvent<AbilityType>(
-                        actionResult.CombatTime + source.Abilities[abilityAction.AbilityType].CooldownCombatTime,
+                combatContext.NewCombatEvents.Add(new CombatEvent<AbilityType>(
+                        combatContext.CombatTimer + source.Abilities[abilityAction.AbilityType].CooldownCombatTime,
                         source,
                         CombatEventType.CooldownReset,
                         abilityAction.AbilityType));
             }
 
-            return actionResult with {
-                DisplayText = displayText,
-                NewCombatEvents = newCombatEvents.ToImmutableList()
-            };
+            combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, source, displayText, abilityAction, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
         }
     }
 }

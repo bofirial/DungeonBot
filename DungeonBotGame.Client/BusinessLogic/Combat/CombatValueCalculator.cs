@@ -48,9 +48,9 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public int GetIterationsUntilNextAction(CharacterBase character)
         {
-            var iterationsUntilNextActionCombatEffectTypes = new CombatEffectType[] { CombatEffectType.ActionCombatTimePercentage, CombatEffectType.ImmediateAction };
+            var iterationsUntilNextCharacterAction = 300 - 6 * character.Speed;
 
-            var iterationsUntilNextAction = 300 - 6 * character.Speed;
+            var iterationsUntilNextActionCombatEffectTypes = new CombatEffectType[] { CombatEffectType.ActionCombatTimePercentage, CombatEffectType.ImmediateAction };
 
             var iterationsUntilNextActionModifierCombatEffects = character.CombatEffects.Where(c => iterationsUntilNextActionCombatEffectTypes.Contains(c.CombatEffectType)).ToList();
 
@@ -60,20 +60,20 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 {
                     case CombatEffectType.ActionCombatTimePercentage:
 
-                        iterationsUntilNextAction = (int)(iterationsUntilNextAction * (iterationsUntilNextActionModifierCombatEffect.Value / 100.0));
+                        iterationsUntilNextCharacterAction = (int)(iterationsUntilNextCharacterAction * (iterationsUntilNextActionModifierCombatEffect.Value / 100.0));
 
                         character.CombatEffects.Remove(iterationsUntilNextActionModifierCombatEffect);
                         break;
 
                     case CombatEffectType.ImmediateAction:
-                        iterationsUntilNextAction = 1;
+                        iterationsUntilNextCharacterAction = 1;
 
                         character.CombatEffects.Remove(iterationsUntilNextActionModifierCombatEffect);
                         break;
                 }
             }
 
-            return iterationsUntilNextAction;
+            return iterationsUntilNextCharacterAction;
         }
     }
 }

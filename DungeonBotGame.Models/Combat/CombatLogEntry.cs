@@ -2,11 +2,10 @@
 
 namespace DungeonBotGame.Models.Combat
 {
-    public record ActionResult(
+    public record CombatLogEntry(
         int CombatTime,
         ICharacter Character,
         string DisplayText,
         IAction Action,
-        IImmutableList<CharacterRecord> Characters,
-        IImmutableList<CombatEvent> NewCombatEvents) : IActionResult;
+        IImmutableList<CharacterRecord> Characters) : ICombatLogEntry;
 }
