@@ -106,6 +106,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         private ActionResult ProcessAttackAction(CharacterBase source, CharacterBase target, ActionResult actionResult)
         {
             var attackDamage = _combatValueCalculator.GetAttackValue(source, target);
+            var newCombatEvents = new List<CombatEvent>();
 
             target.CurrentHealth -= attackDamage;
 
@@ -114,7 +115,25 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 target.CurrentHealth = 0;
             }
 
-            return actionResult with { DisplayText = $"{source.Name} attacked {target.Name} for {attackDamage} damage." };
+            var salvageStrikesCombatEffectTypes = new CombatEffectType[] { CombatEffectType.SalvageStrikes };
+            var salvageStrikesCombatEffects = source.CombatEffects.Where(c => salvageStrikesCombatEffectTypes.Contains(c.CombatEffectType)).ToList();
+
+            foreach (var salvageStrikesCombatEffect in salvageStrikesCombatEffects)
+            {
+                switch (salvageStrikesCombatEffect.CombatEffectType)
+                {
+                    case CombatEffectType.SalvageStrikes:
+                        var combatEffect = new CombatEffect("Salvage Strikes", CombatEffectType.DamageOverTime, (short)(attackDamage * 0.05), CombatTime: actionResult.CombatTime + 200, CombatTimeInterval: 100);
+                        target.CombatEffects.Add(combatEffect);
+
+                        newCombatEvents.Add(new CombatEvent<CombatEffect>(actionResult.CombatTime + 100, target, CombatEventType.CombatEffect, combatEffect));
+
+                        source.CurrentHealth += (short)(attackDamage * 0.05);
+                        break;
+                }
+            }
+
+            return actionResult with { DisplayText = $"{source.Name} attacked {target.Name} for {attackDamage} damage.", NewCombatEvents = newCombatEvents.ToImmutableList() };
         }
 
         private ActionResult ProcessAbilityAction(CharacterBase source, CharacterBase? target, ActionResult actionResult, IAbilityAction abilityAction)

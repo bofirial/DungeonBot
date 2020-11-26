@@ -78,11 +78,39 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                                 await ProcessCharacterActionCombatEvent(dungeonBots, combatTimer, enemies, actionResults, newCombatEvents, combatEvent);
 
                                 break;
+
                             case CombatEventType.CooldownReset:
 
                                 if (combatEvent is CombatEvent<AbilityType> abilityCooldownResetEvent)
                                 {
                                     combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] = combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] with { IsAvailable = true };
+                                }
+
+                                break;
+
+                            case CombatEventType.CombatEffect:
+
+                                if (combatEvent is CombatEvent<CombatEffect> combatEffectEvent)
+                                {
+                                    switch (combatEffectEvent.EventData.CombatEffectType)
+                                    {
+                                        case CombatEffectType.DamageOverTime:
+
+                                            combatEffectEvent.Character.CurrentHealth -= combatEffectEvent.EventData.Value;
+
+                                            if (combatEffectEvent.EventData.CombatTime <= combatTimer)
+                                            {
+                                                combatEffectEvent.Character.CombatEffects.Remove(combatEffectEvent.EventData);
+                                            }
+                                            else if (combatEffectEvent.EventData.CombatTimeInterval != null)
+                                            {
+                                                newCombatEvents.Add(combatEffectEvent with { CombatTime = combatTimer + combatEffectEvent.EventData.CombatTimeInterval.Value });
+                                            }
+
+                                            actionResults.Add(new ActionResult(combatTimer, combatEffectEvent.Character, $"{combatEffectEvent.Character.Name} takes {combatEffectEvent.EventData.Value} damage from {combatEffectEvent.EventData.Name}.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
+
+                                            break;
+                                    }
                                 }
 
                                 break;
@@ -158,6 +186,13 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                         character.CombatEffects.Add(new CombatEffect("Element of Surprise - Stun Target", CombatEffectType.StunTarget, Value: 200, CombatTime: null, CombatTimeInterval: null));
 
                         actionResults.Add(new ActionResult(0, character, $"{character.Name} has the element of surprise.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
+
+                        break;
+
+                    case AbilityType.SalvageStrikes:
+                        character.CombatEffects.Add(new CombatEffect("Salvage Strikes", CombatEffectType.SalvageStrikes, Value: 1, CombatTime: null, CombatTimeInterval: null));
+
+                        actionResults.Add(new ActionResult(0, character, $"{character.Name} prepares their salvage strikes.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
 
                         break;
                 }

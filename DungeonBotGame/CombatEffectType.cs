@@ -8,6 +8,10 @@
         ImmediateAction,
 
         StunTarget,
-        Stunned
+        Stunned,
+
+        DamageOverTime,
+
+        SalvageStrikes
     }
 }
