@@ -54,6 +54,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
             actionResults.AddRange(newlyFallenCharacters.Select(c => new ActionResult(combatTime, c, $"{c.Name} has fallen.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList<CombatEvent>.Empty)));
 
+            var removeAfterActionEffectTypes = new CombatEffectType[] { CombatEffectType.StunTarget };
+            var removeAfterActionEffects = source.CombatEffects.Where(c => removeAfterActionEffectTypes.Contains(c.CombatEffectType)).ToList();
+
+            foreach (var removeAfterActionEffect in removeAfterActionEffects)
+            {
+                source.CombatEffects.Remove(removeAfterActionEffect);
+            }
+
             return actionResults.ToImmutableList();
         }
 
@@ -61,6 +69,21 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         {
             if (targettedAction.Target is CharacterBase target)
             {
+                var targetCombatEffectTypes = new CombatEffectType[] { CombatEffectType.StunTarget };
+                var targetCombatEffects = source.CombatEffects.Where(c => targetCombatEffectTypes.Contains(c.CombatEffectType)).ToList();
+
+                foreach (var targetCombatEffect in targetCombatEffects)
+                {
+                    switch (targetCombatEffect.CombatEffectType)
+                    {
+                        case CombatEffectType.StunTarget:
+                            target.CombatEffects.Add(new CombatEffect("Stunned", CombatEffectType.Stunned, targetCombatEffect.Value, CombatTime: null, CombatTimeInterval: null));
+
+                            source.CombatEffects.Remove(targetCombatEffect);
+                            break;
+                    }
+                }
+
                 if (action.ActionType == ActionType.Attack)
                 {
                     return ProcessAttackAction(source, target, actionResult);
@@ -130,8 +153,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                 case AbilityType.AnalyzeSituation:
 
-                    source.CombatEffects.Add(new CombatEffect("Situational Knowledge - Attack Damage", CombatEffectType.AttackPercentage, Value: 200, CombatTime: null, CombatTimeInterval: null));
-                    source.CombatEffects.Add(new CombatEffect("Situational Knowledge - Action Time", CombatEffectType.ActionCombatTimePercentage, Value: 50, CombatTime: null, CombatTimeInterval: null));
+                    source.CombatEffects.Add(new CombatEffect("Situational Analysis - Attack Damage", CombatEffectType.AttackPercentage, Value: 200, CombatTime: null, CombatTimeInterval: null));
+                    source.CombatEffects.Add(new CombatEffect("Situational Analysis - Action Time", CombatEffectType.ActionCombatTimePercentage, Value: 50, CombatTime: null, CombatTimeInterval: null));
 
                     displayText = $"{source.Name} performs combat analysis.";
                     break;

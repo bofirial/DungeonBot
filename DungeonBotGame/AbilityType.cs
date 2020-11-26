@@ -4,6 +4,7 @@
     {
         HeavySwing = 1,
         AnalyzeSituation,
+        SurpriseAttack,
 
         LickWounds
     }

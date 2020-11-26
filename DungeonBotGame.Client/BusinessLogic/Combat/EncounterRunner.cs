@@ -46,13 +46,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             var enemies = _enemyFactory.CreateEnemies(encounter);
             var characters = CreateCharacterList(dungeonBots, enemies);
 
-            foreach (var character in characters)
-            {
-                ResetAbilityAvailability(character);
-            }
-
-            var combatEvents = characters.Select(c => new CombatEvent(_combatValueCalculator.GetIterationsUntilNextAction(c), c, CombatEventType.CharacterAction)).ToList();
-
             var actionResults = characters.Select(c => new ActionResult(
                     combatTimer,
                     c,
@@ -61,6 +54,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(),
                     ImmutableList.Create<CombatEvent>()))
                 .ToList();
+
+            foreach (var character in characters)
+            {
+                ResetAbilityAvailability(character);
+                ResetCombatEffects(character, actionResults, characters);
+            }
+
+            var combatEvents = characters.Select(c => new CombatEvent(_combatValueCalculator.GetIterationsUntilNextAction(c), c, CombatEventType.CharacterAction)).ToList();
 
             while (!EncounterHasCompleted(characters, combatTimer))
             {
@@ -138,11 +139,54 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
         }
 
+        private static void ResetCombatEffects(CharacterBase character, List<ActionResult> actionResults, IImmutableList<CharacterBase> characters)
+        {
+            character.CombatEffects.Clear();
+
+            AddCombatEffectsForPassiveAbilities(character, actionResults, characters);
+        }
+
+        private static void AddCombatEffectsForPassiveAbilities(CharacterBase character, List<ActionResult> actionResults, IImmutableList<CharacterBase> characters)
+        {
+            foreach (var abilityType in character.Abilities.Keys)
+            {
+                switch (abilityType)
+                {
+                    case AbilityType.SurpriseAttack:
+                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Attack Damage", CombatEffectType.AttackPercentage, Value: 200, CombatTime: null, CombatTimeInterval: null));
+                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Immediate Action", CombatEffectType.ImmediateAction, Value: 1, CombatTime: null, CombatTimeInterval: null));
+                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Stun Target", CombatEffectType.StunTarget, Value: 200, CombatTime: null, CombatTimeInterval: null));
+
+                        actionResults.Add(new ActionResult(0, character, $"{character.Name} has the element of surprise.", null, characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
+
+                        break;
+                }
+            }
+        }
+
         private async Task ProcessCharacterActionCombatEvent(IImmutableList<DungeonBot> dungeonBots, int combatTimer, IImmutableList<Enemy> enemies, List<ActionResult> actionResults, List<CombatEvent> newCombatEvents, CombatEvent combatEvent)
         {
             if (combatEvent.Character.CurrentHealth <= 0)
             {
                 return;
+            }
+
+            var startOfCharacterActionCombatEffectTypes = new CombatEffectType[] { CombatEffectType.Stunned };
+            var startOfCharacterActionCombatEffects = combatEvent.Character.CombatEffects.Where(c => startOfCharacterActionCombatEffectTypes.Contains(c.CombatEffectType)).ToList();
+
+            foreach (var startOfCharacterActionCombatEffect in startOfCharacterActionCombatEffects)
+            {
+                switch (startOfCharacterActionCombatEffect.CombatEffectType)
+                {
+                    case CombatEffectType.Stunned:
+
+                        actionResults.Add(new ActionResult(combatTimer, combatEvent.Character, $"{combatEvent.Character.Name} is stunned.", null, CreateCharacterList(dungeonBots, enemies).Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList(), ImmutableList.Create<CombatEvent>()));
+                        newCombatEvents.Add(combatEvent with { CombatTime = combatTimer + startOfCharacterActionCombatEffect.Value });
+
+                        combatEvent.Character.CombatEffects.Remove(startOfCharacterActionCombatEffect);
+
+                        return;
+                }
             }
 
             var actionComponent = new ActionComponent(combatEvent.Character);
