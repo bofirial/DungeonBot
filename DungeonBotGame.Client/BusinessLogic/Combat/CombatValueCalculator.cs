@@ -10,8 +10,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter);
 
-        int GetAbilityValue(CharacterBase sourceCharacter, CharacterBase targetCharacter, AbilityType abilityType);
-
         int GetIterationsUntilNextAction(CharacterBase character);
     }
 
@@ -33,16 +31,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
 
             return attackValue;
-        }
-
-        public int GetAbilityValue(CharacterBase sourceCharacter, CharacterBase targetCharacter, AbilityType abilityType)
-        {
-            return abilityType switch
-            {
-                AbilityType.HeavySwing => GetAttackValue(sourceCharacter, targetCharacter) * 3,
-                AbilityType.LickWounds => targetCharacter.MaximumHealth,
-                _ => throw new UnknownAbilityTypeException(abilityType)
-            };
         }
 
         public int GetIterationsUntilNextAction(CharacterBase character)

@@ -46,7 +46,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                         {
                             if (targettedAbilityAction.Target is CharacterBase target)
                             {
-                                var abilityDamage = _combatValueCalculator.GetAbilityValue(character, target, abilityAction.AbilityType); ;
+                                var abilityDamage = _combatValueCalculator.GetAttackValue(character, target) * 3;
 
                                 target.CurrentHealth -= abilityDamage;
 
