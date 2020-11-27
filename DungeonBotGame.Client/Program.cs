@@ -51,6 +51,9 @@ namespace DungeonBotGame.Client
 
             services.AddScoped<ICombatLogEntryBuilder, CombatLogEntryBuilder>();
 
+            services.AddScoped<IActionProcessor, AttackActionProcessor>();
+            services.AddScoped<IActionProcessor, AbilityActionProcessor>();
+
             services.AddLogging(builder => builder
                 .AddBrowserConsole()
                 .SetMinimumLevel(LogLevel.Information));

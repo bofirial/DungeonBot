@@ -17,7 +17,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
     public class CombatValueCalculator : ICombatValueCalculator
     {
-
         public int GetMaximumHealth(CharacterBase character) => 100 + character.Armor * 5;
 
         public int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter)
