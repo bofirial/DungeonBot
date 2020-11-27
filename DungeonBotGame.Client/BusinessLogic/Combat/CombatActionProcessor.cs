@@ -8,7 +8,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatActionProcessor
     {
-        void ProcessAction(IAction action, CharacterBase source, CombatContext combatContext);
+        void ProcessAction(IAction action, CharacterBase character, CombatContext combatContext);
     }
 
     public class CombatActionProcessor : ICombatActionProcessor
@@ -24,22 +24,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _actionProcessors = actionProcessors.ToDictionary(a => a.ActionType, a => a);
         }
 
-        public void ProcessAction(IAction action, CharacterBase source, CombatContext combatContext)
+        public void ProcessAction(IAction action, CharacterBase character, CombatContext combatContext)
         {
             var fallenCharactersBefore = combatContext.Characters.Where(c => c.CurrentHealth <= 0).ToList();
 
             if (_actionProcessors.ContainsKey(action.ActionType))
             {
-                _actionProcessors[action.ActionType].ProcessAction(action, source, combatContext);
+                _actionProcessors[action.ActionType].ProcessAction(action, character, combatContext);
             }
             else
             {
                 throw new UnknownActionTypeException(action.ActionType);
-            }
-
-            if (source.CurrentHealth < 0)
-            {
-                source.CurrentHealth = 0;
             }
 
             var fallenCharactersAfter = combatContext.Characters.Where(c => c.CurrentHealth <= 0);
@@ -48,11 +43,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             combatContext.CombatLog.AddRange(newlyFallenCharacters.Select(c => _combatLogEntryBuilder.CreateCombatLogEntry($"{c.Name} has fallen.", c, combatContext)));
 
             var removeAfterActionEffectTypes = new CombatEffectType[] { CombatEffectType.StunTarget };
-            var removeAfterActionEffects = source.CombatEffects.Where(c => removeAfterActionEffectTypes.Contains(c.CombatEffectType)).ToList();
+            var removeAfterActionEffects = character.CombatEffects.Where(c => removeAfterActionEffectTypes.Contains(c.CombatEffectType)).ToList();
 
             foreach (var removeAfterActionEffect in removeAfterActionEffects)
             {
-                source.CombatEffects.Remove(removeAfterActionEffect);
+                character.CombatEffects.Remove(removeAfterActionEffect);
             }
         }
     }

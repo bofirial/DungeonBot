@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using DungeonBotGame.Client.ErrorHandling;
+﻿using System;
+using System.Linq;
 using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
@@ -11,6 +11,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter);
 
         int GetIterationsUntilNextAction(CharacterBase character);
+
+        void ClampCharacterHealth(CharacterBase character);
     }
 
     public class CombatValueCalculator : ICombatValueCalculator
@@ -62,5 +64,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
             return iterationsUntilNextCharacterAction;
         }
+
+        public void ClampCharacterHealth(CharacterBase character) =>
+            character.CurrentHealth = Math.Clamp(character.CurrentHealth, 0, character.MaximumHealth);
     }
 }

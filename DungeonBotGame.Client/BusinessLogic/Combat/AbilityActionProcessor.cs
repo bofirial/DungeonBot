@@ -50,10 +50,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                                 target.CurrentHealth -= abilityDamage;
 
-                                if (target.CurrentHealth < 0)
-                                {
-                                    target.CurrentHealth = 0;
-                                }
+                                _combatValueCalculator.ClampCharacterHealth(target);
 
                                 combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry<IAction>($"{character.Name} took a heavy swing at {target.Name} for {abilityDamage} damage.", character, combatContext, abilityAction));
                             }
@@ -80,6 +77,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     case AbilityType.LickWounds:
 
                         character.CurrentHealth = character.MaximumHealth;
+
+                        _combatValueCalculator.ClampCharacterHealth(character);
 
                         combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry<IAction>($"{character.Name} licked it's wounds because a DungeonBot used an ability last turn.", character, combatContext, abilityAction));
                         break;

@@ -25,10 +25,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                 target.CurrentHealth -= attackDamage;
 
-                if (target.CurrentHealth < 0)
-                {
-                    target.CurrentHealth = 0;
-                }
+                _combatValueCalculator.ClampCharacterHealth(target);
 
                 var salvageStrikesCombatEffectTypes = new CombatEffectType[] { CombatEffectType.SalvageStrikes };
                 var salvageStrikesCombatEffects = character.CombatEffects.Where(c => salvageStrikesCombatEffectTypes.Contains(c.CombatEffectType)).ToList();
@@ -44,6 +41,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                             combatContext.NewCombatEvents.Add(new CombatEvent<CombatEffect>(combatContext.CombatTimer + 100, target, CombatEventType.CombatEffect, combatEffect));
 
                             character.CurrentHealth += (short)(attackDamage * 0.05);
+
+                            _combatValueCalculator.ClampCharacterHealth(character);
                             break;
                     }
                 }
