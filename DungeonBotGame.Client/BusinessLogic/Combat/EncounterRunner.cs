@@ -16,17 +16,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     public class EncounterRunner : IEncounterRunner
     {
         private const int MAX_COMBAT_TIME = 6000;
-        private readonly IEnemyFactory _enemyFactory;
-        private readonly IActionModuleExecuter _actionModuleExecuter;
-        private readonly ICombatActionProcessor _combatActionProcessor;
-        private readonly ICombatValueCalculator _combatValueCalculator;
 
-        public EncounterRunner(IEnemyFactory enemyFactory, IActionModuleExecuter actionModuleExecuter, ICombatActionProcessor combatActionProcessor, ICombatValueCalculator combatValueCalculator)
+        private readonly IEnemyFactory _enemyFactory;
+        private readonly ICombatValueCalculator _combatValueCalculator;
+        private readonly IDictionary<CombatEventType, ICombatEventProcessor> _combatEventProcessors;
+
+        public EncounterRunner(IEnemyFactory enemyFactory, ICombatValueCalculator combatValueCalculator, IEnumerable<ICombatEventProcessor> combatEventProcessors)
         {
             _enemyFactory = enemyFactory;
-            _actionModuleExecuter = actionModuleExecuter;
-            _combatActionProcessor = combatActionProcessor;
             _combatValueCalculator = combatValueCalculator;
+
+            _combatEventProcessors = combatEventProcessors.ToDictionary(c => c.CombatEventType, c => c);
         }
 
         private static bool EncounterHasCompleted(CombatContext combatContext) =>
@@ -35,6 +35,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             combatContext.CombatTimer >= MAX_COMBAT_TIME;
 
         private static bool AllDungeonBotsHaveFallen(IEnumerable<CharacterBase> characters) => characters.All(c => c.CurrentHealth <= 0 || c is Enemy);
+
         private static bool AllEnemiesHaveFallen(IEnumerable<CharacterBase> characters) => characters.All(c => c.CurrentHealth <= 0 || c is DungeonBot);
 
         public async Task<EncounterResultViewModel> RunAdventureEncounterAsync(IImmutableList<DungeonBot> dungeonBots, EncounterViewModel encounter)
@@ -59,50 +60,13 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             {
                 if (combatContext.CombatTimer >= combatEvent.CombatTime)
                 {
-                    switch (combatEvent.CombatEventType)
+                    if (_combatEventProcessors.ContainsKey(combatEvent.CombatEventType))
                     {
-                        case CombatEventType.CharacterAction:
-                            await ProcessCharacterActionCombatEvent(combatEvent, combatContext);
-
-                            break;
-
-                        case CombatEventType.CooldownReset:
-
-                            if (combatEvent is CombatEvent<AbilityType> abilityCooldownResetEvent)
-                            {
-                                combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] = combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] with { IsAvailable = true };
-                            }
-
-                            break;
-
-                        case CombatEventType.CombatEffect:
-
-                            if (combatEvent is CombatEvent<CombatEffect> combatEffectEvent)
-                            {
-                                switch (combatEffectEvent.EventData.CombatEffectType)
-                                {
-                                    case CombatEffectType.DamageOverTime:
-
-                                        combatEffectEvent.Character.CurrentHealth -= combatEffectEvent.EventData.Value;
-
-                                        if (combatEffectEvent.EventData.CombatTime <= combatContext.CombatTimer)
-                                        {
-                                            combatEffectEvent.Character.CombatEffects.Remove(combatEffectEvent.EventData);
-                                        }
-                                        else if (combatEffectEvent.EventData.CombatTimeInterval != null)
-                                        {
-                                            combatContext.NewCombatEvents.Add(combatEffectEvent with { CombatTime = combatContext.CombatTimer + combatEffectEvent.EventData.CombatTimeInterval.Value });
-                                        }
-
-                                        combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, combatEffectEvent.Character, $"{combatEffectEvent.Character.Name} takes {combatEffectEvent.EventData.Value} damage from {combatEffectEvent.EventData.Name}.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
-
-                                        break;
-                                }
-                            }
-
-                            break;
-                        default:
-                            throw new UnknownCombatEventTypeException(combatEvent.CombatEventType);
+                        await _combatEventProcessors[combatEvent.CombatEventType].ProcessCombatEvent(combatEvent, combatContext);
+                    }
+                    else
+                    {
+                        throw new UnknownCombatEventTypeException(combatEvent.CombatEventType);
                     }
 
                     processedCombatEvents.Add(combatEvent);
@@ -208,51 +172,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                         break;
                 }
             }
-        }
-
-        private async Task ProcessCharacterActionCombatEvent(CombatEvent combatEvent, CombatContext combatContext)
-        {
-            if (combatEvent.Character.CurrentHealth <= 0)
-            {
-                return;
-            }
-
-            var startOfCharacterActionCombatEffectTypes = new CombatEffectType[] { CombatEffectType.Stunned };
-            var startOfCharacterActionCombatEffects = combatEvent.Character.CombatEffects.Where(c => startOfCharacterActionCombatEffectTypes.Contains(c.CombatEffectType)).ToList();
-
-            foreach (var startOfCharacterActionCombatEffect in startOfCharacterActionCombatEffects)
-            {
-                switch (startOfCharacterActionCombatEffect.CombatEffectType)
-                {
-                    case CombatEffectType.Stunned:
-
-                        combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, combatEvent.Character, $"{combatEvent.Character.Name} is stunned.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
-                        combatContext.NewCombatEvents.Add(combatEvent with { CombatTime = combatContext.CombatTimer + startOfCharacterActionCombatEffect.Value });
-
-                        combatEvent.Character.CombatEffects.Remove(startOfCharacterActionCombatEffect);
-
-                        return;
-                }
-            }
-
-            var actionComponent = new ActionComponent(combatEvent.Character);
-
-            var sensorComponent = new SensorComponent(
-                combatContext.DungeonBots.Where(d => d.CurrentHealth > 0).Cast<IDungeonBot>().ToImmutableList(),
-                combatContext.Enemies.Where(e => e.CurrentHealth > 0).Cast<IEnemy>().ToImmutableList(),
-                combatContext.CombatTimer,
-                combatContext.CombatLog.Cast<ICombatLogEntry>().ToImmutableList());
-
-            var action = combatEvent.Character switch
-            {
-                DungeonBot dungeonBot => await _actionModuleExecuter.ExecuteActionModule(dungeonBot, actionComponent, sensorComponent),
-                Enemy enemy => await _actionModuleExecuter.ExecuteEnemyActionModule(enemy, actionComponent, sensorComponent),
-                _ => throw new UnknownCharacterTypeException($"Unknown Character Type: {combatEvent.Character.GetType()}"),
-            };
-
-            _combatActionProcessor.ProcessAction(action, combatEvent.Character, combatContext);
-
-            combatContext.NewCombatEvents.Add(combatEvent with { CombatTime = combatContext.CombatTimer + _combatValueCalculator.GetIterationsUntilNextAction(combatEvent.Character) });
         }
 
         private static EncounterResultViewModel BuildEncounterResult(EncounterViewModel encounter, CombatContext combatContext)

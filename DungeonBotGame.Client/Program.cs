@@ -45,6 +45,10 @@ namespace DungeonBotGame.Client
             services.AddScoped<IEnemyFactory, EnemyFactory>();
             services.AddScoped<IAbilityContextDictionaryBuilder, AbilityContextDictionaryBuilder>();
 
+            services.AddScoped<ICombatEventProcessor, CharacterActionCombatEventProcessor>();
+            services.AddScoped<ICombatEventProcessor, CooldownResetCombatEventProcessor>();
+            services.AddScoped<ICombatEventProcessor, CombatEffectCombatEventProcessor>();
+
             services.AddLogging(builder => builder
                 .AddBrowserConsole()
                 .SetMinimumLevel(LogLevel.Information));
