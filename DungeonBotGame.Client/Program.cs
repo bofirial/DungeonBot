@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Blazor.Extensions.Logging;
 using DungeonBotGame.Client.BusinessLogic;
 using DungeonBotGame.Client.BusinessLogic.Combat;
+using DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors;
 using DungeonBotGame.Client.BusinessLogic.Compilation;
 using DungeonBotGame.Client.Store;
 using Fluxor;
@@ -53,6 +54,11 @@ namespace DungeonBotGame.Client
 
             services.AddScoped<IActionProcessor, AttackActionProcessor>();
             services.AddScoped<IActionProcessor, AbilityActionProcessor>();
+
+            services.AddScoped<IAbilityProcessor, HeavySwingAbilityProcessor>();
+            services.AddScoped<IAbilityProcessor, AnalyzeSituationAbilityProcessor>();
+
+            services.AddScoped<IAbilityProcessor, LickWoundsAbilityProcessor>();
 
             services.AddLogging(builder => builder
                 .AddBrowserConsole()

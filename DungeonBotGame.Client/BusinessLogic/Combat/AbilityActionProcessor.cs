@@ -1,17 +1,17 @@
-﻿using DungeonBotGame.Client.ErrorHandling;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DungeonBotGame.Client.ErrorHandling;
 using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public class AbilityActionProcessor : IActionProcessor
     {
-        private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
-        private readonly ICombatValueCalculator _combatValueCalculator;
+        private readonly IDictionary<AbilityType, IAbilityProcessor> _abilityProcessors;
 
-        public AbilityActionProcessor(ICombatLogEntryBuilder combatLogEntryBuilder, ICombatValueCalculator combatValueCalculator)
+        public AbilityActionProcessor(IEnumerable<IAbilityProcessor> abilityProcessors)
         {
-            _combatLogEntryBuilder = combatLogEntryBuilder;
-            _combatValueCalculator = combatValueCalculator;
+            _abilityProcessors = abilityProcessors.ToDictionary(a => a.AbilityType, a => a);
         }
 
         public ActionType ActionType => ActionType.Ability;
@@ -32,75 +32,34 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     throw new AbilityNotAvailableException($"{character.Name} can not use {abilityAction.AbilityType} because it is not ready yet.");
                 }
 
-                if (abilityContext.CooldownCombatTime > 0)
+                SetAbilityCooldown(abilityAction.AbilityType, character, combatContext, abilityContext);
+
+                if (_abilityProcessors.ContainsKey(abilityAction.AbilityType))
                 {
-                    SetAbilityCooldown(abilityAction.AbilityType, character, combatContext, abilityContext);
+                    _abilityProcessors[abilityAction.AbilityType].ProcessAction(abilityAction, character, combatContext);
                 }
-
-                //TODO: Strategy Pattern for AbilityTypes?
-                switch (abilityAction.AbilityType)
+                else
                 {
-                    case AbilityType.HeavySwing:
-
-                        if (abilityAction is ITargettedAbilityAction targettedAbilityAction)
-                        {
-                            if (targettedAbilityAction.Target is CharacterBase target)
-                            {
-                                var abilityDamage = _combatValueCalculator.GetAttackValue(character, target) * 3;
-
-                                target.CurrentHealth -= abilityDamage;
-
-                                _combatValueCalculator.ClampCharacterHealth(target);
-
-                                combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry<IAction>($"{character.Name} took a heavy swing at {target.Name} for {abilityDamage} damage.", character, combatContext, abilityAction));
-                            }
-                            else
-                            {
-                                throw new InvalidTargetException(targettedAbilityAction.Target);
-                            }
-                        }
-                        else
-                        {
-                            throw new InvalidTargetException((ITarget?)null);
-                        }
-
-                        break;
-
-                    case AbilityType.AnalyzeSituation:
-
-                        character.CombatEffects.Add(new CombatEffect("Situational Analysis - Attack Damage", CombatEffectType.AttackPercentage, Value: 200, CombatTime: null, CombatTimeInterval: null));
-                        character.CombatEffects.Add(new CombatEffect("Situational Analysis - Action Time", CombatEffectType.ActionCombatTimePercentage, Value: 50, CombatTime: null, CombatTimeInterval: null));
-
-                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry<IAction>($"{character.Name} performs combat analysis.", character, combatContext, abilityAction));
-                        break;
-
-                    case AbilityType.LickWounds:
-
-                        character.CurrentHealth = character.MaximumHealth;
-
-                        _combatValueCalculator.ClampCharacterHealth(character);
-
-                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry<IAction>($"{character.Name} licked it's wounds because a DungeonBot used an ability last turn.", character, combatContext, abilityAction));
-                        break;
-
-                    default:
-                        throw new UnknownAbilityTypeException(abilityAction.AbilityType);
+                    throw new UnknownAbilityTypeException(abilityAction.AbilityType);
                 }
             }
         }
 
         private static void SetAbilityCooldown(AbilityType abilityType, CharacterBase source, CombatContext combatContext, AbilityContext abilityContext)
         {
-            source.Abilities[abilityType] = abilityContext with
+            if (abilityContext.CooldownCombatTime > 0)
             {
-                IsAvailable = false
-            };
+                source.Abilities[abilityType] = abilityContext with
+                {
+                    IsAvailable = false
+                };
 
-            combatContext.NewCombatEvents.Add(new CombatEvent<AbilityType>(
-                    combatContext.CombatTimer + source.Abilities[abilityType].CooldownCombatTime,
-                    source,
-                    CombatEventType.CooldownReset,
-                    abilityType));
+                combatContext.NewCombatEvents.Add(new CombatEvent<AbilityType>(
+                        combatContext.CombatTimer + source.Abilities[abilityType].CooldownCombatTime,
+                        source,
+                        CombatEventType.CooldownReset,
+                        abilityType));
+            }
         }
     }
 }
