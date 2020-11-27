@@ -11,12 +11,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         private readonly IActionModuleExecuter _actionModuleExecuter;
         private readonly ICombatActionProcessor _combatActionProcessor;
         private readonly ICombatValueCalculator _combatValueCalculator;
+        private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
 
-        public CharacterActionCombatEventProcessor(IActionModuleExecuter actionModuleExecuter, ICombatActionProcessor combatActionProcessor, ICombatValueCalculator combatValueCalculator)
+        public CharacterActionCombatEventProcessor(IActionModuleExecuter actionModuleExecuter, ICombatActionProcessor combatActionProcessor, ICombatValueCalculator combatValueCalculator, ICombatLogEntryBuilder combatLogEntryBuilder)
         {
             _actionModuleExecuter = actionModuleExecuter;
             _combatActionProcessor = combatActionProcessor;
             _combatValueCalculator = combatValueCalculator;
+            _combatLogEntryBuilder = combatLogEntryBuilder;
         }
 
         public CombatEventType CombatEventType => CombatEventType.CharacterAction;
@@ -37,7 +39,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 {
                     case CombatEffectType.Stunned:
 
-                        combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, combatEvent.Character, $"{combatEvent.Character.Name} is stunned.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
+                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{combatEvent.Character.Name} is stunned.", combatEvent.Character, combatContext));
                         combatContext.NewCombatEvents.Add(combatEvent with { CombatTime = combatContext.CombatTimer + startOfCharacterActionCombatEffect.Value });
 
                         combatEvent.Character.CombatEffects.Remove(startOfCharacterActionCombatEffect);

@@ -19,12 +19,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         private readonly IEnemyFactory _enemyFactory;
         private readonly ICombatValueCalculator _combatValueCalculator;
+        private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
         private readonly IDictionary<CombatEventType, ICombatEventProcessor> _combatEventProcessors;
 
-        public EncounterRunner(IEnemyFactory enemyFactory, ICombatValueCalculator combatValueCalculator, IEnumerable<ICombatEventProcessor> combatEventProcessors)
+        public EncounterRunner(IEnemyFactory enemyFactory, ICombatValueCalculator combatValueCalculator, ICombatLogEntryBuilder combatLogEntryBuilder, IEnumerable<ICombatEventProcessor> combatEventProcessors)
         {
             _enemyFactory = enemyFactory;
             _combatValueCalculator = combatValueCalculator;
+            _combatLogEntryBuilder = combatLogEntryBuilder;
 
             _combatEventProcessors = combatEventProcessors.ToDictionary(c => c.CombatEventType, c => c);
         }
@@ -108,12 +110,10 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             };
 
             combatContext.Characters = CreateCharacterList(combatContext.DungeonBots, combatContext.Enemies);
-            combatContext.CombatLog = combatContext.Characters.Select(c => new CombatLogEntry(
-                    combatContext.CombatTimer,
-                    c,
+            combatContext.CombatLog = combatContext.Characters.Select(c => _combatLogEntryBuilder.CreateCombatLogEntry(
                     $"{c.Name} enters combat.",
-                    null,
-                    combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()))
+                    c,
+                    combatContext))
                 .ToList();
 
             combatContext.CombatEvents = new List<CombatEvent>();
@@ -139,7 +139,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
         }
 
-        private static void ResetCombatEffects(CharacterBase character, CombatContext combatContext)
+        private void ResetCombatEffects(CharacterBase character, CombatContext combatContext)
         {
             character.CombatEffects.Clear();
 
@@ -149,7 +149,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         private void AddInitialCombatEvents(CharacterBase character, CombatContext combatContext) =>
             combatContext.CombatEvents.Add(new CombatEvent(_combatValueCalculator.GetIterationsUntilNextAction(character), character, CombatEventType.CharacterAction));
 
-        private static void AddCombatEffectsForPassiveAbilities(CharacterBase character, CombatContext combatContext)
+        private void AddCombatEffectsForPassiveAbilities(CharacterBase character, CombatContext combatContext)
         {
             foreach (var abilityType in character.Abilities.Keys)
             {
@@ -160,14 +160,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                         character.CombatEffects.Add(new CombatEffect("Element of Surprise - Immediate Action", CombatEffectType.ImmediateAction, Value: 1, CombatTime: null, CombatTimeInterval: null));
                         character.CombatEffects.Add(new CombatEffect("Element of Surprise - Stun Target", CombatEffectType.StunTarget, Value: 200, CombatTime: null, CombatTimeInterval: null));
 
-                        combatContext.CombatLog.Add(new CombatLogEntry(0, character, $"{character.Name} has the element of surprise.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
+                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} has the element of surprise.", character, combatContext));
 
                         break;
 
                     case AbilityType.SalvageStrikes:
                         character.CombatEffects.Add(new CombatEffect("Salvage Strikes", CombatEffectType.SalvageStrikes, Value: 1, CombatTime: null, CombatTimeInterval: null));
 
-                        combatContext.CombatLog.Add(new CombatLogEntry(0, character, $"{character.Name} prepares salvage strikes.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
+                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} prepares salvage strikes.", character, combatContext));
 
                         break;
                 }

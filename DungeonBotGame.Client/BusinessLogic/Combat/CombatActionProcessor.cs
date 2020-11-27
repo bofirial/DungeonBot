@@ -13,10 +13,12 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     public class CombatActionProcessor : ICombatActionProcessor
     {
         private readonly ICombatValueCalculator _combatValueCalculator;
+        private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
 
-        public CombatActionProcessor(ICombatValueCalculator combatValueCalculator)
+        public CombatActionProcessor(ICombatValueCalculator combatValueCalculator, ICombatLogEntryBuilder combatLogEntryBuilder)
         {
             _combatValueCalculator = combatValueCalculator;
+            _combatLogEntryBuilder = combatLogEntryBuilder;
         }
 
         public void ProcessAction(IAction action, CharacterBase source, CombatContext combatContext)
@@ -44,7 +46,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             var fallenCharactersAfter = combatContext.Characters.Where(c => c.CurrentHealth <= 0);
             var newlyFallenCharacters = fallenCharactersAfter.Where(c => !fallenCharactersBefore.Contains(c));
 
-            combatContext.CombatLog.AddRange(newlyFallenCharacters.Select(c => new CombatLogEntry(combatContext.CombatTimer, c, $"{c.Name} has fallen.", null, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList())));
+            combatContext.CombatLog.AddRange(newlyFallenCharacters.Select(c => _combatLogEntryBuilder.CreateCombatLogEntry($"{c.Name} has fallen.", c, combatContext)));
 
             var removeAfterActionEffectTypes = new CombatEffectType[] { CombatEffectType.StunTarget };
             var removeAfterActionEffects = source.CombatEffects.Where(c => removeAfterActionEffectTypes.Contains(c.CombatEffectType)).ToList();
@@ -122,7 +124,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 }
             }
 
-            combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, source, $"{source.Name} attacked {target.Name} for {attackDamage} damage.", action, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
+            combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{source.Name} attacked {target.Name} for {attackDamage} damage.", source, combatContext, action));
         }
 
         private void ProcessAbilityAction(IAbilityAction abilityAction, CharacterBase source, CharacterBase? target, CombatContext combatContext)
@@ -196,7 +198,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                         abilityAction.AbilityType));
             }
 
-            combatContext.CombatLog.Add(new CombatLogEntry(combatContext.CombatTimer, source, displayText, abilityAction, combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList()));
+            combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry<IAction>(displayText, source, combatContext, abilityAction));
         }
     }
 }

@@ -6,6 +6,12 @@ namespace DungeonBotGame.Models.Combat
         int CombatTime,
         ICharacter Character,
         string DisplayText,
-        IAction Action,
         IImmutableList<CharacterRecord> Characters) : ICombatLogEntry;
+
+    public record CombatLogEntry<TLogData>(
+        int CombatTime,
+        ICharacter Character,
+        string DisplayText,
+        IImmutableList<CharacterRecord> Characters,
+        TLogData LogData) : CombatLogEntry(CombatTime, Character, DisplayText, Characters), ICombatLogEntry<TLogData>;
 }

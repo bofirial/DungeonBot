@@ -49,6 +49,8 @@ namespace DungeonBotGame.Client
             services.AddScoped<ICombatEventProcessor, CooldownResetCombatEventProcessor>();
             services.AddScoped<ICombatEventProcessor, CombatEffectCombatEventProcessor>();
 
+            services.AddScoped<ICombatLogEntryBuilder, CombatLogEntryBuilder>();
+
             services.AddLogging(builder => builder
                 .AddBrowserConsole()
                 .SetMinimumLevel(LogLevel.Information));
