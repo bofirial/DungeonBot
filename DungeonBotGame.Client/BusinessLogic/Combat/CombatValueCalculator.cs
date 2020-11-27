@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors;
 using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
@@ -17,6 +20,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
     public class CombatValueCalculator : ICombatValueCalculator
     {
+        private readonly ICombatEffectDirector _combatEffectDirector;
+
+        private readonly IDictionary<CombatEffectType, IIterationsUntilNextActionCombatEffectProcessor> _iterationsUntilNextActionCombatEffectProcessors;
+
+        public CombatValueCalculator(ICombatEffectDirector combatEffectDirector, IEnumerable<IIterationsUntilNextActionCombatEffectProcessor> iterationsUntilNextActionCombatEffectProcessors)
+        {
+            _combatEffectDirector = combatEffectDirector;
+
+            _iterationsUntilNextActionCombatEffectProcessors = iterationsUntilNextActionCombatEffectProcessors.ToDictionary(n => n.CombatEffectType, n => n);
+        }
+
         public int GetMaximumHealth(CharacterBase character) => 100 + character.Armor * 5;
 
         public int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter)
@@ -37,32 +51,16 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public int GetIterationsUntilNextAction(CharacterBase character)
         {
-            var iterationsUntilNextCharacterAction = 300 - 6 * character.Speed;
+            var iterationsUntilNextAction = 300 - 6 * character.Speed;
 
-            var iterationsUntilNextActionCombatEffectTypes = new CombatEffectType[] { CombatEffectType.ActionCombatTimePercentage, CombatEffectType.ImmediateAction };
-
-            var iterationsUntilNextActionModifierCombatEffects = character.CombatEffects.Where(c => iterationsUntilNextActionCombatEffectTypes.Contains(c.CombatEffectType)).ToList();
-
-            foreach (var iterationsUntilNextActionModifierCombatEffect in iterationsUntilNextActionModifierCombatEffects)
+            void ModifyIterationsUntilNextAction(IIterationsUntilNextActionCombatEffectProcessor iterationsUntilNextActionCombatEffectProcessor, CombatEffect combatEffect)
             {
-                switch (iterationsUntilNextActionModifierCombatEffect.CombatEffectType)
-                {
-                    case CombatEffectType.ActionCombatTimePercentage:
-
-                        iterationsUntilNextCharacterAction = (int)(iterationsUntilNextCharacterAction * (iterationsUntilNextActionModifierCombatEffect.Value / 100.0));
-
-                        character.CombatEffects.Remove(iterationsUntilNextActionModifierCombatEffect);
-                        break;
-
-                    case CombatEffectType.ImmediateAction:
-                        iterationsUntilNextCharacterAction = 1;
-
-                        character.CombatEffects.Remove(iterationsUntilNextActionModifierCombatEffect);
-                        break;
-                }
+                iterationsUntilNextAction = iterationsUntilNextActionCombatEffectProcessor.ModifyIterationsUntilNextAction(iterationsUntilNextAction, combatEffect, character);
             }
 
-            return iterationsUntilNextCharacterAction;
+            _combatEffectDirector.ProcessCombatEffects(character, _iterationsUntilNextActionCombatEffectProcessors, ModifyIterationsUntilNextAction);
+
+            return iterationsUntilNextAction;
         }
 
         public void ClampCharacterHealth(CharacterBase character) =>
