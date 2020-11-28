@@ -15,7 +15,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors
 
         public void ProcessAfterDamageCombatEffect(CombatEffect combatEffect, CharacterBase character, CharacterBase target, int combatDamage, CombatContext combatContext)
         {
-            var newCombatEffect = new CombatEffect("Salvage Strikes", CombatEffectType.DamageOverTime, (short)(combatDamage * 0.05), CombatTime: combatContext.CombatTimer + 200, CombatTimeInterval: 100);
+            var newCombatEffect = new CombatEffect<(int CombatTime, int CombatTimeInterval)>("Salvage Strikes", CombatEffectType.DamageOverTime, (short)(combatDamage * 0.05), (CombatTime: combatContext.CombatTimer + 200, CombatTimeInterval: 100));
             target.CombatEffects.Add(newCombatEffect);
 
             combatContext.NewCombatEvents.Add(new CombatEvent<CombatEffect>(combatContext.CombatTimer + 100, target, CombatEventType.CombatEffect, newCombatEffect));

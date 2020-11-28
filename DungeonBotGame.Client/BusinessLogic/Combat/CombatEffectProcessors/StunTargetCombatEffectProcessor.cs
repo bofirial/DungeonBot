@@ -10,7 +10,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors
         {
             if (action is ITargettedAbilityAction targettedAbilityAction && targettedAbilityAction.Target is CharacterBase target)
             {
-                target.CombatEffects.Add(new CombatEffect("Stunned", CombatEffectType.Stunned, combatEffect.Value, CombatTime: null, CombatTimeInterval: null));
+                target.CombatEffects.Add(new CombatEffect("Stunned", CombatEffectType.Stunned, combatEffect.Value));
 
                 character.CombatEffects.Remove(combatEffect);
             }

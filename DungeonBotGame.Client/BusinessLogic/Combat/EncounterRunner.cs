@@ -156,16 +156,16 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 switch (abilityType)
                 {
                     case AbilityType.SurpriseAttack:
-                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Attack Damage", CombatEffectType.AttackPercentage, Value: 200, CombatTime: null, CombatTimeInterval: null));
-                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Immediate Action", CombatEffectType.ImmediateAction, Value: 1, CombatTime: null, CombatTimeInterval: null));
-                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Stun Target", CombatEffectType.StunTarget, Value: 200, CombatTime: null, CombatTimeInterval: null));
+                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Attack Damage", CombatEffectType.AttackPercentage, Value: 200));
+                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Immediate Action", CombatEffectType.ImmediateAction, Value: 1));
+                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Stun Target", CombatEffectType.StunTarget, Value: 200));
 
                         combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} has the element of surprise.", character, combatContext));
 
                         break;
 
                     case AbilityType.SalvageStrikes:
-                        character.CombatEffects.Add(new CombatEffect("Salvage Strikes", CombatEffectType.SalvageStrikes, Value: 1, CombatTime: null, CombatTimeInterval: null));
+                        character.CombatEffects.Add(new CombatEffect("Salvage Strikes", CombatEffectType.SalvageStrikes, Value: 1));
 
                         combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} prepares salvage strikes.", character, combatContext));
 
