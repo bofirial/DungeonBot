@@ -70,8 +70,11 @@ namespace DungeonBotGame.Client
             services.AddScoped<IAttackValueCombatEffectProcessor, AttackPercentageCombatEffectProcessor>();
 
             services.AddScoped<IBeforeActionCombatEffectProcessor, StunnedCombatEffectProcessor>();
+            services.AddScoped<IBeforeActionCombatEffectProcessor, StunTargetCombatEffectProcessor>();
 
-            services.AddScoped<IOnDamageCombatEffectProcessor, SalvageStrikesCombatEffectProcessor>();
+            services.AddScoped<IAfterDamageCombatEffectProcessor, SalvageStrikesCombatEffectProcessor>();
+
+            services.AddScoped<IAfterActionCombatEffectProcessor, StunTargetCombatEffectProcessor>();
 
             services.AddLogging(builder => builder
                 .AddBrowserConsole()

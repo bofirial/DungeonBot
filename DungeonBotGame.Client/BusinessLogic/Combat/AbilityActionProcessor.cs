@@ -11,7 +11,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public AbilityActionProcessor(IEnumerable<IAbilityProcessor> abilityProcessors)
         {
-            _abilityProcessors = abilityProcessors.ToDictionary(a => a.AbilityType, a => a);
+            _abilityProcessors = abilityProcessors.ToDictionary(p => p.AbilityType, p => p);
         }
 
         public ActionType ActionType => ActionType.Ability;

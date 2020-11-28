@@ -13,7 +13,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public CombatEffectCombatEventProcessor(IEnumerable<ICombatEventCombatEffectProcessor> combatEventCombatEffectProcessors)
         {
-            _combatEventCombatEffectProcessors = combatEventCombatEffectProcessors.ToDictionary(c => c.CombatEffectType, c => c);
+            _combatEventCombatEffectProcessors = combatEventCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
         }
 
         public CombatEventType CombatEventType => CombatEventType.CombatEffect;
@@ -24,7 +24,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             {
                 if (_combatEventCombatEffectProcessors.ContainsKey(combatEffectEvent.EventData.CombatEffectType))
                 {
-                    _combatEventCombatEffectProcessors[combatEffectEvent.EventData.CombatEffectType].ProcessCombatEvent(combatEffectEvent, combatContext);
+                    _combatEventCombatEffectProcessors[combatEffectEvent.EventData.CombatEffectType].ProcessCombatEventCombatEffect(combatEffectEvent, combatContext);
                 }
                 else
                 {

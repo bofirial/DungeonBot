@@ -28,7 +28,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _combatValueCalculator = combatValueCalculator;
             _combatLogEntryBuilder = combatLogEntryBuilder;
 
-            _combatEventProcessors = combatEventProcessors.ToDictionary(c => c.CombatEventType, c => c);
+            _combatEventProcessors = combatEventProcessors.ToDictionary(p => p.CombatEventType, p => p);
         }
 
         private static bool EncounterHasCompleted(CombatContext combatContext) =>

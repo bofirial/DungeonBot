@@ -13,12 +13,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors
 
         public CombatEffectType CombatEffectType => CombatEffectType.Stunned;
 
-        public void ProcessCombatEffect(CombatEffect combatEffect, CharacterBase character, CombatContext combatContext)
+        public BeforeActionCombatEffectProcessorResult ProcessBeforeActionCombatEffect(CombatEffect combatEffect, CharacterBase character, IAction action, CombatContext combatContext)
         {
             combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} is stunned.", character, combatContext));
             combatContext.NewCombatEvents.Add(new CombatEvent(combatContext.CombatTimer + combatEffect.Value, character, CombatEventType.CharacterAction));
 
             character.CombatEffects.Remove(combatEffect);
+
+            return new BeforeActionCombatEffectProcessorResult(PreventAction: true);
         }
     }
 }

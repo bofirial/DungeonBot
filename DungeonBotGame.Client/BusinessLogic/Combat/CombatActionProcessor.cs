@@ -21,7 +21,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         {
             _combatLogEntryBuilder = combatLogEntryBuilder;
 
-            _actionProcessors = actionProcessors.ToDictionary(a => a.ActionType, a => a);
+            _actionProcessors = actionProcessors.ToDictionary(p => p.ActionType, p => p);
         }
 
         public void ProcessAction(IAction action, CharacterBase character, CombatContext combatContext)

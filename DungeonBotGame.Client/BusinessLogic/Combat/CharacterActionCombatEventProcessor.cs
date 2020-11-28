@@ -15,15 +15,22 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         private readonly ICombatValueCalculator _combatValueCalculator;
         private readonly ICombatEffectDirector _combatEffectDirector;
         private readonly IDictionary<CombatEffectType, IBeforeActionCombatEffectProcessor> _beforeActionCombatEffectProcessors;
+        private readonly IDictionary<CombatEffectType, IAfterActionCombatEffectProcessor> _afterActionCombatEffectProcessors;
 
-        public CharacterActionCombatEventProcessor(IActionModuleExecuter actionModuleExecuter, ICombatActionProcessor combatActionProcessor, ICombatValueCalculator combatValueCalculator, ICombatEffectDirector combatEffectDirector, IEnumerable<IBeforeActionCombatEffectProcessor> beforeActionCombatEffectProcessors)
+        public CharacterActionCombatEventProcessor(IActionModuleExecuter actionModuleExecuter,
+            ICombatActionProcessor combatActionProcessor,
+            ICombatValueCalculator combatValueCalculator,
+            ICombatEffectDirector combatEffectDirector,
+            IEnumerable<IBeforeActionCombatEffectProcessor> beforeActionCombatEffectProcessors,
+            IEnumerable<IAfterActionCombatEffectProcessor> afterActionCombatEffectProcessors)
         {
             _actionModuleExecuter = actionModuleExecuter;
             _combatActionProcessor = combatActionProcessor;
             _combatValueCalculator = combatValueCalculator;
             _combatEffectDirector = combatEffectDirector;
 
-            _beforeActionCombatEffectProcessors = beforeActionCombatEffectProcessors.ToDictionary(b => b.CombatEffectType, b => b);
+            _beforeActionCombatEffectProcessors = beforeActionCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
+            _afterActionCombatEffectProcessors = afterActionCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
         }
 
         public CombatEventType CombatEventType => CombatEventType.CharacterAction;
@@ -35,9 +42,37 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 return;
             }
 
-            _combatEffectDirector.ProcessCombatEffects(combatEvent.Character, _beforeActionCombatEffectProcessors,
-                (processor, combatEffect) => processor.ProcessCombatEffect(combatEffect, combatEvent.Character, combatContext));
+            var action = await ExecuteActionModuleForEventCharacter(combatEvent, combatContext);
 
+            var preventAction = false;
+
+            void ProcessBeforeActionCombatEffect(IBeforeActionCombatEffectProcessor beforeActionCombatEffectProcessor, CombatEffect combatEffect)
+            {
+                var result = beforeActionCombatEffectProcessor.ProcessBeforeActionCombatEffect(combatEffect, combatEvent.Character, action, combatContext);
+
+                preventAction &= result.PreventAction;
+            }
+
+            _combatEffectDirector.ProcessCombatEffects(combatEvent.Character, _beforeActionCombatEffectProcessors, ProcessBeforeActionCombatEffect);
+
+            if (preventAction)
+            {
+                return;
+            }
+
+            _combatActionProcessor.ProcessAction(action, combatEvent.Character, combatContext);
+
+            _combatEffectDirector.ProcessCombatEffects(combatEvent.Character, _afterActionCombatEffectProcessors,
+                (processor, combatEffect) => processor.ProcessAfterActionCombatEffect(combatEffect, combatEvent.Character, action, combatContext));
+
+            combatContext.NewCombatEvents.Add(combatEvent with
+            {
+                CombatTime = combatContext.CombatTimer + _combatValueCalculator.GetIterationsUntilNextAction(combatEvent.Character)
+            });
+        }
+
+        private async Task<IAction> ExecuteActionModuleForEventCharacter(CombatEvent combatEvent, CombatContext combatContext)
+        {
             var actionComponent = new ActionComponent(combatEvent.Character);
 
             var sensorComponent = new SensorComponent(
@@ -46,16 +81,12 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 combatContext.CombatTimer,
                 combatContext.CombatLog.Cast<ICombatLogEntry>().ToImmutableList());
 
-            var action = combatEvent.Character switch
+            return combatEvent.Character switch
             {
                 DungeonBot dungeonBot => await _actionModuleExecuter.ExecuteActionModule(dungeonBot, actionComponent, sensorComponent),
                 Enemy enemy => await _actionModuleExecuter.ExecuteEnemyActionModule(enemy, actionComponent, sensorComponent),
                 _ => throw new UnknownCharacterTypeException($"Unknown Character Type: {combatEvent.Character.GetType()}"),
             };
-
-            _combatActionProcessor.ProcessAction(action, combatEvent.Character, combatContext);
-
-            combatContext.NewCombatEvents.Add(combatEvent with { CombatTime = combatContext.CombatTimer + _combatValueCalculator.GetIterationsUntilNextAction(combatEvent.Character) });
         }
     }
 }

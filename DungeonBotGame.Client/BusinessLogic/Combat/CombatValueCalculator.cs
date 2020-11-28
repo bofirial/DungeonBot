@@ -28,8 +28,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         {
             _combatEffectDirector = combatEffectDirector;
 
-            _iterationsUntilNextActionCombatEffectProcessors = iterationsUntilNextActionCombatEffectProcessors.ToDictionary(i => i.CombatEffectType, n => n);
-            _attackValueCombatEffectProcessors = attackValueCombatEffectProcessors.ToDictionary(a => a.CombatEffectType, a => a);
+            _iterationsUntilNextActionCombatEffectProcessors = iterationsUntilNextActionCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
+            _attackValueCombatEffectProcessors = attackValueCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
         }
 
         public int GetMaximumHealth(CharacterBase character) => 100 + character.Armor * 5;

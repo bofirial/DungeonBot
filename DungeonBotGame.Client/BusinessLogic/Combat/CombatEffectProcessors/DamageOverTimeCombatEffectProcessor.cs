@@ -6,20 +6,20 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors
     {
         private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
         private readonly ICombatValueCalculator _combatValueCalculator;
+        private readonly ICombatDamageApplier _combatDamageApplier;
 
-        public DamageOverTimeCombatEffectProcessor(ICombatLogEntryBuilder combatLogEntryBuilder, ICombatValueCalculator combatValueCalculator)
+        public DamageOverTimeCombatEffectProcessor(ICombatLogEntryBuilder combatLogEntryBuilder, ICombatValueCalculator combatValueCalculator, ICombatDamageApplier combatDamageApplier)
         {
             _combatLogEntryBuilder = combatLogEntryBuilder;
             _combatValueCalculator = combatValueCalculator;
+            _combatDamageApplier = combatDamageApplier;
         }
 
         public CombatEffectType CombatEffectType => CombatEffectType.DamageOverTime;
 
-        public void ProcessCombatEvent(CombatEvent<CombatEffect> combatEffectEvent, CombatContext combatContext)
+        public void ProcessCombatEventCombatEffect(CombatEvent<CombatEffect> combatEffectEvent, CombatContext combatContext)
         {
-            combatEffectEvent.Character.CurrentHealth -= combatEffectEvent.EventData.Value;
-
-            _combatValueCalculator.ClampCharacterHealth(combatEffectEvent.Character);
+            _combatDamageApplier.ApplyDamage(combatEffectEvent.Character, combatEffectEvent.Character, combatEffectEvent.EventData.Value, combatContext, applyCombatEffects: false);
 
             if (combatEffectEvent.EventData.CombatTime <= combatContext.CombatTimer)
             {
