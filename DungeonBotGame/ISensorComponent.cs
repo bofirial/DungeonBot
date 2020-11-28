@@ -10,6 +10,6 @@ namespace DungeonBotGame
 
         public int CombatTime { get; }
 
-        public IEnumerable<IActionResult> ActionResults { get; }
+        public IEnumerable<ICombatLogEntry> CombatLog { get; }
     }
 }

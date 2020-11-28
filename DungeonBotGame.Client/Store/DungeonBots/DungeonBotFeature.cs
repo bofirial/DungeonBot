@@ -53,6 +53,7 @@ namespace DungeonBotGame.Scripts
                     "/images/temp/dungeonbot.png",
                     ImmutableList.Create(new ActionModuleFileViewModel("DungeonBot001.cs", DefaultActionModule)),
                     ImmutableList.Create(AbilityType.HeavySwing),
+                    //ImmutableList.Create(AbilityType.HeavySwing, AbilityType.AnalyzeSituation, AbilityType.SurpriseAttack, AbilityType.SalvageStrikes),
                     null,
                     ImmutableList.Create<ErrorViewModel>())
                 ),

@@ -3,6 +3,7 @@
     public enum CombatEventType
     {
         CharacterAction = 1,
-        CooldownReset
+        CooldownReset,
+        CombatEffect
     }
 }

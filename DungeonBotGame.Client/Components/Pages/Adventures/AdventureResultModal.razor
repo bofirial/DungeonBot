@@ -26,13 +26,20 @@
                             <CollapsePanel CssClass="my-2" HeadingId="@($"combatLogPanelHeading-{encounterResult.Order}")" CollapseSectionId="@($"combatLogPanel-{encounterResult.Order}")" IsCollapsedInitially="false">
                                 <HeadingView>Combat Log</HeadingView>
                                 <CollapseSectionView>
-                                    <Accordion Id="@($"combatLogAccordionId-{encounterResult.Order}")" TListItem="ActionResult" List="encounterResult.ActionResults">
-                                        <HeadingView Context="actionResult"><span class="badge bg-primary rounded-pill">@($"{(actionResult.CombatTime / 100.0).ToString("0.00").PadLeft(5)}s")</span> @actionResult.DisplayText</HeadingView>
-                                        <CollapseSectionView Context="actionResult">
-                                            @foreach (var character in actionResult.Characters)
+                                    <Accordion Id="@($"combatLogAccordionId-{encounterResult.Order}")" TListItem="CombatLogEntry" List="encounterResult.CombatLog">
+                                        <HeadingView Context="combatLogEntry"><span class="badge bg-primary rounded-pill">@($"{(combatLogEntry.CombatTime / 100.0).ToString("0.00").PadLeft(5)}s")</span> @combatLogEntry.DisplayText</HeadingView>
+                                        <CollapseSectionView Context="combatLogEntry">
+                                            @foreach (var character in combatLogEntry.Characters)
                                             {
                                                 <div class="alert @(character.IsDungeonBot ? "alert-success" : "alert-danger")" role="alert">
-                                                    @character.Name <span class="badge bg-info rounded-pill">@character.CurrentHealth / @character.MaximumHealth hp</span>
+                                                    <span class="characterName">@character.Name</span>
+                                                    <span class="badge bg-info rounded-pill">@character.CurrentHealth / @character.MaximumHealth hp</span>
+                                                    <div class="float-right">
+                                                        @foreach (var combatEffect in character.CombatEffects)
+                                                        {
+                                                            <span class="badge bg-info rounded-pill m-1" data-toggle="tooltip" title="@combatEffect.Name">@combatEffect.ShortName</span>
+                                                        }
+                                                    </div>
                                                 </div>
                                             }
                                         </CollapseSectionView>

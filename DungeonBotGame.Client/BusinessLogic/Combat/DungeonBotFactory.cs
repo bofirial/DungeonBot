@@ -1,4 +1,5 @@
-﻿using DungeonBotGame.Models.Combat;
+﻿using System.Collections.Generic;
+using DungeonBotGame.Models.Combat;
 using DungeonBotGame.Models.ViewModels;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat
@@ -29,7 +30,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                             dungeonBotViewModel.Speed,
                             dungeonBotViewModel.ActionModuleFiles,
                             dungeonBotViewModel.ActionModuleContext,
-                            _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(dungeonBotViewModel.Abilities)
+                            _abilityContextDictionaryBuilder.BuildAbilityContextDictionary(dungeonBotViewModel.Abilities),
+                            new List<CombatEffect>()
                         );
 
             dungeonBot.MaximumHealth = _combatValueCalculator.GetMaximumHealth(dungeonBot);
