@@ -6,7 +6,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatLogEntryBuilder
     {
-        CombatLogEntry CreateCombatLogEntry(string displayText, CharacterBase character,  CombatContext combatContext);
+        CombatLogEntry CreateCombatLogEntry(string displayText, CharacterBase character, CombatContext combatContext);
 
         CombatLogEntry<TLogData> CreateCombatLogEntry<TLogData>(string displayText, CharacterBase character, CombatContext combatContext, TLogData logData);
     }

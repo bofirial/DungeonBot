@@ -7,14 +7,14 @@ namespace DungeonBotGame.Client.Store.DungeonBots
 {
     public class DungeonBotFeature : Feature<DungeonBotState>
     {
-        private const string DefaultActionModule = @"using System;
+        private const string DefaultWarriorBotActionModule = @"using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DungeonBotGame;
 
 namespace DungeonBotGame.Scripts
 {
-    public class AttackActionModule
+    public class DungeonBotActionModule
     {
         [ActionModuleEntrypoint]
         public IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent)
@@ -29,6 +29,30 @@ namespace DungeonBotGame.Scripts
             // if (actionComponent.HeavySwingIsAvailable() && (enemy.Name != ""Wolf King"" || enemy.CurrentHealth <= 60))
             // {
             //     return actionComponent.UseHeavySwing(enemy);
+            // }
+
+            return actionComponent.Attack(enemy);
+        }
+    }
+}";
+        private const string DefaultMysticRepairBotActionModule = @"using System;
+using System.Linq;
+using System.Threading.Tasks;
+using DungeonBotGame;
+
+namespace DungeonBotGame.Scripts
+{
+    public class DungeonBotActionModule
+    {
+        [ActionModuleEntrypoint]
+        public IAction Action(IActionComponent actionComponent, ISensorComponent sensorComponent)
+        {
+            var dungeonBot = sensorComponent.DungeonBots.First();
+            var enemy = sensorComponent.Enemies.First();
+
+            // if (actionComponent.RepairIsAvailable() && dungeonBot.CurrentHealth < 50)
+            // {
+            //     return actionComponent.UseRepair(dungeonBot);
             // }
 
             return actionComponent.Attack(enemy);
@@ -51,7 +75,7 @@ namespace DungeonBotGame.Scripts
                     armor: 5,
                     speed: 5,
                     "/images/temp/dungeonbot.png",
-                    ImmutableList.Create(new ActionModuleFileViewModel("WarriorBot001.cs", DefaultActionModule)),
+                    ImmutableList.Create(new ActionModuleFileViewModel("WarriorBot001.cs", DefaultWarriorBotActionModule)),
                     ImmutableList.Create(AbilityType.HeavySwing),
                     actionModuleContext: null,
                     ImmutableList.Create<ErrorViewModel>()),
@@ -66,7 +90,7 @@ namespace DungeonBotGame.Scripts
                     armor: 14,
                     speed: 14,
                     "/images/temp/dungeonbot.png",
-                    ImmutableList.Create(new ActionModuleFileViewModel("WarriorBot001.cs", DefaultActionModule)),
+                    ImmutableList.Create(new ActionModuleFileViewModel("WarriorBot001.cs", DefaultWarriorBotActionModule)),
                     //ImmutableList.Create(AbilityType.HeavySwing), //TODO: Allow the User to select these abilities
                     ImmutableList.Create(AbilityType.HeavySwing, AbilityType.AnalyzeSituation, AbilityType.SurpriseAttack, AbilityType.SalvageStrikes),
                     actionModuleContext: null,
@@ -82,8 +106,8 @@ namespace DungeonBotGame.Scripts
                     armor: 5,
                     speed: 5,
                     "/images/temp/dungeonbot.png",
-                    ImmutableList.Create(new ActionModuleFileViewModel("MysticRepairBot001.cs", DefaultActionModule)),
-                    ImmutableList.Create<AbilityType>(), //TODO: Implement Heal
+                    ImmutableList.Create(new ActionModuleFileViewModel("MysticRepairBot001.cs", DefaultMysticRepairBotActionModule)),
+                    ImmutableList.Create(AbilityType.Repair),
                     actionModuleContext: null,
                     ImmutableList.Create<ErrorViewModel>())
                 ),

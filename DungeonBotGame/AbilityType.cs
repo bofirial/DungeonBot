@@ -7,6 +7,8 @@
         SurpriseAttack,
         SalvageStrikes,
 
+        Repair,
+
         LickWounds
     }
 }

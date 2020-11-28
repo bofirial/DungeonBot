@@ -21,6 +21,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
         private readonly IJSRuntime _jsRuntime;
         private readonly HttpClient _httpClient;
 
+        private bool _isInitialized;
+
         private DungeonBotViewModel? _dungeonBot;
 
         public CodeCompletionService(IJSRuntime jsRuntime, HttpClient httpClient)
@@ -33,7 +35,12 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
         {
             _dungeonBot = dungeonBot;
 
-            await _jsRuntime.InvokeVoidAsync("initializeMonacoCodeEditor", DotNetObjectReference.Create(this));
+            if (!_isInitialized)
+            {
+                _isInitialized = true;
+
+                await _jsRuntime.InvokeVoidAsync("initializeMonacoCodeEditor", DotNetObjectReference.Create(this));
+            }
         }
 
         [JSInvokable]
@@ -48,7 +55,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Compilation
             var response = await _httpClient.PostAsJsonAsync($"api/CodeCompletions", new CodeCompletionPostRequestModel(
                 _dungeonBot.ActionModuleFiles[0].FileName,
                 currentPosition,
-                _dungeonBot with { ActionModuleFiles = ImmutableList.Create(actionModuleFile with { Content = sourceCode }) }));
+                _dungeonBot with { ActionModuleFiles = ImmutableList.Create(actionModuleFile with { Content = sourceCode }), ActionModuleContext = null }));
 
             var responseModel = await response.Content.ReadFromJsonAsync<CodeCompletionPostResponseModel>();
 

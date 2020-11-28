@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using DungeonBotGame.Client.BusinessLogic.Combat;
+﻿using System;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
+using DungeonBotGame.Client.BusinessLogic.Combat;
 using DungeonBotGame.Client.Store.Adventures;
 using DungeonBotGame.Client.Store.DungeonBots;
-using System.Linq;
-using System;
-using System.Collections.Immutable;
 using DungeonBotGame.Models.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace DungeonBotGame.Tests
 {

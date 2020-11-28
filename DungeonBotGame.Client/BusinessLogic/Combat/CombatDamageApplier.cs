@@ -7,6 +7,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatDamageApplier
     {
+        void ApplyHealing(CharacterBase character, CharacterBase target, int combatHealing, CombatContext combatContext, bool applyCombatEffects = true);
+
         void ApplyDamage(CharacterBase character, CharacterBase target, int combatDamage, CombatContext combatContext, bool applyCombatEffects = true);
     }
 
@@ -15,13 +17,15 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         private readonly ICombatValueCalculator _combatValueCalculator;
         private readonly ICombatEffectDirector _combatEffectDirector;
         private readonly IDictionary<CombatEffectType, IAfterDamageCombatEffectProcessor> _afterDamageCombatEffectProcessors;
+        private readonly IDictionary<CombatEffectType, IAfterHealingCombatEffectProcessor> _afterHealingCombatEffectProcessors;
 
-        public CombatDamageApplier(ICombatValueCalculator combatValueCalculator, ICombatEffectDirector combatEffectDirector, IEnumerable<IAfterDamageCombatEffectProcessor> onDamageCombatEffectProcessors)
+        public CombatDamageApplier(ICombatValueCalculator combatValueCalculator, ICombatEffectDirector combatEffectDirector, IEnumerable<IAfterDamageCombatEffectProcessor> afterDamageCombatEffectProcessors, IEnumerable<IAfterHealingCombatEffectProcessor> afterHealingCombatEffectProcessors)
         {
             _combatValueCalculator = combatValueCalculator;
             _combatEffectDirector = combatEffectDirector;
 
-            _afterDamageCombatEffectProcessors = onDamageCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
+            _afterDamageCombatEffectProcessors = afterDamageCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
+            _afterHealingCombatEffectProcessors = afterHealingCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
         }
 
         public void ApplyDamage(CharacterBase character, CharacterBase target, int combatDamage, CombatContext combatContext, bool applyCombatEffects = true)
@@ -34,6 +38,19 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             {
                 _combatEffectDirector.ProcessCombatEffects(character, _afterDamageCombatEffectProcessors,
                     (processor, combatEffect) => processor.ProcessAfterDamageCombatEffect(combatEffect, character, target, combatDamage, combatContext));
+            }
+        }
+
+        public void ApplyHealing(CharacterBase character, CharacterBase target, int combatHealing, CombatContext combatContext, bool applyCombatEffects = true)
+        {
+            target.CurrentHealth += combatHealing;
+
+            _combatValueCalculator.ClampCharacterHealth(target);
+
+            if (applyCombatEffects)
+            {
+                _combatEffectDirector.ProcessCombatEffects(character, _afterHealingCombatEffectProcessors,
+                    (processor, combatEffect) => processor.ProcessAfterHealingCombatEffect(combatEffect, character, target, combatHealing, combatContext));
             }
         }
     }

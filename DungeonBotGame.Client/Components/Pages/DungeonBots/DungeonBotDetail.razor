@@ -13,7 +13,7 @@
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     @alert
-                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="() => CloseSaveAlert(alert)"></button>
                 </div>
             }
             <div class="col-12 col-lg-6 col-xl-4">
@@ -171,6 +171,8 @@
                 Armor = -1;
                 Speed = -1;
                 AvailableStatPoints = -1;
+
+                Alerts.Clear();
             }
 
             if (string.IsNullOrEmpty(DungeonBotName))
@@ -207,6 +209,11 @@
                 Alerts.Insert(0, $"{DungeonBot.Name} was saved successfully!");
             }
         }
+    }
+
+    public void CloseSaveAlert(string alert)
+    {
+        Alerts.Remove(alert);
     }
 
     public bool DungeonBotNameIsValid()
