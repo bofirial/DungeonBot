@@ -32,7 +32,14 @@
                                             @foreach (var character in combatLogEntry.Characters)
                                             {
                                                 <div class="alert @(character.IsDungeonBot ? "alert-success" : "alert-danger")" role="alert">
-                                                    @character.Name <span class="badge bg-info rounded-pill">@character.CurrentHealth / @character.MaximumHealth hp</span>
+                                                    <span class="characterName">@character.Name</span>
+                                                    <span class="badge bg-info rounded-pill">@character.CurrentHealth / @character.MaximumHealth hp</span>
+                                                    <div class="float-right">
+                                                        @foreach (var combatEffect in character.CombatEffects)
+                                                        {
+                                                            <span class="badge bg-info rounded-pill m-1" data-toggle="tooltip" title="@combatEffect.Name">@combatEffect.ShortName</span>
+                                                        }
+                                                    </div>
                                                 </div>
                                             }
                                         </CollapseSectionView>

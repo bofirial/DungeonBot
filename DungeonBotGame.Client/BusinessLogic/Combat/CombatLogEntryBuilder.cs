@@ -14,7 +14,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     public class CombatLogEntryBuilder : ICombatLogEntryBuilder
     {
         private static ImmutableList<CharacterRecord> BuildCharacterRecords(CombatContext combatContext) =>
-            combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot)).ToImmutableList();
+            combatContext.Characters.Select(c => new CharacterRecord(c.Id, c.Name, c.MaximumHealth, c.CurrentHealth, c is DungeonBot, c.CombatEffects.ToImmutableList())).ToImmutableList();
 
         public CombatLogEntry CreateCombatLogEntry(string displayText, CharacterBase character, CombatContext combatContext) => new(
                     combatContext.CombatTimer,
