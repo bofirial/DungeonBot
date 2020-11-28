@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors;
@@ -23,12 +22,14 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         private readonly ICombatEffectDirector _combatEffectDirector;
 
         private readonly IDictionary<CombatEffectType, IIterationsUntilNextActionCombatEffectProcessor> _iterationsUntilNextActionCombatEffectProcessors;
+        private readonly IDictionary<CombatEffectType, IAttackValueCombatEffectProcessor> _attackValueCombatEffectProcessors;
 
-        public CombatValueCalculator(ICombatEffectDirector combatEffectDirector, IEnumerable<IIterationsUntilNextActionCombatEffectProcessor> iterationsUntilNextActionCombatEffectProcessors)
+        public CombatValueCalculator(ICombatEffectDirector combatEffectDirector, IEnumerable<IIterationsUntilNextActionCombatEffectProcessor> iterationsUntilNextActionCombatEffectProcessors, IEnumerable<IAttackValueCombatEffectProcessor> attackValueCombatEffectProcessors)
         {
             _combatEffectDirector = combatEffectDirector;
 
-            _iterationsUntilNextActionCombatEffectProcessors = iterationsUntilNextActionCombatEffectProcessors.ToDictionary(n => n.CombatEffectType, n => n);
+            _iterationsUntilNextActionCombatEffectProcessors = iterationsUntilNextActionCombatEffectProcessors.ToDictionary(i => i.CombatEffectType, n => n);
+            _attackValueCombatEffectProcessors = attackValueCombatEffectProcessors.ToDictionary(a => a.CombatEffectType, a => a);
         }
 
         public int GetMaximumHealth(CharacterBase character) => 100 + character.Armor * 5;
@@ -37,14 +38,12 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         {
             var attackValue = (int)(10 + sourceCharacter.Power * 3.5) - targetCharacter.Armor;
 
-            var attackModifierCombatEffects = sourceCharacter.CombatEffects.Where(c => c.CombatEffectType == CombatEffectType.AttackPercentage).ToList();
-
-            foreach (var attackModifierCombatEffect in attackModifierCombatEffects)
+            void ModifyAttackValue(IAttackValueCombatEffectProcessor attackValueCombatEffectProcessor, CombatEffect combatEffect)
             {
-                attackValue = (int)(attackValue * (attackModifierCombatEffect.Value / 100.0 ));
-
-                sourceCharacter.CombatEffects.Remove(attackModifierCombatEffect);
+                attackValue = attackValueCombatEffectProcessor.ModifyAttackValue(attackValue, combatEffect, sourceCharacter);
             }
+
+            _combatEffectDirector.ProcessCombatEffects(sourceCharacter, _attackValueCombatEffectProcessors, ModifyAttackValue);
 
             return attackValue;
         }

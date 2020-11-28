@@ -1,6 +1,8 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors;
 using DungeonBotGame.Client.ErrorHandling;
 using DungeonBotGame.Models.Combat;
 
@@ -11,14 +13,17 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         private readonly IActionModuleExecuter _actionModuleExecuter;
         private readonly ICombatActionProcessor _combatActionProcessor;
         private readonly ICombatValueCalculator _combatValueCalculator;
-        private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
+        private readonly ICombatEffectDirector _combatEffectDirector;
+        private readonly IDictionary<CombatEffectType, IBeforeActionCombatEffectProcessor> _beforeActionCombatEffectProcessors;
 
-        public CharacterActionCombatEventProcessor(IActionModuleExecuter actionModuleExecuter, ICombatActionProcessor combatActionProcessor, ICombatValueCalculator combatValueCalculator, ICombatLogEntryBuilder combatLogEntryBuilder)
+        public CharacterActionCombatEventProcessor(IActionModuleExecuter actionModuleExecuter, ICombatActionProcessor combatActionProcessor, ICombatValueCalculator combatValueCalculator, ICombatEffectDirector combatEffectDirector, IEnumerable<IBeforeActionCombatEffectProcessor> beforeActionCombatEffectProcessors)
         {
             _actionModuleExecuter = actionModuleExecuter;
             _combatActionProcessor = combatActionProcessor;
             _combatValueCalculator = combatValueCalculator;
-            _combatLogEntryBuilder = combatLogEntryBuilder;
+            _combatEffectDirector = combatEffectDirector;
+
+            _beforeActionCombatEffectProcessors = beforeActionCombatEffectProcessors.ToDictionary(b => b.CombatEffectType, b => b);
         }
 
         public CombatEventType CombatEventType => CombatEventType.CharacterAction;
@@ -30,23 +35,8 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 return;
             }
 
-            var startOfCharacterActionCombatEffectTypes = new CombatEffectType[] { CombatEffectType.Stunned };
-            var startOfCharacterActionCombatEffects = combatEvent.Character.CombatEffects.Where(c => startOfCharacterActionCombatEffectTypes.Contains(c.CombatEffectType)).ToList();
-
-            foreach (var startOfCharacterActionCombatEffect in startOfCharacterActionCombatEffects)
-            {
-                switch (startOfCharacterActionCombatEffect.CombatEffectType)
-                {
-                    case CombatEffectType.Stunned:
-
-                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{combatEvent.Character.Name} is stunned.", combatEvent.Character, combatContext));
-                        combatContext.NewCombatEvents.Add(combatEvent with { CombatTime = combatContext.CombatTimer + startOfCharacterActionCombatEffect.Value });
-
-                        combatEvent.Character.CombatEffects.Remove(startOfCharacterActionCombatEffect);
-
-                        return;
-                }
-            }
+            _combatEffectDirector.ProcessCombatEffects(combatEvent.Character, _beforeActionCombatEffectProcessors,
+                (processor, combatEffect) => processor.ProcessCombatEffect(combatEffect, combatEvent.Character, combatContext));
 
             var actionComponent = new ActionComponent(combatEvent.Character);
 

@@ -7,11 +7,13 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors
     {
         private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
         private readonly ICombatValueCalculator _combatValueCalculator;
+        private readonly ICombatDamageApplier _combatDamageApplier;
 
-        public HeavySwingAbilityProcessor(ICombatLogEntryBuilder combatLogEntryBuilder, ICombatValueCalculator combatValueCalculator)
+        public HeavySwingAbilityProcessor(ICombatLogEntryBuilder combatLogEntryBuilder, ICombatValueCalculator combatValueCalculator, ICombatDamageApplier combatDamageApplier)
         {
             _combatLogEntryBuilder = combatLogEntryBuilder;
             _combatValueCalculator = combatValueCalculator;
+            _combatDamageApplier = combatDamageApplier;
         }
 
         public AbilityType AbilityType => AbilityType.HeavySwing;
@@ -24,9 +26,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors
                 {
                     var abilityDamage = _combatValueCalculator.GetAttackValue(character, target) * 3;
 
-                    target.CurrentHealth -= abilityDamage;
-
-                    _combatValueCalculator.ClampCharacterHealth(target);
+                    _combatDamageApplier.ApplyDamage(character, target, abilityDamage, combatContext);
 
                     combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry<IAction>($"{character.Name} took a heavy swing at {target.Name} for {abilityDamage} damage.", character, combatContext, abilityAction));
                 }

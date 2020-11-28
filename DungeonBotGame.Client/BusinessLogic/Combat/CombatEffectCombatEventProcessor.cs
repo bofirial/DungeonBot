@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors;
 using DungeonBotGame.Client.ErrorHandling;
 using DungeonBotGame.Models.Combat;
 
@@ -6,13 +9,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public class CombatEffectCombatEventProcessor : ICombatEventProcessor
     {
-        private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
-        private readonly ICombatValueCalculator _combatValueCalculator;
+        private readonly IDictionary<CombatEffectType, ICombatEventCombatEffectProcessor> _combatEventCombatEffectProcessors;
 
-        public CombatEffectCombatEventProcessor(ICombatLogEntryBuilder combatLogEntryBuilder, ICombatValueCalculator combatValueCalculator)
+        public CombatEffectCombatEventProcessor(IEnumerable<ICombatEventCombatEffectProcessor> combatEventCombatEffectProcessors)
         {
-            _combatLogEntryBuilder = combatLogEntryBuilder;
-            _combatValueCalculator = combatValueCalculator;
+            _combatEventCombatEffectProcessors = combatEventCombatEffectProcessors.ToDictionary(c => c.CombatEffectType, c => c);
         }
 
         public CombatEventType CombatEventType => CombatEventType.CombatEffect;
@@ -21,26 +22,13 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         {
             if (combatEvent is CombatEvent<CombatEffect> combatEffectEvent)
             {
-                switch (combatEffectEvent.EventData.CombatEffectType)
+                if (_combatEventCombatEffectProcessors.ContainsKey(combatEffectEvent.EventData.CombatEffectType))
                 {
-                    case CombatEffectType.DamageOverTime:
-
-                        combatEffectEvent.Character.CurrentHealth -= combatEffectEvent.EventData.Value;
-
-                        _combatValueCalculator.ClampCharacterHealth(combatEffectEvent.Character);
-
-                        if (combatEffectEvent.EventData.CombatTime <= combatContext.CombatTimer)
-                        {
-                            combatEffectEvent.Character.CombatEffects.Remove(combatEffectEvent.EventData);
-                        }
-                        else if (combatEffectEvent.EventData.CombatTimeInterval != null)
-                        {
-                            combatContext.NewCombatEvents.Add(combatEffectEvent with { CombatTime = combatContext.CombatTimer + combatEffectEvent.EventData.CombatTimeInterval.Value });
-                        }
-
-                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{combatEffectEvent.Character.Name} takes {combatEffectEvent.EventData.Value} damage from {combatEffectEvent.EventData.Name}.", combatEffectEvent.Character, combatContext, combatEffectEvent.EventData));
-
-                        break;
+                    _combatEventCombatEffectProcessors[combatEffectEvent.EventData.CombatEffectType].ProcessCombatEvent(combatEffectEvent, combatContext);
+                }
+                else
+                {
+                    throw new UnknownCombatEventTypeException($"No CombatEventCombatEffectProcessor found for the CombatEffectEvent {combatEffectEvent.EventData.CombatEffectType}.");
                 }
             }
             else
