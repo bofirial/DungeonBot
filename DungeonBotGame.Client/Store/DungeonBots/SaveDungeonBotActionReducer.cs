@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using DungeonBotGame.Models.ViewModels;
 using Fluxor;
 
 namespace DungeonBotGame.Client.Store.DungeonBots
@@ -7,9 +9,23 @@ namespace DungeonBotGame.Client.Store.DungeonBots
     {
         public override DungeonBotState Reduce(DungeonBotState state, SaveDungeonBotAction action)
         {
+            var dungeonBots = new List<DungeonBotViewModel>();
+
+            foreach (var dungeonBot in state.DungeonBots)
+            {
+                if (dungeonBot.Id == action.DungeonBot.Id)
+                {
+                    dungeonBots.Add(action.DungeonBot);
+                }
+                else
+                {
+                    dungeonBots.Add(dungeonBot);
+                }
+            }
+
             return state with
             {
-                DungeonBots = ImmutableList.Create(action.DungeonBot),
+                DungeonBots = dungeonBots.ToImmutableList(),
                 IsSaving = false
             };
         }

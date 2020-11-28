@@ -103,11 +103,15 @@
     [Parameter]
     public bool IsSaving { get; set; }
 
+    public bool IsSpinning { get; set; } = false;
+
     public DungeonBotCodeEditor? DungeonBotCodeEditor { get; set; }
 
     public SpinnerModal? Spinner { get; set; }
 
     public List<string> Alerts { get; set; } = new List<string>();
+
+    public string DungeonBotId { get; set; } = string.Empty;
 
     public string DungeonBotName { get; set; } = string.Empty;
     public short AvailableStatPoints { get; set; } = -1;
@@ -125,6 +129,8 @@
         var actionModuleFiles = await DungeonBotCodeEditor.GetValueAsync();
 
         await Spinner.StartSpinnerAsync();
+
+        IsSpinning = true;
 
         Dispatcher.Dispatch(new CompileDungeonBotScriptAction(DungeonBot with
         {
@@ -156,6 +162,17 @@
 
         if (DungeonBot != null)
         {
+            if (string.IsNullOrEmpty(DungeonBotId) || DungeonBotId != DungeonBot.Id)
+            {
+                DungeonBotId = DungeonBot.Id;
+
+                DungeonBotName = string.Empty;
+                Power = -1;
+                Armor = -1;
+                Speed = -1;
+                AvailableStatPoints = -1;
+            }
+
             if (string.IsNullOrEmpty(DungeonBotName))
             {
                 DungeonBotName = DungeonBot.Name;
@@ -181,9 +198,11 @@
                 AvailableStatPoints = DungeonBot.AvailableStatPoints;
             }
 
-            if (Spinner != null && !IsSaving)
+            if (Spinner != null && !IsSaving && IsSpinning)
             {
                 await Spinner.StopSpinnerAsync();
+
+                IsSpinning = false;
 
                 Alerts.Insert(0, $"{DungeonBot.Name} was saved successfully!");
             }
