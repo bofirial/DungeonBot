@@ -3,7 +3,6 @@
 @using DungeonBotGame.Client.BusinessLogic
 @using DungeonBotGame.Client.Store.DungeonBots
 @using DungeonBotGame.Models.ViewModels
-@using DungeonBotGame.Client.ErrorHandling
 
 @if (DungeonBot != null)
 {
@@ -28,7 +27,7 @@
             <div class="col-12 col-lg-6 col-xl-4">
                 <div class="card m-3">
                     <div class="card-header">
-                        Level @DungeonBot.Level @GetClassName()
+                        Level @DungeonBot.Level @ClassDetailProvider.GetClassName(DungeonBot.DungeonBotClass)
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -65,7 +64,7 @@
                     <ul class="list-group list-group-flush">
                         @foreach (var abilityType in DungeonBot.Abilities)
                         {
-                            var abilityDescription = abilityDescriptionProvider.GetAbilityDescription(abilityType);
+                            var abilityDescription = AbilityDescriptionProvider.GetAbilityDescription(abilityType);
 
                             <li class="list-group-item list-group-item-action" data-toggle="tooltip" title="@abilityDescription.Description">
                                 @abilityDescription.Name
@@ -93,7 +92,9 @@
 
 @inject IDispatcher Dispatcher
 
-@inject IAbilityDescriptionProvider abilityDescriptionProvider
+@inject IAbilityDescriptionProvider AbilityDescriptionProvider
+
+@inject IClassDetailProvider ClassDetailProvider
 
 @code {
 
@@ -219,27 +220,5 @@
     public bool DungeonBotNameIsValid()
     {
         return !string.IsNullOrEmpty(DungeonBotName);
-    }
-
-    public string GetClassName()
-    {
-        if (DungeonBot == null)
-        {
-            return string.Empty;
-        }
-
-        switch (DungeonBot.DungeonBotClass)
-        {
-            case DungeonBotClass.WarriorBot:
-                return "Warrior Bot";
-            case DungeonBotClass.ArmorBot:
-                return "Armor Bot";
-            case DungeonBotClass.SorcererBot:
-                return "Sorcerer Bot";
-            case DungeonBotClass.MysticRepairBot:
-                return "Mystic Repair Bot";
-            default:
-                throw new UnknownDungeonBotClassException(DungeonBot.DungeonBotClass);
-        }
     }
 }
