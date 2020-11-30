@@ -56,19 +56,21 @@
                                 <CollapseSectionView>
                                     @foreach (var character in encounterResult.Characters)
                                     {
+                                        var characterId = string.Join('-', encounterResult.Order, character.Id);
+
                                         // Sets a CSS Class on the Code Editor when the Panel is Showing to redraw the Code Editor
                                         Action setCodeEditorCssClass = () =>
                                         {
                                             if (!CharacterPanelHasExpanded.ContainsKey(character.Id))
                                             {
-                                                CharacterPanelHasExpanded.Add(character.Id, "has-expanded");
+                                                CharacterPanelHasExpanded.Add(characterId, "has-expanded");
                                             }
                                         };
 
-                                        <CollapsePanel CssClass="my-2" HeadingId="@($"characterPanelHeading-{character.Id}")" CollapseSectionId="@($"characterPanel-{character.Id}")" IsCollapsedInitially="true" OnShow="@setCodeEditorCssClass">
+                                        <CollapsePanel CssClass="my-2" HeadingId="@($"characterPanelHeading-{characterId}")" CollapseSectionId="@($"characterPanel-{characterId}")" IsCollapsedInitially="true" OnShow="@setCodeEditorCssClass">
                                             <HeadingView>@character.Name</HeadingView>
                                             <CollapseSectionView>
-                                                <DungeonBotCodeEditor CssClass="@(CharacterPanelHasExpanded.ContainsKey(character.Id) ? CharacterPanelHasExpanded[character.Id] : string.Empty)" Files="@character.SourceCodeFiles" ReadOnly="true"></DungeonBotCodeEditor>
+                                                <DungeonBotCodeEditor CssClass="@(CharacterPanelHasExpanded.ContainsKey(characterId) ? CharacterPanelHasExpanded[characterId] : string.Empty)" Files="@character.SourceCodeFiles" ReadOnly></DungeonBotCodeEditor>
                                             </CollapseSectionView>
                                         </CollapsePanel>
                                     }
@@ -79,7 +81,7 @@
                 }
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary px-5 mx-3" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -93,6 +95,8 @@
 
     public async Task ShowModalAsync()
     {
+        CharacterPanelHasExpanded = new Dictionary<string, string>();
+
         await JSRuntime.InvokeVoidAsync("launchModal", "adventureResultModal");
     }
 }

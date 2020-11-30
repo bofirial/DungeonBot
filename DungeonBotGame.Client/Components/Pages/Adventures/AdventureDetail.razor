@@ -23,8 +23,8 @@
         @foreach (var encounter in Adventure.Encounters)
         {
             <div class="col">
-                <div class="card h-100">
-                    <div class="card-header">
+                <div class="card h-100 border-danger">
+                    <div class="card-header border-danger">
                         @encounter.Name
                     </div>
                     <div class="card-body">
@@ -51,8 +51,13 @@
                         <div class="card-body">
                             @if (dungeonBotSlot.DungeonBot != null)
                             {
-                                @*<h3 class="card-title text-center">@ClassDetailProvider.GetClassName(dungeonBotSlot.DungeonBot.DungeonBotClass)</h3>*@
-                                <h4 class="card-title text-center">@($"Level {dungeonBotSlot.DungeonBot.Level}")</h4>
+                                <h4 class="card-title text-center">Level @dungeonBotSlot.DungeonBot.Level</h4>
+                                <p class="card-title text-center">@ClassDetailProvider.GetClassName(dungeonBotSlot.DungeonBot.DungeonBotClass)</p>
+                            }
+                            else
+                            {
+                                <h4 class="card-title text-center">&nbsp;</h4>
+                                <p class="card-title text-center">&nbsp;</p>
                             }
                             <img src="@dungeonBotSlotImageLocation" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@dungeonBotSlotName">
                             <button type="button" class="btn btn-primary btn-large px-5 mx-auto mt-3 d-block"
@@ -74,7 +79,9 @@
         </button>
     </div>
 
-    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>
+    @AdventureResultModalRenderFragment
+
+    @*<AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>*@
 
     <SpinnerModal @ref="Spinner" ModalTitle="Starting Adventure"></SpinnerModal>
 }
@@ -86,9 +93,11 @@
 
     public string AdventureId { get; set; } = string.Empty;
 
+    public RenderFragment AdventureResultModalRenderFragment { get; set; } = builder => { };
+
     public AdventureResultModal? AdventureResultModal { get; set; }
 
-    public AdventureResultViewModel? AdventureResult { get; set; }
+    //public AdventureResultViewModel? AdventureResult { get; set; }
 
     public string StartAdventureButtonClass { get; set; } = string.Empty;
 
@@ -114,6 +123,13 @@
             var dungeonBots = (IEnumerable<DungeonBotViewModel>)DungeonBotSlots.Where(d => d.DungeonBot != null).Select(d => d.DungeonBot);
 
             Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, dungeonBots.ToImmutableList(), CurrentAdventureRunId));
+
+            if (AdventureResultModal != null)
+            {
+                AdventureResultModalRenderFragment = builder => { };
+
+                AdventureResultModal = null;
+            }
         }
     }
 
@@ -139,7 +155,7 @@
                 return;
             }
 
-            if (AdventureResultModal != null && Adventure.AdventureResults != null)
+            if (Adventure.AdventureResults != null)
             {
                 var adventureResult = Adventure.AdventureResults.LastOrDefault(d => d.RunId == CurrentAdventureRunId);
 
@@ -147,10 +163,18 @@
                 {
                     CurrentAdventureRunId = string.Empty;
 
-                    AdventureResult = adventureResult;
-
                     await Spinner.StopSpinnerAsync();
-                    await AdventureResultModal.ShowModalAsync();
+
+                    AdventureResultModalRenderFragment = builder =>
+                    {
+                        builder.OpenComponent<AdventureResultModal>(0);
+
+                        builder.AddAttribute(1, "AdventureResult", adventureResult);
+
+                        builder.AddComponentReferenceCapture(2, async newRef => { AdventureResultModal = (AdventureResultModal)newRef; await AdventureResultModal.ShowModalAsync(); });
+
+                        builder.CloseComponent();
+                    };
                 }
             }
         }
