@@ -79,9 +79,7 @@
         </button>
     </div>
 
-    @AdventureResultModalRenderFragment
-
-    @*<AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>*@
+    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>
 
     <SpinnerModal @ref="Spinner" ModalTitle="Starting Adventure"></SpinnerModal>
 }
@@ -93,11 +91,9 @@
 
     public string AdventureId { get; set; } = string.Empty;
 
-    public RenderFragment AdventureResultModalRenderFragment { get; set; } = builder => { };
-
     public AdventureResultModal? AdventureResultModal { get; set; }
 
-    //public AdventureResultViewModel? AdventureResult { get; set; }
+    public AdventureResultViewModel? AdventureResult { get; set; }
 
     public string StartAdventureButtonClass { get; set; } = string.Empty;
 
@@ -123,13 +119,6 @@
             var dungeonBots = (IEnumerable<DungeonBotViewModel>)DungeonBotSlots.Where(d => d.DungeonBot != null).Select(d => d.DungeonBot);
 
             Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, dungeonBots.ToImmutableList(), CurrentAdventureRunId));
-
-            if (AdventureResultModal != null)
-            {
-                AdventureResultModalRenderFragment = builder => { };
-
-                AdventureResultModal = null;
-            }
         }
     }
 
@@ -155,7 +144,8 @@
                 return;
             }
 
-            if (Adventure.AdventureResults != null)
+
+            if (AdventureResultModal != null && Adventure.AdventureResults != null)
             {
                 var adventureResult = Adventure.AdventureResults.LastOrDefault(d => d.RunId == CurrentAdventureRunId);
 
@@ -163,18 +153,10 @@
                 {
                     CurrentAdventureRunId = string.Empty;
 
+                    AdventureResult = adventureResult;
+
                     await Spinner.StopSpinnerAsync();
-
-                    AdventureResultModalRenderFragment = builder =>
-                    {
-                        builder.OpenComponent<AdventureResultModal>(0);
-
-                        builder.AddAttribute(1, "AdventureResult", adventureResult);
-
-                        builder.AddComponentReferenceCapture(2, async newRef => { AdventureResultModal = (AdventureResultModal)newRef; await AdventureResultModal.ShowModalAsync(); });
-
-                        builder.CloseComponent();
-                    };
+                    await AdventureResultModal.ShowModalAsync();
                 }
             }
         }
