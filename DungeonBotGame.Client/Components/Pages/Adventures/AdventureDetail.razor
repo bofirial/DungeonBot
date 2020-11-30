@@ -17,22 +17,25 @@
     <h2>@Adventure.Name</h2>
     <p>@Adventure.Description</p>
 
-    <div class="encounters row justify-content-center m-2">
+
+    <div class="row justify-content-evenly row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4 mb-3 profile-cards">
+
         @foreach (var encounter in Adventure.Encounters)
         {
-            <div class="col-12 col-md-6 col-lg-3">
-                <div class="card m-3">
-                    <img src="@encounter.ProfileImageLocation" class="card-img-top pixel-image" alt="@encounter.Name">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        @encounter.Name
+                    </div>
                     <div class="card-body">
-                        <h3 class="card-title">@encounter.Name</h3>
-                        <p class="card-text">@encounter.Description</p>
+                        <h4 class="card-title text-center">@($"Level 1")</h4>
+                        <p class="card-title text-center">@encounter.Description</p>
+                        <img src="@encounter.ProfileImageLocation" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@encounter.Name">
                     </div>
                 </div>
             </div>
         }
-    </div>
 
-    <div class="dungeonBotSlots row justify-content-center m-2">
         @foreach (var dungeonBotSlot in DungeonBotSlots)
         {
             if (dungeonBotSlot.Slot <= Adventure.DungeonBotSlots)
@@ -40,26 +43,36 @@
                 var dungeonBotSlotImageLocation = dungeonBotSlot.DungeonBot == null ? "/images/temp/dungeonbot-silhoutte.png" : dungeonBotSlot.DungeonBot.ProfileImageLocation;
                 var dungeonBotSlotName = dungeonBotSlot.DungeonBot == null ? "Select a DungeonBot" : dungeonBotSlot.DungeonBot.Name;
 
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="card m-3" @onclick="() => SelectADungeonBot(dungeonBotSlot.Slot)">
-                        <img src="@dungeonBotSlotImageLocation" class="card-img-top pixel-image" alt="@dungeonBotSlotName">
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            @dungeonBotSlotName
+                        </div>
                         <div class="card-body">
-                            <h3 class="card-title">@dungeonBotSlotName</h3>
                             @if (dungeonBotSlot.DungeonBot != null)
                             {
-                                <p class="card-text">Level @dungeonBotSlot.DungeonBot.Level @ClassDetailProvider.GetClassName(dungeonBotSlot.DungeonBot.DungeonBotClass)</p>
+                                @*<h3 class="card-title text-center">@ClassDetailProvider.GetClassName(dungeonBotSlot.DungeonBot.DungeonBotClass)</h3>*@
+                                <h4 class="card-title text-center">@($"Level {dungeonBotSlot.DungeonBot.Level}")</h4>
                             }
+                            <img src="@dungeonBotSlotImageLocation" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@dungeonBotSlotName">
+                            <button type="button" class="btn btn-primary btn-large px-5 mx-auto mt-3 d-block"
+                                    @onclick="() => SelectADungeonBot(dungeonBotSlot.Slot)">
+                                Select a DungeonBot
+                            </button>
                         </div>
                     </div>
                 </div>
             }
         }
+
     </div>
 
-    <button type="button" class="btn btn-primary btn-large px-4 mx-2 @StartAdventureButtonClass"
-            @onclick="async e => await StartAdventureAsync(Adventure)">
-        Start Adventure
-    </button>
+    <div class="mt-3 text-center">
+        <button type="button" class="btn btn-primary px-5 mx-3 @StartAdventureButtonClass"
+                @onclick="async e => await StartAdventureAsync(Adventure)">
+            Start Adventure
+        </button>
+    </div>
 
     <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>
 
