@@ -1,5 +1,8 @@
 ﻿html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
     overflow-x: hidden;
 }
 
@@ -139,6 +142,14 @@ app {
 
 .pixel-image {
     image-rendering: pixelated;
+}
+
+.profile-image {
+    max-width: 256px;
+}
+
+.profile-cards .col {
+    max-width: 400px;
 }
 
 //@media (min-width: 768px) {

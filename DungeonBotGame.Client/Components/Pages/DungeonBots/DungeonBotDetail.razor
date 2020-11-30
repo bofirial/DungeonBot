@@ -7,7 +7,7 @@
 @if (DungeonBot != null)
 {
     <form>
-        <div class="row justify-content-center m-2">
+        <div class="row justify-content-evenly row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4 mb-3 profile-cards">
             @foreach (var alert in Alerts)
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -15,22 +15,26 @@
                     <button type="button" class="btn-close" aria-label="Close" @onclick="() => CloseSaveAlert(alert)"></button>
                 </div>
             }
-            <div class="col-12 col-lg-6 col-xl-4">
-                <div class="card m-3">
-                    <img src="@DungeonBot.ProfileImageLocation" class="card-img-top pixel-image" alt="@DungeonBot.Name">
+            <div class="col">
+                <div class="card ">
+                    <div class="card-header">
+                        @DungeonBot.Name
+                    </div>
                     <div class="card-body">
-                        <h3 class="card-title">@DungeonBot.Name</h3>
+                        <h3 class="card-title text-center">@ClassDetailProvider.GetClassName(DungeonBot.DungeonBotClass)</h3>
+                        <h4 class="card-title text-center">@($"Level {DungeonBot.Level}")</h4>
+                        <img src="@DungeonBot.ProfileImageLocation" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@DungeonBot.Name">
                     </div>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-6 col-xl-4">
-                <div class="card m-3">
+            <div class="col">
+                <div class="card">
                     <div class="card-header">
-                        Level @DungeonBot.Level @ClassDetailProvider.GetClassName(DungeonBot.DungeonBotClass)
+                        @($"Level {DungeonBot.Level} {ClassDetailProvider.GetClassName(DungeonBot.DungeonBotClass)}")
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3">
+                    <div class="card-body flex-grow-0">
+                        <div class="mb-1">
                             <label for="dungeonbot-name" class="form-label">Name</label>
                             <input type="text" class="form-control @(!DungeonBotNameIsValid() ? "is-invalid" : string.Empty)" id="dungeonbot-name" @bind="DungeonBotName" />
                             <div class="invalid-feedback">
@@ -56,8 +60,8 @@
                 </div>
             </div>
 
-            <div class="col-12 col-lg-6 col-xl-4">
-                <div class="card m-3">
+            <div class="col">
+                <div class="card">
                     <div class="card-header">
                         Abilities
                     </div>
@@ -81,9 +85,9 @@
 
         <DungeonBotCodeEditor @ref="DungeonBotCodeEditor" Files="@DungeonBot.ActionModuleFiles" DungeonBot="DungeonBot"></DungeonBotCodeEditor>
 
-        <div class="mt-3">
-            <button type="button" class="btn btn-primary" @onclick="SaveAsync">Save</button>
-            <button type="button" class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
+        <div class="mt-3 text-center">
+            <button type="button" class="btn btn-primary px-5 mx-3" @onclick="SaveAsync">Save</button>
+            <button type="button" class="btn btn-secondary px-5 mx-3" @onclick="CancelAsync">Cancel</button>
         </div>
 
         <SpinnerModal @ref="Spinner" ModalTitle="Saving DungeonBot"></SpinnerModal>
