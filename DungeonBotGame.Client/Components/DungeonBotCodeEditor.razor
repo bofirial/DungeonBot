@@ -60,7 +60,11 @@
             DungeonBotId = DungeonBot.Id;
 
             await CodeCompletionService.InitializeCodeEditorAsync(DungeonBot);
-            await SetValueAsync(DungeonBot.ActionModuleFiles);
+            await SetValueAsync(Files);
+        }
+        else if (ReadOnly)
+        {
+            await SetValueAsync(Files);
         }
     }
 
