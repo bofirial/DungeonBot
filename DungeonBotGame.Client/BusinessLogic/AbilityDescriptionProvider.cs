@@ -53,7 +53,7 @@ namespace DungeonBotGame.Client.BusinessLogic
             {
                 AbilityType.Repair,
                 new AbilityDescriptionViewModel("Repair",
-                    "Repairs the target using Mystic Power.",
+                    "Repairs the target using Mystic Power.  Also fully repairs the party between encounters.",
                     AbilityType.Repair,
                     IsTargetted: true,
                     IsPassive: false,

@@ -60,6 +60,11 @@ namespace DungeonBotGame.Client
 
             services.AddScoped<IAbilityProcessor, HeavySwingAbilityProcessor>();
             services.AddScoped<IAbilityProcessor, AnalyzeSituationAbilityProcessor>();
+            services.AddScoped<IPassiveAbilityProcessor, SalvageStrikesAbilityProcessor>();
+            services.AddScoped<IPassiveAbilityProcessor, SurpriseAttackAbilityProcessor>();
+
+            services.AddScoped<IAbilityProcessor, RepairAbilityProcessor>();
+            services.AddScoped<IPassiveAbilityProcessor, RepairAbilityProcessor>();
 
             services.AddScoped<IAbilityProcessor, LickWoundsAbilityProcessor>();
 
