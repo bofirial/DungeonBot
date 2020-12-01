@@ -105,7 +105,7 @@ namespace DungeonBotGame.Scripts
                     power: 5,
                     armor: 5,
                     speed: 5,
-                    "/images/temp/dungeonbot.png",
+                    "/images/temp/dungeonbot-mysticrepairbot.png",
                     ImmutableList.Create(new ActionModuleFileViewModel("MysticRepairBot001.cs", DefaultMysticRepairBotActionModule)),
                     ImmutableList.Create(AbilityType.Repair),
                     actionModuleContext: null,
