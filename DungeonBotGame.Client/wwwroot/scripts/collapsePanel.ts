@@ -1,8 +1,10 @@
 ﻿export { }
 
+declare const bootstrap: any;
 declare global {
     interface Window {
         registerCollapsePanelEvents: any;
+        closePanels: any;
     }
 }
 
@@ -22,3 +24,18 @@ window.registerCollapsePanelEvents = (collapsePanelId, collapsePanelComponent) =
         }
     }, 1);
 };
+
+window.closePanels = (collapsePanelIds) => {
+    for (var i in collapsePanelIds) {
+        var collapsePanelId = collapsePanelIds[i];
+        var targetCollapsePanel = document.getElementById(collapsePanelId);
+
+        if (targetCollapsePanel) {
+            var collapsePanel = bootstrap.Collapse.getInstance(targetCollapsePanel);
+
+            if (collapsePanel) {
+                collapsePanel.hide();
+            }
+        }
+    }
+}

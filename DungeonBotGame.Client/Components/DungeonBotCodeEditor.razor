@@ -7,6 +7,8 @@
 
 <MonacoEditor @ref="CSharpEditor" CssClass="@CssClass" Id="@Id" ConstructionOptions="EditorConstructionOptions"></MonacoEditor>
 
+@inject ICodeCompletionService CodeCompletionService
+
 @code {
     public string Id { get; set; } = $"monaco-container-{Guid.NewGuid()}";
 
@@ -22,7 +24,10 @@
     [Parameter]
     public DungeonBotViewModel? DungeonBot { get; set; }
 
-    @inject ICodeCompletionService CodeCompletionService
+    [Parameter]
+    public string ReadOnlyUniqueId { get; set; } = Guid.NewGuid().ToString();
+
+    public string SetReadOnlyUniqueId { get; set; } = string.Empty;
 
     private MonacoEditor? CSharpEditor { get; set; }
 
@@ -62,8 +67,10 @@
             await CodeCompletionService.InitializeCodeEditorAsync(DungeonBot);
             await SetValueAsync(Files);
         }
-        else if (ReadOnly)
+        else if (ReadOnly && ReadOnlyUniqueId != SetReadOnlyUniqueId)
         {
+            SetReadOnlyUniqueId = ReadOnlyUniqueId;
+
             await SetValueAsync(Files);
         }
     }

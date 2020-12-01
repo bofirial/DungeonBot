@@ -57,17 +57,19 @@
                                     @foreach (var character in encounterResult.Characters)
                                     {
                                         var characterId = string.Join('-', encounterResult.Order, character.Id);
+                                        var collapsePanelId = $"characterPanel-{characterId}";
+                                        CodeEditorCollapsePanelIdsToInitiate.Add(collapsePanelId);
 
                                         // Sets a CSS Class on the Code Editor when the Panel is Showing to redraw the Code Editor
                                         Action setCodeEditorCssClass = () =>
                                         {
-                                            if (!CharacterPanelHasExpanded.ContainsKey(character.Id))
+                                            if (!CharacterPanelHasExpanded.ContainsKey(characterId))
                                             {
                                                 CharacterPanelHasExpanded.Add(characterId, "has-expanded");
                                             }
                                         };
 
-                                        <CollapsePanel CssClass="my-2" HeadingId="@($"characterPanelHeading-{characterId}")" CollapseSectionId="@($"characterPanel-{characterId}")" IsCollapsedInitially="true" OnShow="@setCodeEditorCssClass">
+                                        <CollapsePanel CssClass="my-2" HeadingId="@($"characterPanelHeading-{characterId}")" CollapseSectionId="@collapsePanelId" IsCollapsedInitially="true" OnShow="@setCodeEditorCssClass">
                                             <HeadingView>@character.Name</HeadingView>
                                             <CollapseSectionView>
                                                 <DungeonBotCodeEditor CssClass="@(CharacterPanelHasExpanded.ContainsKey(characterId) ? CharacterPanelHasExpanded[characterId] : string.Empty)" Files="@character.SourceCodeFiles" ReadOnly></DungeonBotCodeEditor>
@@ -93,10 +95,58 @@
 
     public Dictionary<string, string> CharacterPanelHasExpanded { get; set; } = new Dictionary<string, string>();
 
+    public HashSet<string> CodeEditorCollapsePanelIdsToInitiate = new HashSet<string>();
+
+    [Parameter]
+    public EventCallback OnShown { get; set; }
+
+    [Parameter]
+    public EventCallback OnShow { get; set; }
+
+    [Parameter]
+    public EventCallback OnHidden { get; set; }
+
+    [Parameter]
+    public EventCallback OnHide { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (JSRuntime != null && (OnShown.HasDelegate || OnShow.HasDelegate || OnHidden.HasDelegate || OnHide.HasDelegate))
+        {
+            await JSRuntime.InvokeVoidAsync("registerModalEvents", "adventureResultModal", DotNetObjectReference.Create(this));
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    [JSInvokable]
+    public async Task TriggerEventAsync(string collapsePanelEvent)
+    {
+        switch (collapsePanelEvent)
+        {
+            case "shown.bs.modal":
+                await OnShown.InvokeAsync();
+                break;
+            case "show.bs.modal":
+                await OnShow.InvokeAsync();
+                break;
+            case "hidden.bs.modal":
+                await OnHidden.InvokeAsync();
+                break;
+            case "hide.bs.modal":
+                await OnHide.InvokeAsync();
+                break;
+        }
+    }
+
     public async Task ShowModalAsync()
     {
         CharacterPanelHasExpanded = new Dictionary<string, string>();
 
         await JSRuntime.InvokeVoidAsync("launchModal", "adventureResultModal");
+
+        await JSRuntime.InvokeVoidAsync("closePanels", CodeEditorCollapsePanelIdsToInitiate);
+
+        CodeEditorCollapsePanelIdsToInitiate.Clear();
     }
 }

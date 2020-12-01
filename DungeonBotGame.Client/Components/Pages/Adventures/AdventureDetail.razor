@@ -79,9 +79,9 @@
         </button>
     </div>
 
-    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>
-
     <SpinnerModal @ref="Spinner" ModalTitle="Starting Adventure"></SpinnerModal>
+
+    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult" OnShow="async () => await (Spinner?.StopSpinnerAsync() ?? Task.CompletedTask)"></AdventureResultModal>
 }
 
 @code {
@@ -155,7 +155,7 @@
 
                     AdventureResult = adventureResult;
 
-                    await Spinner.StopSpinnerAsync();
+                    //await Spinner.StopSpinnerAsync();
                     await AdventureResultModal.ShowModalAsync();
                 }
             }
