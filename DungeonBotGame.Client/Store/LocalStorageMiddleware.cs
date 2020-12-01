@@ -9,7 +9,7 @@ namespace DungeonBotGame.Client.Store
     public class LocalStorageMiddleware : Middleware
     {
         private readonly IJSRuntime _jsRuntime;
-        private readonly JsonSerializerSettings _jsonSerializerSettings = new ()
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.All,

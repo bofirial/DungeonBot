@@ -42,6 +42,7 @@ namespace DungeonBotGame.Client
             services.AddScoped<ICombatValueCalculator, CombatValueCalculator>();
             services.AddScoped<ICombatActionProcessor, CombatActionProcessor>();
             services.AddScoped<IAbilityDescriptionProvider, AbilityDescriptionProvider>();
+            services.AddScoped<IClassDetailProvider, ClassDetailProvider>();
             services.AddScoped<IActionComponentAbilityExtensionMethodsClassBuilder, ActionComponentAbilityExtensionMethodsClassBuilder>();
             services.AddScoped<IDungeonBotFactory, DungeonBotFactory>();
             services.AddScoped<IEnemyFactory, EnemyFactory>();
@@ -75,6 +76,8 @@ namespace DungeonBotGame.Client
             services.AddScoped<IAfterDamageCombatEffectProcessor, SalvageStrikesCombatEffectProcessor>();
 
             services.AddScoped<IAfterActionCombatEffectProcessor, StunTargetCombatEffectProcessor>();
+
+            services.AddScoped<ICombatEventCombatEffectProcessor, DamageOverTimeCombatEffectProcessor>();
 
             services.AddLogging(builder => builder
                 .AddBrowserConsole()

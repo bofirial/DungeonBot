@@ -7,6 +7,8 @@
 
 <MonacoEditor @ref="CSharpEditor" CssClass="@CssClass" Id="@Id" ConstructionOptions="EditorConstructionOptions"></MonacoEditor>
 
+@inject ICodeCompletionService CodeCompletionService
+
 @code {
     public string Id { get; set; } = $"monaco-container-{Guid.NewGuid()}";
 
@@ -22,19 +24,14 @@
     [Parameter]
     public DungeonBotViewModel? DungeonBot { get; set; }
 
-    @inject ICodeCompletionService CodeCompletionService
+    [Parameter]
+    public string ReadOnlyUniqueId { get; set; } = Guid.NewGuid().ToString();
+
+    public string SetReadOnlyUniqueId { get; set; } = string.Empty;
 
     private MonacoEditor? CSharpEditor { get; set; }
 
-    protected async override Task OnInitializedAsync()
-    {
-        if (DungeonBot != null)
-        {
-            await CodeCompletionService.InitializeCodeEditorAsync(DungeonBot);
-        }
-
-        await base.OnInitializedAsync();
-    }
+    public string DungeonBotId { get; set; } = string.Empty;
 
     public async Task<IImmutableList<ActionModuleFileViewModel>> GetValueAsync()
     {
@@ -59,6 +56,25 @@
         }
     }
 
+    protected async override Task OnParametersSetAsync()
+    {
+        base.OnParametersSet();
+
+        if (DungeonBot != null && (string.IsNullOrEmpty(DungeonBotId) || DungeonBotId != DungeonBot.Id))
+        {
+            DungeonBotId = DungeonBot.Id;
+
+            await CodeCompletionService.InitializeCodeEditorAsync(DungeonBot);
+            await SetValueAsync(Files);
+        }
+        else if (ReadOnly && ReadOnlyUniqueId != SetReadOnlyUniqueId)
+        {
+            SetReadOnlyUniqueId = ReadOnlyUniqueId;
+
+            await SetValueAsync(Files);
+        }
+    }
+
     private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
     {
         return new StandaloneEditorConstructionOptions
@@ -70,4 +86,4 @@
             ReadOnly = ReadOnly
         };
     }
-    }
+}

@@ -3,40 +3,88 @@
 @using DungeonBotGame.Client.Store.DungeonBots;
 @using DungeonBotGame.Client.Store.Adventures;
 @using System.Collections.Immutable
+@using DungeonBotGame.Client.BusinessLogic
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 
 @inject IState<DungeonBotState> DungeonBotState
 @inject IDispatcher Dispatcher
 
+@inject IClassDetailProvider ClassDetailProvider
+
 @if (Adventure != null)
 {
     <h2>@Adventure.Name</h2>
     <p>@Adventure.Description</p>
 
-    <div class="encounters row justify-content-center m-2">
+    <div class="row justify-content-evenly row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4 mb-3 profile-cards">
+
         @foreach (var encounter in Adventure.Encounters)
         {
-            <div class="col-12 col-md-6 col-lg-3">
-                <div class="card m-3">
-                    <img src="@encounter.ProfileImageLocation" class="card-img-top pixel-image" alt="@encounter.Name">
+            <div class="col">
+                <div class="card h-100 border-danger">
+                    <div class="card-header border-danger">
+                        @encounter.Name
+                    </div>
                     <div class="card-body">
-                        <h3 class="card-title">@encounter.Name</h3>
-                        <p class="card-text">@encounter.Description</p>
+                        <h4 class="card-title text-center">@($"Level 1")</h4>
+                        <p class="card-title text-center">@encounter.Description</p>
+                        <img src="@encounter.ProfileImageLocation" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@encounter.Name">
                     </div>
                 </div>
             </div>
         }
+
+        @foreach (var dungeonBotSlot in DungeonBotSlots)
+        {
+            if (dungeonBotSlot.Slot <= Adventure.DungeonBotSlots)
+            {
+                var dungeonBotSlotImageLocation = dungeonBotSlot.DungeonBot == null ? "/images/temp/dungeonbot-silhoutte.png" : dungeonBotSlot.DungeonBot.ProfileImageLocation;
+                var dungeonBotSlotName = dungeonBotSlot.DungeonBot == null ? "Select a DungeonBot" : dungeonBotSlot.DungeonBot.Name;
+
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            @dungeonBotSlotName
+                        </div>
+                        <div class="card-body">
+                            @if (dungeonBotSlot.DungeonBot != null)
+                            {
+                                <h4 class="card-title text-center">Level @dungeonBotSlot.DungeonBot.Level</h4>
+                                <p class="card-title text-center">@ClassDetailProvider.GetClassName(dungeonBotSlot.DungeonBot.DungeonBotClass)</p>
+                            }
+                            else
+                            {
+                                <h4 class="card-title text-center">&nbsp;</h4>
+                                <p class="card-title text-center">&nbsp;</p>
+                            }
+                            <img src="@dungeonBotSlotImageLocation" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@dungeonBotSlotName">
+                        </div>
+                        <div class="card-footer">
+                            <button type="button" class="btn btn-primary btn-large px-5 mx-auto mt-3 d-block"
+                                    @onclick="async () => await SelectADungeonBotAsync(dungeonBotSlot.Slot)">
+                                Select a DungeonBot
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
     </div>
 
-    <button type="button" class="btn btn-primary btn-large px-4 mx-2"
-            @onclick="async e => await StartAdventureAsync(Adventure)">
-        Start Adventure
-    </button>
-
-    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult"></AdventureResultModal>
+    <div class="mt-3 text-center">
+        <button type="button" class="btn btn-primary px-5 mx-3 @StartAdventureButtonClass"
+                @onclick="async e => await StartAdventureAsync(Adventure)">
+            Start Adventure
+        </button>
+    </div>
 
     <SpinnerModal @ref="Spinner" ModalTitle="Starting Adventure"></SpinnerModal>
+
+    <DungeonBotPickerModal @ref="DungeonBotPickerModal" DungeonBots="DungeonBotState?.Value?.DungeonBots"></DungeonBotPickerModal>
+
+    <AdventureResultModal @ref="AdventureResultModal" AdventureResult="@AdventureResult" OnShow="async () => await (Spinner?.StopSpinnerAsync() ?? Task.CompletedTask)"></AdventureResultModal>
 }
 
 @code {
@@ -44,9 +92,22 @@
     [Parameter]
     public AdventureViewModel? Adventure { get; set; }
 
+    public string AdventureId { get; set; } = string.Empty;
+
     public AdventureResultModal? AdventureResultModal { get; set; }
 
     public AdventureResultViewModel? AdventureResult { get; set; }
+
+    public string StartAdventureButtonClass { get; set; } = string.Empty;
+
+    public List<(DungeonBotViewModel? DungeonBot, ushort Slot)> DungeonBotSlots { get; set; } = new List<(DungeonBotViewModel? DungeonBot, ushort Slot)>() {
+        (DungeonBot: null, Slot: 1),
+        (DungeonBot: null, Slot: 2),
+        (DungeonBot: null, Slot: 3),
+        (DungeonBot: null, Slot: 4),
+        (DungeonBot: null, Slot: 5) };
+
+    public DungeonBotPickerModal? DungeonBotPickerModal { get; set; }
 
     public SpinnerModal? Spinner { get; set; }
 
@@ -56,13 +117,13 @@
     {
         CurrentAdventureRunId = Guid.NewGuid().ToString();
 
-        var dungeonBot = DungeonBotState?.Value?.DungeonBots?.FirstOrDefault();
-
-        if (dungeonBot != null && Spinner != null)
+        if (Spinner != null)
         {
             await Spinner.StartSpinnerAsync();
 
-            Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, ImmutableList.Create(dungeonBot), CurrentAdventureRunId));
+            var dungeonBots = (IEnumerable<DungeonBotViewModel>)DungeonBotSlots.Where(d => d.DungeonBot != null).Select(d => d.DungeonBot);
+
+            Dispatcher.Dispatch(new RunAdventureAction(currentAdventure, dungeonBots.ToImmutableList(), CurrentAdventureRunId));
         }
     }
 
@@ -70,21 +131,62 @@
     {
         await base.OnParametersSetAsync();
 
-        if (Adventure == null || AdventureResultModal == null || Adventure.AdventureResults == null)
+        if (Adventure != null)
         {
-            return;
+            if (string.IsNullOrEmpty(AdventureId) || AdventureId != Adventure.Id)
+            {
+                AdventureId = Adventure.Id;
+
+                StartAdventureButtonClass = "disabled";
+
+                DungeonBotSlots = new List<(DungeonBotViewModel? DungeonBot, ushort Slot)>() {
+                    (DungeonBot: null, Slot: 1),
+                    (DungeonBot: null, Slot: 2),
+                    (DungeonBot: null, Slot: 3),
+                    (DungeonBot: null, Slot: 4),
+                    (DungeonBot: null, Slot: 5) };
+
+                return;
+            }
+
+
+            if (AdventureResultModal != null && Adventure.AdventureResults != null)
+            {
+                var adventureResult = Adventure.AdventureResults.LastOrDefault(d => d.RunId == CurrentAdventureRunId);
+
+                if (adventureResult != null && Spinner != null)
+                {
+                    CurrentAdventureRunId = string.Empty;
+
+                    AdventureResult = adventureResult;
+
+                    await AdventureResultModal.ShowModalAsync();
+                }
+            }
         }
+    }
 
-        var adventureResult = Adventure.AdventureResults.LastOrDefault(d => d.RunId == CurrentAdventureRunId);
-
-        if (adventureResult != null && Spinner != null)
+    public async Task SelectADungeonBotAsync(ushort dungeonBotSlot)
+    {
+        if (DungeonBotPickerModal != null)
         {
-            CurrentAdventureRunId = string.Empty;
+            DungeonBotPickerModal.SelectedDungeonBot = DungeonBotSlots[dungeonBotSlot - 1].DungeonBot;
 
-            AdventureResult = adventureResult;
+            DungeonBotPickerModal.UnavailableDungeonBots = (IEnumerable<DungeonBotViewModel>)DungeonBotSlots.Where(d => d.DungeonBot != null && d.Slot != dungeonBotSlot).Select(d => d.DungeonBot);
 
-            await Spinner.StopSpinnerAsync();
-            await AdventureResultModal.ShowModalAsync();
+            DungeonBotPickerModal.DungeonBotSelectionAction = dungeonBot =>
+            {
+                DungeonBotSlots[dungeonBotSlot - 1] = (DungeonBot: dungeonBot, Slot: dungeonBotSlot);
+
+                if (Adventure != null && DungeonBotSlots.Count(d => d.DungeonBot != null) >= Adventure.DungeonBotSlots)
+                {
+                    StartAdventureButtonClass = string.Empty;
+                }
+
+                StateHasChanged();
+            };
+
+            await DungeonBotPickerModal.ShowAsync();
         }
     }
 }

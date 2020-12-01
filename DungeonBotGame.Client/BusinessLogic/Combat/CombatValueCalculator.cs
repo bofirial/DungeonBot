@@ -36,7 +36,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public int GetAttackValue(CharacterBase sourceCharacter, CharacterBase targetCharacter)
         {
-            var attackValue = (int)(10 + sourceCharacter.Power * 3.5) - targetCharacter.Armor;
+            var attackValue = (int)(10 + sourceCharacter.Power * 3.5);
 
             void ModifyAttackValue(IAttackValueCombatEffectProcessor attackValueCombatEffectProcessor, CombatEffect combatEffect)
             {
@@ -44,6 +44,10 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             }
 
             _combatEffectDirector.ProcessCombatEffects(sourceCharacter, _attackValueCombatEffectProcessors, ModifyAttackValue);
+
+            attackValue -= targetCharacter.Armor;
+
+            attackValue = Math.Clamp(attackValue, 0, int.MaxValue);
 
             return attackValue;
         }

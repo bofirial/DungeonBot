@@ -11,5 +11,17 @@ window.registerCollapsePanelEvents = (collapsePanelId, collapsePanelComponent) =
         }
     }, 1);
 };
+window.closePanels = (collapsePanelIds) => {
+    for (var i in collapsePanelIds) {
+        var collapsePanelId = collapsePanelIds[i];
+        var targetCollapsePanel = document.getElementById(collapsePanelId);
+        if (targetCollapsePanel) {
+            var collapsePanel = bootstrap.Collapse.getInstance(targetCollapsePanel);
+            if (collapsePanel) {
+                collapsePanel.hide();
+            }
+        }
+    }
+};
 export {};
 //# sourceMappingURL=collapsePanel.js.map

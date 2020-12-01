@@ -5,7 +5,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 {
     public interface ICombatEventProcessor
     {
-        CombatEventType CombatEventType  { get; }
+        CombatEventType CombatEventType { get; }
 
         Task ProcessCombatEvent(CombatEvent combatEvent, CombatContext combatContext);
     }

@@ -2,5 +2,5 @@
 
 namespace DungeonBotGame.Models.ViewModels
 {
-    public record AdventureViewModel(string Name, string Description, IImmutableList<EncounterViewModel> Encounters, string Status, IImmutableList<AdventureResultViewModel> AdventureResults);
+    public record AdventureViewModel(string Id, string Name, string Description, IImmutableList<EncounterViewModel> Encounters, int DungeonBotSlots, string Status, IImmutableList<AdventureResultViewModel> AdventureResults);
 }
