@@ -1,39 +1,33 @@
-﻿<div id="@Id" class="modal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            @if (!string.IsNullOrEmpty(ModalTitle))
-            {
-                <div class="modal-header">
-                    <h5 class="modal-title">@ModalTitle</h5>
-                </div>
-            }
-            <div class="modal-body">
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            </div>
+﻿<Modal ModalId="@ModalId" ModalTitle="@ModalTitle" IsClosable="false" @ref="Modal">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
-</div>
-
-@inject IJSRuntime JSRuntime
+</Modal>
 
 @code {
     [Parameter]
     public string? ModalTitle { get; set; }
 
     [Parameter]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string ModalId { get; set; } = Guid.NewGuid().ToString();
+
+    public Modal? Modal { get; set; }
 
     public async Task StartSpinnerAsync()
     {
-        await JSRuntime.InvokeVoidAsync("launchModal", Id, false);
+        if (Modal != null)
+        {
+            await Modal.ShowAsync();
+        }
     }
 
     public async Task StopSpinnerAsync()
     {
-        await JSRuntime.InvokeVoidAsync("closeModal", Id);
+        if (Modal != null)
+        {
+            await Modal.CloseAsync();
+        }
     }
 }
