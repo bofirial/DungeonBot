@@ -29,7 +29,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors
                 combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry<IAction>(
                     $"{character.Name} swiped at {target.Name} for {abilityDamage} damage.", character, combatContext, abilityAction));
             }
-
         }
     }
 }
