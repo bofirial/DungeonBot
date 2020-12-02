@@ -12,7 +12,8 @@ namespace DungeonBotGame.Client.BusinessLogic.EnemyActionModules
         {
             var previousDungeonBotActionCombatLogEntry = sensorComponent.CombatLog.LastOrDefault(a => a is CombatLogEntry<IAction> && a.Character is IDungeonBot);
 
-            if (previousDungeonBotActionCombatLogEntry != null &&
+            if (actionComponent.LickWoundsIsAvailable() &&
+                previousDungeonBotActionCombatLogEntry != null &&
                 previousDungeonBotActionCombatLogEntry is CombatLogEntry<IAction> previousDungeonBotAction &&
                 previousDungeonBotAction.LogData is IAbilityAction)
             {

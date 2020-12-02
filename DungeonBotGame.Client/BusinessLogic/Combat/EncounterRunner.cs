@@ -15,20 +15,22 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
     public class EncounterRunner : IEncounterRunner
     {
-        private const int MAX_COMBAT_TIME = 6000;
+        private const int MAX_COMBAT_TIME = 60 * 600;
 
         private readonly IEnemyFactory _enemyFactory;
         private readonly ICombatValueCalculator _combatValueCalculator;
         private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
         private readonly IDictionary<CombatEventType, ICombatEventProcessor> _combatEventProcessors;
+        private readonly IDictionary<AbilityType, IPassiveAbilityProcessor> _passiveAbilityProcessors;
 
-        public EncounterRunner(IEnemyFactory enemyFactory, ICombatValueCalculator combatValueCalculator, ICombatLogEntryBuilder combatLogEntryBuilder, IEnumerable<ICombatEventProcessor> combatEventProcessors)
+        public EncounterRunner(IEnemyFactory enemyFactory, ICombatValueCalculator combatValueCalculator, ICombatLogEntryBuilder combatLogEntryBuilder, IEnumerable<ICombatEventProcessor> combatEventProcessors, IEnumerable<IPassiveAbilityProcessor> passiveAbilityProcessors)
         {
             _enemyFactory = enemyFactory;
             _combatValueCalculator = combatValueCalculator;
             _combatLogEntryBuilder = combatLogEntryBuilder;
 
             _combatEventProcessors = combatEventProcessors.ToDictionary(p => p.CombatEventType, p => p);
+            _passiveAbilityProcessors = passiveAbilityProcessors.ToDictionary(p => p.AbilityType, p => p);
         }
 
         private static bool EncounterHasCompleted(CombatContext combatContext) =>
@@ -143,33 +145,19 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
         {
             character.CombatEffects.Clear();
 
-            AddCombatEffectsForPassiveAbilities(character, combatContext);
+            ProcessPassiveAbilities(character, combatContext);
         }
 
         private void AddInitialCombatEvents(CharacterBase character, CombatContext combatContext) =>
             combatContext.CombatEvents.Add(new CombatEvent(_combatValueCalculator.GetIterationsUntilNextAction(character), character, CombatEventType.CharacterAction));
 
-        private void AddCombatEffectsForPassiveAbilities(CharacterBase character, CombatContext combatContext)
+        private void ProcessPassiveAbilities(CharacterBase character, CombatContext combatContext)
         {
             foreach (var abilityType in character.Abilities.Keys)
             {
-                switch (abilityType)
+                if (_passiveAbilityProcessors.ContainsKey(abilityType))
                 {
-                    case AbilityType.SurpriseAttack:
-                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Double Attack Damage", "2x Damage", CombatEffectType.AttackPercentage, Value: 200));
-                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Immediate Action", "Instant Action", CombatEffectType.ImmediateAction, Value: 1));
-                        character.CombatEffects.Add(new CombatEffect("Element of Surprise - Stun Target", "Stun Target", CombatEffectType.StunTarget, Value: 200));
-
-                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} has the element of surprise.", character, combatContext));
-
-                        break;
-
-                    case AbilityType.SalvageStrikes:
-                        character.CombatEffects.Add(new CombatEffect("Salvage Strikes", "Salvage Strikes", CombatEffectType.SalvageStrikes, Value: 1));
-
-                        combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} prepares salvage strikes.", character, combatContext));
-
-                        break;
+                    _passiveAbilityProcessors[abilityType].ProcessAction(character, combatContext);
                 }
             }
         }

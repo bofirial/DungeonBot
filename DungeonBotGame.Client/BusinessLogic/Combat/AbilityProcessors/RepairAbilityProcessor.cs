@@ -3,7 +3,7 @@ using DungeonBotGame.Models.Combat;
 
 namespace DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors
 {
-    public class RepairAbilityProcessor : IAbilityProcessor
+    public class RepairAbilityProcessor : IAbilityProcessor, IPassiveAbilityProcessor
     {
         private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
         private readonly ICombatValueCalculator _combatValueCalculator;
@@ -24,7 +24,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors
             {
                 if (targettedAbilityAction.Target is CharacterBase target)
                 {
-                    var health = _combatValueCalculator.GetAttackValue(character, target);
+                    var health = (int)(_combatValueCalculator.GetAttackValue(character, target) * 1.5);
 
                     _combatDamageApplier.ApplyHealing(character, target, health, combatContext);
 
@@ -39,6 +39,19 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors
             else
             {
                 throw new InvalidTargetException((ITarget?)null);
+            }
+        }
+
+        public void ProcessAction(CharacterBase character, CombatContext combatContext)
+        {
+            foreach (var dungeonBot in combatContext.DungeonBots)
+            {
+                if (dungeonBot.CurrentHealth < dungeonBot.MaximumHealth)
+                {
+                    dungeonBot.CurrentHealth = dungeonBot.MaximumHealth;
+
+                    combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} repaired {dungeonBot.Name} between encounters.", character, combatContext));
+                }
             }
         }
     }

@@ -11,26 +11,31 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     public class CharacterActionCombatEventProcessor : ICombatEventProcessor
     {
         private readonly IActionModuleExecuter _actionModuleExecuter;
-        private readonly ICombatActionProcessor _combatActionProcessor;
         private readonly ICombatValueCalculator _combatValueCalculator;
         private readonly ICombatEffectDirector _combatEffectDirector;
+        private readonly ICombatLogEntryBuilder _combatLogEntryBuilder;
+        private readonly IDictionary<ActionType, IActionProcessor> _actionProcessors;
         private readonly IDictionary<CombatEffectType, IBeforeActionCombatEffectProcessor> _beforeActionCombatEffectProcessors;
         private readonly IDictionary<CombatEffectType, IAfterActionCombatEffectProcessor> _afterActionCombatEffectProcessors;
+        private readonly IDictionary<CombatEffectType, IAfterCharacterFallsCombatEffectProcessor> _afterCharacterFallsCombatEffectProcessors;
 
         public CharacterActionCombatEventProcessor(IActionModuleExecuter actionModuleExecuter,
-            ICombatActionProcessor combatActionProcessor,
             ICombatValueCalculator combatValueCalculator,
             ICombatEffectDirector combatEffectDirector,
+            ICombatLogEntryBuilder combatLogEntryBuilder,
+            IEnumerable<IActionProcessor> actionProcessors,
             IEnumerable<IBeforeActionCombatEffectProcessor> beforeActionCombatEffectProcessors,
-            IEnumerable<IAfterActionCombatEffectProcessor> afterActionCombatEffectProcessors)
+            IEnumerable<IAfterActionCombatEffectProcessor> afterActionCombatEffectProcessors,
+            IEnumerable<IAfterCharacterFallsCombatEffectProcessor> afterCharacterFallsCombatEffectProcessors)
         {
             _actionModuleExecuter = actionModuleExecuter;
-            _combatActionProcessor = combatActionProcessor;
             _combatValueCalculator = combatValueCalculator;
             _combatEffectDirector = combatEffectDirector;
-
+            _combatLogEntryBuilder = combatLogEntryBuilder;
+            _actionProcessors = actionProcessors.ToDictionary(p => p.ActionType, p => p);
             _beforeActionCombatEffectProcessors = beforeActionCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
             _afterActionCombatEffectProcessors = afterActionCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
+            _afterCharacterFallsCombatEffectProcessors = afterCharacterFallsCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
         }
 
         public CombatEventType CombatEventType => CombatEventType.CharacterAction;
@@ -60,7 +65,30 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                 return;
             }
 
-            _combatActionProcessor.ProcessAction(action, combatEvent.Character, combatContext);
+            var fallenCharactersBefore = combatContext.Characters.Where(c => c.CurrentHealth <= 0).ToList();
+
+            if (_actionProcessors.ContainsKey(action.ActionType))
+            {
+                _actionProcessors[action.ActionType].ProcessAction(action, combatEvent.Character, combatContext);
+            }
+            else
+            {
+                throw new UnknownActionTypeException(action.ActionType);
+            }
+
+            var fallenCharactersAfter = combatContext.Characters.Where(c => c.CurrentHealth <= 0);
+            var newlyFallenCharacters = fallenCharactersAfter.Where(c => !fallenCharactersBefore.Contains(c));
+
+            combatContext.CombatLog.AddRange(newlyFallenCharacters.Select(c => _combatLogEntryBuilder.CreateCombatLogEntry($"{c.Name} has fallen.", c, combatContext)));
+
+            foreach (var fallenCharacter in newlyFallenCharacters)
+            {
+                foreach (var character in combatContext.Characters)
+                {
+                    _combatEffectDirector.ProcessCombatEffects(character, _afterCharacterFallsCombatEffectProcessors,
+                        (processor, combatEffect) => processor.ProcessAfterCharacterFallsCombatEffect(combatEffect, character, fallenCharacter, combatContext));
+                }
+            }
 
             _combatEffectDirector.ProcessCombatEffects(combatEvent.Character, _afterActionCombatEffectProcessors,
                 (processor, combatEffect) => processor.ProcessAfterActionCombatEffect(combatEffect, combatEvent.Character, action, combatContext));

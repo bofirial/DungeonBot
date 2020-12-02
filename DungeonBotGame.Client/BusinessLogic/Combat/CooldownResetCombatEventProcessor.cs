@@ -10,9 +10,9 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public Task ProcessCombatEvent(CombatEvent combatEvent, CombatContext combatContext)
         {
-            if (combatEvent is CombatEvent<AbilityType> abilityCooldownResetEvent)
+            if (combatEvent is AbilityCombatEvent abilityCooldownResetEvent)
             {
-                combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] = combatEvent.Character.Abilities[abilityCooldownResetEvent.EventData] with { IsAvailable = true };
+                combatEvent.Character.Abilities[abilityCooldownResetEvent.AbilityType] = combatEvent.Character.Abilities[abilityCooldownResetEvent.AbilityType] with { IsAvailable = true };
             }
             else
             {

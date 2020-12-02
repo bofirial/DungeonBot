@@ -45,10 +45,6 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
             _combatEffectDirector.ProcessCombatEffects(sourceCharacter, _attackValueCombatEffectProcessors, ModifyAttackValue);
 
-            attackValue -= targetCharacter.Armor;
-
-            attackValue = Math.Clamp(attackValue, 0, int.MaxValue);
-
             return attackValue;
         }
 

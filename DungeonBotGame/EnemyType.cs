@@ -7,6 +7,7 @@
         Wolf,
         Pixie,
         Troll,
-        Bat
+        Bat,
+        EliteBearFamily
     }
 }

@@ -12,6 +12,7 @@
 
         DamageOverTime,
 
-        SalvageStrikes
+        SalvageStrikes,
+        ProtectBabies
     }
 }

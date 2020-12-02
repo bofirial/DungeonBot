@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors;
 using DungeonBotGame.Models.Combat;
@@ -9,7 +10,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
     {
         void ApplyHealing(CharacterBase character, CharacterBase target, int combatHealing, CombatContext combatContext, bool applyCombatEffects = true);
 
-        void ApplyDamage(CharacterBase character, CharacterBase target, int combatDamage, CombatContext combatContext, bool applyCombatEffects = true);
+        void ApplyDamage(CharacterBase character, CharacterBase target, int combatDamage, CombatContext combatContext, bool applyCombatEffects = true, bool applyArmorDamageReduction = true);
     }
 
     public class CombatDamageApplier : ICombatDamageApplier
@@ -28,8 +29,15 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
             _afterHealingCombatEffectProcessors = afterHealingCombatEffectProcessors.ToDictionary(p => p.CombatEffectType, p => p);
         }
 
-        public void ApplyDamage(CharacterBase character, CharacterBase target, int combatDamage, CombatContext combatContext, bool applyCombatEffects = true)
+        public void ApplyDamage(CharacterBase character, CharacterBase target, int combatDamage, CombatContext combatContext, bool applyCombatEffects = true, bool applyArmorDamageReduction = true)
         {
+            if (applyArmorDamageReduction)
+            {
+                combatDamage -= target.Armor;
+
+                combatDamage = Math.Clamp(combatDamage, 0, int.MaxValue);
+            }
+
             target.CurrentHealth -= combatDamage;
 
             _combatValueCalculator.ClampCharacterHealth(target);

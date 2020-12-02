@@ -54,7 +54,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
                     IsAvailable = false
                 };
 
-                combatContext.NewCombatEvents.Add(new CombatEvent<AbilityType>(
+                combatContext.NewCombatEvents.Add(new AbilityCombatEvent(
                         combatContext.CombatTimer + source.Abilities[abilityType].CooldownCombatTime,
                         source,
                         CombatEventType.CooldownReset,

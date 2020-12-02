@@ -53,7 +53,7 @@ namespace DungeonBotGame.Client.BusinessLogic
             {
                 AbilityType.Repair,
                 new AbilityDescriptionViewModel("Repair",
-                    "Repairs the target using Mystic Power.",
+                    "Repairs the target using Mystic Power.  Also fully repairs the party between encounters.",
                     AbilityType.Repair,
                     IsTargetted: true,
                     IsPassive: false,
@@ -67,6 +67,24 @@ namespace DungeonBotGame.Client.BusinessLogic
                     AbilityType.LickWounds,
                     IsTargetted: false,
                     IsPassive: false,
+                    CooldownCombatTime: 0)
+            },
+            {
+                AbilityType.Swipe,
+                new AbilityDescriptionViewModel("Swipe",
+                    "Swipes at all enemies.",
+                    AbilityType.Swipe,
+                    IsTargetted: false,
+                    IsPassive: false,
+                    CooldownCombatTime: 300)
+            },
+            {
+                AbilityType.ProtectBabies,
+                new AbilityDescriptionViewModel("Protect Babies",
+                    "The user goes into an intense rage upon seeing any of their offspring fall in battle.",
+                    AbilityType.ProtectBabies,
+                    IsTargetted: false,
+                    IsPassive: true,
                     CooldownCombatTime: 0)
             }
         };
