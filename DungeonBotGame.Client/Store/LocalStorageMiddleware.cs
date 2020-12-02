@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Fluxor;
 using Microsoft.JSInterop;
@@ -37,12 +38,14 @@ namespace DungeonBotGame.Client.Store
                 if (!string.IsNullOrEmpty(storedValue))
                 {
                     var state = JsonConvert.DeserializeObject(storedValue, feature.GetStateType(), _jsonSerializerSettings);
+
                     feature.RestoreState(state);
                 }
 
                 feature.StateChanged += async (sender, args) =>
                 {
                     var data = JsonConvert.SerializeObject(feature.GetState(), _jsonSerializerSettings);
+
                     await _jsRuntime.InvokeVoidAsync("localStorage.setItem", stateKey, data);
                 };
             }
