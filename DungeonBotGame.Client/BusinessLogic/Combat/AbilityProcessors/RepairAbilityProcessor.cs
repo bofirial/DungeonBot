@@ -24,7 +24,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors
             {
                 if (targettedAbilityAction.Target is CharacterBase target)
                 {
-                    var health = _combatValueCalculator.GetAttackValue(character, target) * 2;
+                    var health = (int)(_combatValueCalculator.GetAttackValue(character, target) * 1.5);
 
                     _combatDamageApplier.ApplyHealing(character, target, health, combatContext);
 

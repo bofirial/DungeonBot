@@ -20,15 +20,15 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
         public Task ProcessCombatEvent(CombatEvent combatEvent, CombatContext combatContext)
         {
-            if (combatEvent is CombatEvent<CombatEffect> combatEffectEvent)
+            if (combatEvent is CombatEffectCombatEvent combatEffectEvent)
             {
-                if (_combatEventCombatEffectProcessors.ContainsKey(combatEffectEvent.EventData.CombatEffectType))
+                if (_combatEventCombatEffectProcessors.ContainsKey(combatEffectEvent.CombatEffect.CombatEffectType))
                 {
-                    _combatEventCombatEffectProcessors[combatEffectEvent.EventData.CombatEffectType].ProcessCombatEventCombatEffect(combatEffectEvent, combatContext);
+                    _combatEventCombatEffectProcessors[combatEffectEvent.CombatEffect.CombatEffectType].ProcessCombatEventCombatEffect(combatEffectEvent, combatContext);
                 }
                 else
                 {
-                    throw new UnknownCombatEventTypeException($"No CombatEventCombatEffectProcessor found for the CombatEffectEvent {combatEffectEvent.EventData.CombatEffectType}.");
+                    throw new UnknownCombatEventTypeException($"No CombatEventCombatEffectProcessor found for the CombatEffectEvent {combatEffectEvent.CombatEffect.CombatEffectType}.");
                 }
             }
             else

@@ -15,7 +15,7 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.AbilityProcessors
 
         public void ProcessAction(CharacterBase character, CombatContext combatContext)
         {
-            character.CombatEffects.Add(new CombatEffect("Salvage Strikes", "Salvage Strikes", CombatEffectType.SalvageStrikes, Value: 1));
+            character.CombatEffects.Add(new PermanentCombatEffect("Salvage Strikes", "Salvage Strikes", CombatEffectType.SalvageStrikes, Value: 1));
 
             combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{character.Name} prepares salvage strikes.", character, combatContext));
         }

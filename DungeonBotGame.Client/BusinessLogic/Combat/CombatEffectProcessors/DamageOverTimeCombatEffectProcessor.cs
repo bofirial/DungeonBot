@@ -15,22 +15,22 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors
 
         public CombatEffectType CombatEffectType => CombatEffectType.DamageOverTime;
 
-        public void ProcessCombatEventCombatEffect(CombatEvent<CombatEffect> combatEffectEvent, CombatContext combatContext)
+        public void ProcessCombatEventCombatEffect(CombatEffectCombatEvent combatEffectEvent, CombatContext combatContext)
         {
-            if (combatEffectEvent.EventData is CombatEffect<(int CombatTime, int CombatTimeInterval)> dotCombatEffect)
+            if (combatEffectEvent.CombatEffect is TimedIntervalCombatEffect dotCombatEffect)
             {
-                _combatDamageApplier.ApplyDamage(combatEffectEvent.Character, combatEffectEvent.Character, combatEffectEvent.EventData.Value, combatContext, applyCombatEffects: false);
+                _combatDamageApplier.ApplyDamage(combatEffectEvent.Character, combatEffectEvent.Character, combatEffectEvent.CombatEffect.Value, combatContext, applyCombatEffects: false, applyArmorDamageReduction: false);
 
-                if (dotCombatEffect.CombatEffectData.CombatTime <= combatContext.CombatTimer)
+                if (dotCombatEffect.CombatTime <= combatContext.CombatTimer)
                 {
-                    combatEffectEvent.Character.CombatEffects.Remove(combatEffectEvent.EventData);
+                    combatEffectEvent.Character.CombatEffects.Remove(combatEffectEvent.CombatEffect);
                 }
                 else
                 {
-                    combatContext.NewCombatEvents.Add(combatEffectEvent with { CombatTime = combatContext.CombatTimer + dotCombatEffect.CombatEffectData.CombatTimeInterval });
+                    combatContext.NewCombatEvents.Add(combatEffectEvent with { CombatTime = combatContext.CombatTimer + dotCombatEffect.CombatTimeInterval });
                 }
 
-                combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{combatEffectEvent.Character.Name} takes {combatEffectEvent.EventData.Value} damage from {combatEffectEvent.EventData.Name}.", combatEffectEvent.Character, combatContext, combatEffectEvent.EventData));
+                combatContext.CombatLog.Add(_combatLogEntryBuilder.CreateCombatLogEntry($"{combatEffectEvent.Character.Name} takes {combatEffectEvent.CombatEffect.Value} damage from {combatEffectEvent.CombatEffect.Name}.", combatEffectEvent.Character, combatContext, combatEffectEvent.CombatEffect));
             }
         }
     }

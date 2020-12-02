@@ -8,7 +8,10 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat.CombatEffectProcessors
 
         public int ModifyAttackValue(int attackValue, CombatEffect combatEffect, CharacterBase character)
         {
-            character.CombatEffects.Remove(combatEffect);
+            if (combatEffect is not PermanentCombatEffect)
+            {
+                character.CombatEffects.Remove(combatEffect);
+            }
 
             return (int)(attackValue * (combatEffect.Value / 100.0));
         }

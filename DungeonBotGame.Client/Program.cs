@@ -40,7 +40,6 @@ namespace DungeonBotGame.Client
             services.AddScoped<IActionModuleContextBuilder, ActionModuleContextBuilder>();
             services.AddScoped<IActionModuleExecuter, ActionModuleExecuter>();
             services.AddScoped<ICombatValueCalculator, CombatValueCalculator>();
-            services.AddScoped<ICombatActionProcessor, CombatActionProcessor>();
             services.AddScoped<IAbilityDescriptionProvider, AbilityDescriptionProvider>();
             services.AddScoped<IClassDetailProvider, ClassDetailProvider>();
             services.AddScoped<IActionComponentAbilityExtensionMethodsClassBuilder, ActionComponentAbilityExtensionMethodsClassBuilder>();
@@ -67,6 +66,8 @@ namespace DungeonBotGame.Client
             services.AddScoped<IPassiveAbilityProcessor, RepairAbilityProcessor>();
 
             services.AddScoped<IAbilityProcessor, LickWoundsAbilityProcessor>();
+            services.AddScoped<IAbilityProcessor, SwipeAbilityProcessor>();
+            services.AddScoped<IPassiveAbilityProcessor, ProtectBabiesAbilityProcessor>();
 
             services.AddScoped<ICombatEffectDirector, CombatEffectDirector>();
 
@@ -83,6 +84,8 @@ namespace DungeonBotGame.Client
             services.AddScoped<IAfterActionCombatEffectProcessor, StunTargetCombatEffectProcessor>();
 
             services.AddScoped<ICombatEventCombatEffectProcessor, DamageOverTimeCombatEffectProcessor>();
+
+            services.AddScoped<IAfterCharacterFallsCombatEffectProcessor, ProtectBabiesCombatEffectProcessor>();
 
             services.AddLogging(builder => builder
                 .AddBrowserConsole()

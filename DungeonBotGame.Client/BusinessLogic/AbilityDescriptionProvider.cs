@@ -68,6 +68,24 @@ namespace DungeonBotGame.Client.BusinessLogic
                     IsTargetted: false,
                     IsPassive: false,
                     CooldownCombatTime: 0)
+            },
+            {
+                AbilityType.Swipe,
+                new AbilityDescriptionViewModel("Swipe",
+                    "Swipes at all enemies.",
+                    AbilityType.Swipe,
+                    IsTargetted: false,
+                    IsPassive: false,
+                    CooldownCombatTime: 300)
+            },
+            {
+                AbilityType.ProtectBabies,
+                new AbilityDescriptionViewModel("Protect Babies",
+                    "The user goes into an intense rage upon seeing any of their offspring fall in battle.",
+                    AbilityType.ProtectBabies,
+                    IsTargetted: false,
+                    IsPassive: true,
+                    CooldownCombatTime: 0)
             }
         };
 

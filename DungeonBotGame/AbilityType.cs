@@ -9,6 +9,8 @@
 
         Repair,
 
-        LickWounds
+        LickWounds,
+        Swipe,
+        ProtectBabies
     }
 }
