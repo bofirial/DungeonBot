@@ -6,6 +6,10 @@
 <Modal ModalId="adventureResultModal" ModalTitle="@(AdventureResult?.Success == true ? "Victory" : "Defeat")" @ref="Modal" OnShow="@OnShow" ModalDialogSize="modal-xl">
     @if (AdventureResult != null)
     {
+        <div class="alert @(AdventureResult.Success ? "alert-success" : "alert-danger") m-3" role="alert">
+            @AdventureResult.ResultDisplayText
+        </div>
+
         <h4 class="m-2">Encounters</h4>
 
         <Accordion Id="encountersAccordion" TListItem="EncounterResultViewModel" List="AdventureResult.EncounterResults"

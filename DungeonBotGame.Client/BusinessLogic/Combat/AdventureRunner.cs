@@ -61,11 +61,11 @@ namespace DungeonBotGame.Client.BusinessLogic.Combat
 
                 if (!encounterResult.Success)
                 {
-                    return new AdventureResultViewModel(runAdventureAction.RunId, Success: false, encounterResults.ToImmutableList());
+                    return new AdventureResultViewModel(runAdventureAction.RunId, Success: false, $"{(dungeonBots.Count > 1 ? "The DungeonBots have" : $"{dungeonBots[0].Name} has")} failed to complete the adventure.", encounterResults.ToImmutableList());
                 }
             }
 
-            return new AdventureResultViewModel(runAdventureAction.RunId, Success: encounterResults.All(e => e.Success), encounterResults.ToImmutableList());
+            return new AdventureResultViewModel(runAdventureAction.RunId, Success: encounterResults.All(e => e.Success), $"{(dungeonBots.Count > 1 ? "The DungeonBots have" : $"{dungeonBots[0].Name} has")} completed the adventure.", encounterResults.ToImmutableList());
         }
     }
 }
