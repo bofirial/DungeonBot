@@ -13,4 +13,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DungeonBotGame\DungeonBotGame.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -11,13 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		version.json = version.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonBotGame", "DungeonBotGame\DungeonBotGame.csproj", "{BE54BAC9-9944-46CC-887B-746F235D2D9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame", "DungeonBotGame\DungeonBotGame.csproj", "{BE54BAC9-9944-46CC-887B-746F235D2D9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonBotGame.Web", "DungeonBotGame.Web\DungeonBotGame.Web.csproj", "{C8170EE9-69F7-4827-8CFB-05C1B692BBA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.Web", "DungeonBotGame.Web\DungeonBotGame.Web.csproj", "{C8170EE9-69F7-4827-8CFB-05C1B692BBA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonBotGame.Tests", "DungeonBotGame.Tests\DungeonBotGame.Tests.csproj", "{9D94114B-2A9F-4052-9C6D-9441D1D3C65E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.Tests", "DungeonBotGame.Tests\DungeonBotGame.Tests.csproj", "{9D94114B-2A9F-4052-9C6D-9441D1D3C65E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonBotGame.SampleGame", "DungeonBotGame.SampleGame\DungeonBotGame.SampleGame.csproj", "{460C37D1-EE35-4761-9EE7-7E6B701C9BD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.SampleGame", "DungeonBotGame.SampleGame\DungeonBotGame.SampleGame.csproj", "{460C37D1-EE35-4761-9EE7-7E6B701C9BD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
