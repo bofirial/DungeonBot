@@ -12,6 +12,7 @@ public static class Application
 
         // Add services to the container.
         builder.Services.AddRazorPages();
+        builder.Services.AddServerSideBlazor().AddCircuitOptions(options => options.DetailedErrors = true);
 
         var app = builder.Build();
 
@@ -28,9 +29,8 @@ public static class Application
 
         app.UseRouting();
 
-        app.UseAuthorization();
-
-        app.MapRazorPages();
+        app.MapBlazorHub();
+        app.MapFallbackToPage("/_Host");
 
         app.Run();
 
