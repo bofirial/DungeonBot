@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.Tests", "Dun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.SampleGame", "DungeonBotGame.SampleGame\DungeonBotGame.SampleGame.csproj", "{460C37D1-EE35-4761-9EE7-7E6B701C9BD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonBotGame.SourceGenerators", "DungeonBot.SourceGenerators\DungeonBotGame.SourceGenerators.csproj", "{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonBotGame.Foundation", "DungeonBot.Foundation\DungeonBotGame.Foundation.csproj", "{DB6ED309-6CDB-4266-89D9-7BB27C8E92C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +45,14 @@ Global
 		{460C37D1-EE35-4761-9EE7-7E6B701C9BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{460C37D1-EE35-4761-9EE7-7E6B701C9BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{460C37D1-EE35-4761-9EE7-7E6B701C9BD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB6ED309-6CDB-4266-89D9-7BB27C8E92C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB6ED309-6CDB-4266-89D9-7BB27C8E92C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB6ED309-6CDB-4266-89D9-7BB27C8E92C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB6ED309-6CDB-4266-89D9-7BB27C8E92C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
