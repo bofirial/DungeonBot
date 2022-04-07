@@ -1,6 +1,6 @@
 ﻿namespace DungeonBotGame.Foundation;
 
-[AttributeUsage(AttributeTargets.Class)]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 public class DungeonBotAttribute : Attribute
 {
     public DungeonBotAttribute(string name)

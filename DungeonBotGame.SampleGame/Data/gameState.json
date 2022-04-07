@@ -1,0 +1,21 @@
+﻿{
+  "Adventures": [
+
+  ],
+  "DungeonBots": [
+    {
+      "Id": null,
+      "Name": "WarriorBot001",
+      "Class": "WarriorBot",
+      "Level": 1,
+      "AvailableStatPoints": 0,
+      "Power": 5,
+      "Armor": 5,
+      "Speed": 5,
+      "Image": "/images/dungeonbot.png",
+      "Abilities": [
+        "HeavySwing"
+      ]
+    }
+  ]
+}
