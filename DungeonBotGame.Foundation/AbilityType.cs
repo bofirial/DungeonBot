@@ -14,12 +14,12 @@ public enum AbilityType
     //ProtectBabies
 }
 
-//public static class AbilityTypeDetails
-//{
-//    public static List<AbilityType> TargettedAbilities = new()
-//    {
-//        AbilityType.HeavySwing
-//    };
+public static class AbilityTypeDetails
+{
+    public static List<AbilityType> TargettedAbilities = new()
+    {
+        AbilityType.HeavySwing
+    };
 
-//    public static List<AbilityType> NonTargettedAbilities = new();
-//}
+    public static List<AbilityType> NonTargettedAbilities = new();
+}
