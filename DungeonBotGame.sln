@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.SampleGame",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.SourceGenerators", "DungeonBotGame.SourceGenerators\DungeonBotGame.SourceGenerators.csproj", "{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.Foundation", "DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj", "{CBFA34C1-0268-4E0D-9372-6E36FC119C57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBFA34C1-0268-4E0D-9372-6E36FC119C57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBFA34C1-0268-4E0D-9372-6E36FC119C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBFA34C1-0268-4E0D-9372-6E36FC119C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBFA34C1-0268-4E0D-9372-6E36FC119C57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

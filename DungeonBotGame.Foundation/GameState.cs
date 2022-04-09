@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
 
-namespace DungeonBotGame.Store;
+namespace DungeonBotGame.Foundation;
+
 public record GameState(IImmutableList<DungeonBotState> DungeonBots);

@@ -11,11 +11,6 @@ public class DungeonBotPartialClassGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Add the DungeonBot marker attribute to the compilation
-        context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-            "DungeonBotAttribute.g.cs",
-            SourceText.From(SourceGenerationHelper.DungeonBotAttribute, Encoding.UTF8)));
-
         var textFiles = context.AdditionalTextsProvider.Where(static file => file.Path.EndsWith("gameState.json"));
 
         // Do a simple filter for classes

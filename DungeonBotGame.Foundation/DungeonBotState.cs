@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
-using DungeonBotGame.Combat;
 
-namespace DungeonBotGame.Store;
+namespace DungeonBotGame.Foundation;
 
 public record DungeonBotState(
     string Id,

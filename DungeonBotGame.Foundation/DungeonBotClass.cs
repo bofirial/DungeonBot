@@ -1,4 +1,4 @@
-﻿namespace DungeonBotGame.Combat;
+﻿namespace DungeonBotGame.Foundation;
 public enum DungeonBotClass
 {
     WarriorBot = 1,
