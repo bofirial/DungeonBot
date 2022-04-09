@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+      <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,8 +14,12 @@
     </PackageReference>
   </ItemGroup>
 
+    <ItemGroup>
+        <AdditionalFiles Include="gameState.json" />
+    </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\DungeonBot.Foundation\DungeonBotGame.Foundation.csproj" />
+    <ProjectReference Include="..\DungeonBotGame.SourceGenerators\DungeonBotGame.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\DungeonBotGame\DungeonBotGame.csproj" />
   </ItemGroup>
 

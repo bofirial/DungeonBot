@@ -1,4 +1,4 @@
-﻿namespace DungeonBotGame.Foundation;
+﻿namespace DungeonBotGame.Combat;
 
 public interface ITarget
 {
