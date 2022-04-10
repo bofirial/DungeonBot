@@ -1,5 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using DungeonBotGame.Foundation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -90,16 +93,16 @@ public class DungeonBotPartialClassGenerator : IIncrementalGenerator
             return;
         }
 
-        //var gameState = JsonSerializer.Deserialize<GameState>(gameStateJsonFileText.ToString(), new JsonSerializerOptions
-        //{
-        //    Converters = { new JsonStringEnumConverter() },
-        //    WriteIndented = true
-        //});
+        var gameState = JsonSerializer.Deserialize<GameState>(gameStateJsonFileText.ToString(), new JsonSerializerOptions
+        {
+            Converters = { new JsonStringEnumConverter() },
+            WriteIndented = true
+        });
 
-        //if (gameState == null)
-        //{
-        //    return;
-        //}
+        if (gameState == null)
+        {
+            return;
+        }
 
         // Convert each ClassDeclarationSyntax to a DungeonBotPartialClassToGenerate
         var dungeonBotPartialClassesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
@@ -109,16 +112,15 @@ public class DungeonBotPartialClassGenerator : IIncrementalGenerator
         {
             foreach (var dungeonBotPartialClassToGenerate in dungeonBotPartialClassesToGenerate)
             {
-                //var dungeonBots = gameState.DungeonBots.Where(x => dungeonBotPartialClassToGenerate.DungeonBotNames.Contains(x.Name)).ToList();
+                var dungeonBots = gameState.DungeonBots.Where(x => dungeonBotPartialClassToGenerate.DungeonBotNames.Contains(x.Name)).ToList();
 
-                //var abilities = dungeonBots.SelectMany(x => x.Abilities);
+                var abilities = dungeonBots.SelectMany(x => x.Abilities);
 
-                //var targettedAbilities = abilities.Where(x => AbilityTypeDetails.TargettedAbilities.Contains(x));
-                //var nonTargettedAbilities = abilities.Where(x => AbilityTypeDetails.NonTargettedAbilities.Contains(x));
+                var targettedAbilities = abilities.Where(x => AbilityTypeDetails.TargettedAbilities.Contains(x));
+                var nonTargettedAbilities = abilities.Where(x => AbilityTypeDetails.NonTargettedAbilities.Contains(x));
 
-                //// generate the source code and add it to the output
-                //var result = SourceGenerationHelper.GenerateDungeonBotPartialClass(dungeonBotPartialClassToGenerate, targettedAbilities, nonTargettedAbilities);
-                var result = SourceGenerationHelper.GenerateDungeonBotPartialClass(dungeonBotPartialClassToGenerate);
+                // generate the source code and add it to the output
+                var result = SourceGenerationHelper.GenerateDungeonBotPartialClass(dungeonBotPartialClassToGenerate, targettedAbilities, nonTargettedAbilities);
                 context.AddSource($"{dungeonBotPartialClassToGenerate.Name}.g.cs", SourceText.From(result, Encoding.UTF8));
             }
         }
