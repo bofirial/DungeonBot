@@ -78,6 +78,29 @@ public class DungeonBotPartialClassGenerator : IIncrementalGenerator
 
         var gameStateJsonFile = gameStateJsonFiles.First();
 
+        if (gameStateJsonFile == null)
+        {
+            return;
+        }
+
+        var gameStateJsonFileText = gameStateJsonFile.GetText();
+
+        if (gameStateJsonFileText == null)
+        {
+            return;
+        }
+
+        //var gameState = JsonSerializer.Deserialize<GameState>(gameStateJsonFileText.ToString(), new JsonSerializerOptions
+        //{
+        //    Converters = { new JsonStringEnumConverter() },
+        //    WriteIndented = true
+        //});
+
+        //if (gameState == null)
+        //{
+        //    return;
+        //}
+
         // Convert each ClassDeclarationSyntax to a DungeonBotPartialClassToGenerate
         var dungeonBotPartialClassesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
 
@@ -86,7 +109,15 @@ public class DungeonBotPartialClassGenerator : IIncrementalGenerator
         {
             foreach (var dungeonBotPartialClassToGenerate in dungeonBotPartialClassesToGenerate)
             {
-                // generate the source code and add it to the output
+                //var dungeonBots = gameState.DungeonBots.Where(x => dungeonBotPartialClassToGenerate.DungeonBotNames.Contains(x.Name)).ToList();
+
+                //var abilities = dungeonBots.SelectMany(x => x.Abilities);
+
+                //var targettedAbilities = abilities.Where(x => AbilityTypeDetails.TargettedAbilities.Contains(x));
+                //var nonTargettedAbilities = abilities.Where(x => AbilityTypeDetails.NonTargettedAbilities.Contains(x));
+
+                //// generate the source code and add it to the output
+                //var result = SourceGenerationHelper.GenerateDungeonBotPartialClass(dungeonBotPartialClassToGenerate, targettedAbilities, nonTargettedAbilities);
                 var result = SourceGenerationHelper.GenerateDungeonBotPartialClass(dungeonBotPartialClassToGenerate);
                 context.AddSource($"{dungeonBotPartialClassToGenerate.Name}.g.cs", SourceText.From(result, Encoding.UTF8));
             }

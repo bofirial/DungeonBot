@@ -13,10 +13,10 @@ public partial class WarriorBot
     {
         var enemy = sensorComponent.Enemies.First();
 
-        if (HeavySwingIsAvailable())
-        {
-            return UseHeavySwing(enemy);
-        }
+        //if (HeavySwingIsAvailable())
+        //{
+        //    return UseHeavySwing(enemy);
+        //}
 
         return Attack(enemy);
     }
