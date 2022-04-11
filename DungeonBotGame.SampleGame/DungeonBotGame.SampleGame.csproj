@@ -1,27 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-      <LangVersion>10.0</LangVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Authors>James Schafer</Authors>
+        <Title>Dungeon Bot</Title>
+        <Description>A Turn-Based Role-Playing Programming Game for CSharp Developers.</Description>
+        <PackageTags>game;rpg</PackageTags>
+        <Copyright>Copyright (c) 2022 James Schafer</Copyright>
+        <ProjectUrl>https://dungeonbot.net/</ProjectUrl>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>preview</LangVersion>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 
     <ItemGroup>
         <AdditionalFiles Include="gameState.json" />
     </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" OutputItemType="Analyzer" />
-    <ProjectReference Include="..\DungeonBotGame.SourceGenerators\DungeonBotGame.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\DungeonBotGame\DungeonBotGame.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\DungeonBotGame.SourceGenerators\DungeonBotGame.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\DungeonBotGame\DungeonBotGame.csproj" />
+    </ItemGroup>
 
 </Project>

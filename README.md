@@ -1,3 +1,3 @@
-# DungeonBotGame
+# Dungeon Bot
 
-A Turn-Based Role-Playing-Game for CSharp Developers!
+A Turn-Based Role-Playing Programming Game for CSharp Developers!

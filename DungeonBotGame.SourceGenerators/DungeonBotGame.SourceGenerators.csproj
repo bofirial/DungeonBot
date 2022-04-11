@@ -1,11 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <AssemblyName>DungeonBot.SourceGenerators</AssemblyName>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <Authors>James Schafer</Authors>
+        <Title>Dungeon Bot</Title>
+        <Description>A Turn-Based Role-Playing Programming Game for CSharp Developers.</Description>
+        <PackageTags>game;rpg</PackageTags>
+        <Copyright>Copyright (c) 2022 James Schafer</Copyright>
+        <ProjectUrl>https://dungeonbot.net/</ProjectUrl>
+        <PackageIcon>Logo.png</PackageIcon>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Nullable>enable</Nullable>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>preview</LangVersion>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,6 +39,16 @@
         <PackageReference Include="System.Buffers" Version="4.5.1" GeneratePathProperty="true" PrivateAssets="all" />
         <PackageReference Include="System.Memory" Version="4.5.4" GeneratePathProperty="true" PrivateAssets="all" />
         <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" GeneratePathProperty="true" PrivateAssets="all" />
+
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.255" PrivateAssets="all">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" IsImplicitlyDefined="true" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\Logo.png" Pack="true" PackagePath="" />
+        <None Include="..\README.md" Pack="true" PackagePath="" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,12 +56,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" GeneratePathProperty="true" PrivateAssets="all" />
+        <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" GeneratePathProperty="true" PrivateAssets="all" />
     </ItemGroup>
-
-    <PropertyGroup>
-        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
-    </PropertyGroup>
 
     <Target Name="GetDependencyTargetPaths">
         <ItemGroup>

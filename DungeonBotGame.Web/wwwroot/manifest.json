@@ -1,6 +1,6 @@
 {
-  "name": "DungeonBotGame.Web",
-  "short_name": "DungeonBotGame.Web",
+  "name": "DungeonBot.Web",
+  "short_name": "DungeonBot.Web",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
