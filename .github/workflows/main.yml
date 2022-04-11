@@ -45,5 +45,5 @@ jobs:
         uses: Azure/webapps-deploy@v2
         with:
           publish-profile: ${{secrets.SCM_CREDENTIALS}}
-          app-name: DungeonBot
+          app-name: DungeonBot-Web
           package: publish
