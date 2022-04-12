@@ -51,6 +51,12 @@
 
     <ItemGroup>
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+        <!-- Pack the foundation dll in the analyzers/dotnet/cs path -->
+        <None Include="$(OutputPath)\DungeonBotGame.Foundation.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+        <!-- Pack the foundation dll in the lib\netstandard2.0 path -->
+        <None Include="$(OutputPath)\DungeonBotGame.Foundation.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
     </ItemGroup>
 
     <ItemGroup>
@@ -69,4 +75,6 @@
             <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Text_Encodings_Web)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
         </ItemGroup>
     </Target>
+
+
 </Project>
