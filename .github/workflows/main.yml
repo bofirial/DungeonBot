@@ -29,19 +29,24 @@ jobs:
         run: dotnet test ./DungeonBotGame.Tests/DungeonBotGame.Tests.csproj -c Release -r win-x86
 
       - name: DotNet Pack
+        if: github.ref == 'refs/heads/main'
         run: dotnet pack ./DungeonBotGame.SourceGenerators/DungeonBotGame.SourceGenerators.csproj -c Release -o packages
 
       - name: DotNet Pack
+        if: github.ref == 'refs/heads/main'
         run: dotnet pack ./DungeonBotGame/DungeonBotGame.csproj -c Release -o packages
 
       - name: DotNet NuGet Push
+        if: github.ref == 'refs/heads/main'
         working-directory: ./packages
         run: dotnet nuget push "*.nupkg" --skip-duplicate -k ${{secrets.NUGET_PASSWORD}} -s https://api.nuget.org/v3/index.json
 
       - name: DotNet Publish
+        if: github.ref == 'refs/heads/main'
         run: dotnet publish ./DungeonBotGame.Web/DungeonBotGame.Web.csproj -c Release --no-self-contained -r win-x86 -o publish
 
       - name: Azure WebApp
+        if: github.ref == 'refs/heads/main'
         uses: Azure/webapps-deploy@v2
         with:
           publish-profile: ${{secrets.SCM_CREDENTIALS}}
