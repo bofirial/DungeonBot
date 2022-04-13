@@ -1,6 +1,4 @@
-﻿using DungeonBotGame.Foundation;
-
-namespace DungeonBotGame.Combat;
+﻿namespace DungeonBotGame.Combat;
 
 public record AbilityAction : IAbilityAction
 {

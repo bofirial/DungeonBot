@@ -46,10 +46,6 @@
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" IsImplicitlyDefined="true" />
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" PrivateAssets="all" />
-    </ItemGroup>
-
     <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="BuildOnlySettings;ResolveReferences">
         <ItemGroup>
             <!-- Filter out unnecessary files -->

@@ -10,8 +10,10 @@
       "Armor": 5,
       "Speed": 5,
       "ImageLocation": "/images/dungeonbot.png",
-      "Abilities": [
+      "TargettedAbilities": [
         "HeavySwing"
+      ],
+      "NonTargettedAbilities": [
       ]
     }
   ]
