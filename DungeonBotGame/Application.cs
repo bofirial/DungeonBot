@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using DungeonBotGame.Store;
+using Fluxor;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,6 +15,11 @@ public static class Application
         // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor().AddCircuitOptions(options => options.DetailedErrors = true);
+
+        builder.Services.AddFluxor(options => options
+            .ScanAssemblies(typeof(Application).Assembly)
+            .UseReduxDevTools()
+            .AddMiddleware<GameStateFileMiddleware>());
 
         var app = builder.Build();
 

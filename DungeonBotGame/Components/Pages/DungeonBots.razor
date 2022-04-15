@@ -1,3 +1,15 @@
 ﻿@page "/dungeonbots"
 
+@using DungeonBotGame.Data
+@using Fluxor
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+
+@inject IState<DungeonBotState> DungeonBotState
+
 <h1>Dungeon Bots</h1>
+
+@foreach (var dungeonBot in DungeonBotState.Value.DungeonBots)
+{
+    <p>@dungeonBot.Name</p>
+}

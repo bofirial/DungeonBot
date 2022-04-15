@@ -1,4 +1,6 @@
-﻿namespace DungeonBotGame.Combat;
+﻿using DungeonBotGame.Data;
+
+namespace DungeonBotGame.Combat;
 
 public record TargettedAbilityAction : ITargettedAbilityAction
 {

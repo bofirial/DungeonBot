@@ -112,7 +112,7 @@ public class DungeonBotPartialClassGenerator : IIncrementalGenerator
         {
             foreach (var dungeonBotPartialClassToGenerate in dungeonBotPartialClassesToGenerate)
             {
-                var dungeonBots = gameState.DungeonBots.Where(x => dungeonBotPartialClassToGenerate.DungeonBotNames.Contains(x.Name)).ToList();
+                var dungeonBots = gameState.DungeonBotState.DungeonBots.Where(x => dungeonBotPartialClassToGenerate.DungeonBotNames.Contains(x.Name)).ToList();
 
                 var targettedAbilities = dungeonBots.SelectMany(x => x.TargettedAbilities);
                 var nonTargettedAbilities = dungeonBots.SelectMany(x => x.NonTargettedAbilities);

@@ -16,7 +16,7 @@ public static class SourceGenerationHelper
 using System.ComponentModel;
 using System.Collections.Immutable;
 using DungeonBotGame.Combat;
-using DungeonBotGame.Foundation;
+using DungeonBotGame.Data;
 ");
         if (!string.IsNullOrWhiteSpace(dungeonBotPartialClassToGenerate.Namespace))
         {

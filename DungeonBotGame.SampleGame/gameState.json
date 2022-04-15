@@ -1,20 +1,22 @@
 ﻿{
-  "DungeonBots": [
-    {
-      "Id": "51ce2138-87ea-438d-87ef-1df1a1def9bf",
-      "Name": "WarriorBot001",
-      "Class": "WarriorBot",
-      "Level": 1,
-      "AvailableStatPoints": 0,
-      "Power": 5,
-      "Armor": 5,
-      "Speed": 5,
-      "ImageLocation": "/images/dungeonbot.png",
-      "TargettedAbilities": [
-        "HeavySwing"
-      ],
-      "NonTargettedAbilities": [
-      ]
-    }
-  ]
+  "DungeonBotState": {
+    "DungeonBots": [
+      {
+        "Id": "51ce2138-87ea-438d-87ef-1df1a1def9bf",
+        "Name": "WarriorBot001",
+        "Class": "WarriorBot",
+        "Level": 1,
+        "AvailableStatPoints": 0,
+        "Power": 5,
+        "Armor": 5,
+        "Speed": 5,
+        "ImageLocation": "/images/dungeonbot.png",
+        "TargettedAbilities": [
+          "HeavySwing"
+        ],
+        "NonTargettedAbilities": [
+        ]
+      }
+    ]
+  }  
 }
