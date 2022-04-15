@@ -1,0 +1,79 @@
+﻿@using DungeonBotGame.Data
+
+@if (DungeonBot != null)
+{
+    <div class="row justify-content-evenly row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4 mb-3 profile-cards">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    @DungeonBot.Name
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title text-center">Warrior Bot</h3>
+                    @*<h3 class="card-title text-center">@ClassDetailProvider.GetClassName(DungeonBot.Class)</h3>*@
+                    <h4 class="card-title text-center">@($"Level {DungeonBot.Level}")</h4>
+                    @*<img src="@DungeonBot.ImageLocation" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@DungeonBot.Name">*@
+                </div>
+            </div>
+        </div>
+
+        @*<div class="col">
+            <div class="card">
+                <div class="card-header">
+                    @($"Level {DungeonBot.Level} {ClassDetailProvider.GetClassName(DungeonBot.Class)}")
+                </div>
+                <div class="card-body flex-grow-0">
+                    <div class="mb-1">
+                        <label for="dungeonbot-name" class="form-label">Name</label>
+                        <input type="text" class="form-control @(!DungeonBotNameIsValid() ? "is-invalid" : string.Empty)" id="dungeonbot-name" @bind="DungeonBotName" />
+                        <div class="invalid-feedback">
+                            Please choose a dungeonbot name.
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item @(AvailableStatPoints <= 0 ? "list-group-item-light" : "list-group-item-primary")">Available Stat Points: <span class="float-right">@AvailableStatPoints</span></div>
+                    @if (AvailableStatPoints <= 0)
+                    {
+                        <div class="list-group-item">Power: <span class="float-right">@Power</span></div>
+                        <div class="list-group-item">Armor: <span class="float-right">@Armor</span></div>
+                        <div class="list-group-item">Speed: <span class="float-right">@Speed</span></div>
+                    }
+                    else
+                    {
+                        <button type="button" class="list-group-item list-group-item-action" @onclick="e => { Power++; AvailableStatPoints--; }">Power: <span class="float-right">@Power</span></button>
+                        <button type="button" class="list-group-item list-group-item-action" @onclick="e => { Armor++; AvailableStatPoints--; }">Armor: <span class="float-right">@Armor</span></button>
+                        <button type="button" class="list-group-item list-group-item-action" @onclick="e => { Speed++; AvailableStatPoints--; }">Speed: <span class="float-right">@Speed</span></button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Abilities
+                </div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var abilityType in DungeonBot.Abilities)
+                    {
+                        var abilityDescription = AbilityDescriptionProvider.GetAbilityDescription(abilityType);
+
+                        <li class="list-group-item list-group-item-action" data-toggle="tooltip" title="@abilityDescription.Description">
+                            @abilityDescription.Name
+                            @if (abilityDescription.CooldownCombatTime > 0)
+                            {
+                                <span class="badge bg-primary float-right">@($"{(abilityDescription.CooldownCombatTime / 100.0).ToString("0.00").PadLeft(5)}s") Cooldown</span>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>*@
+    </div>
+}
+
+@code {
+    [Parameter]
+    public DungeonBotViewModel? DungeonBot { get; set; }
+}

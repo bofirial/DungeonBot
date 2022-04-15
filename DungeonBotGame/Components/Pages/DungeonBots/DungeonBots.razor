@@ -1,0 +1,22 @@
+﻿@page "/dungeonbots"
+
+@using DungeonBotGame.Data
+@using Fluxor
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+
+@inject IState<DungeonBotState> DungeonBotState
+
+<h1>Dungeon Bots</h1>
+
+<ListAndDetailView TListItem="DungeonBotViewModel" List="@DungeonBotState.Value.DungeonBots" KeyFunction="@((dungeonBot) => dungeonBot.Id)">
+    <ListItemView>
+        @if (context.ListItem != null)
+        {
+            @context.ListItem.Name
+        }
+    </ListItemView>
+    <DetailView>
+        <DungeonBotDetail DungeonBot="@context"></DungeonBotDetail>
+    </DetailView>
+</ListAndDetailView>
