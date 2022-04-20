@@ -1,3 +1,5 @@
-﻿namespace DungeonBotGame.Data;
+﻿using DungeonBotGame.Store.Adventures;
 
-public record GameState(DungeonBotState DungeonBotState);
+namespace DungeonBotGame.Data;
+
+public record GameState(DungeonBotState DungeonBotState, AdventureState AdventureState);

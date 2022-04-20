@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DungeonBotGame.Data;
+using DungeonBotGame.Store.Adventures;
 using Fluxor;
 using Microsoft.AspNetCore.Hosting;
 
@@ -25,6 +26,7 @@ public class GameStateFileMiddleware : Middleware
         var gameState = await LoadGameState();
 
         var dungeonBotFeature = store.Features.Values.FirstOrDefault(x => x.GetName() == nameof(DungeonBotState));
+        var adventureFeature = store.Features.Values.FirstOrDefault(x => x.GetName() == nameof(AdventureState));
 
         if (dungeonBotFeature != null)
         {
@@ -37,6 +39,20 @@ public class GameStateFileMiddleware : Middleware
                 var dungeonBotState = (DungeonBotState)dungeonBotFeature.GetState();
 
                 await SaveGameState(gameState with { DungeonBotState = dungeonBotState });
+            };
+        }
+
+        if (adventureFeature != null)
+        {
+            adventureFeature.RestoreState(gameState.AdventureState);
+
+            adventureFeature.StateChanged += async (sender, args) =>
+            {
+                var gameState = await LoadGameState();
+
+                var adventureState = (AdventureState)adventureFeature.GetState();
+
+                await SaveGameState(gameState with { AdventureState = adventureState });
             };
         }
 
@@ -72,5 +88,5 @@ public class GameStateFileMiddleware : Middleware
     }
 
     private string GetGameStateFilePath() => $"{_webHostEnvironment.ContentRootPath}gameState.json";
-    private GameState CreateEmptyGameState() => new GameState(new DungeonBotState(ImmutableList<DungeonBotViewModel>.Empty));
+    private GameState CreateEmptyGameState() => new GameState(new DungeonBotState(ImmutableList<DungeonBotViewModel>.Empty), new AdventureState(ImmutableList<AdventureViewModel>.Empty));
 }

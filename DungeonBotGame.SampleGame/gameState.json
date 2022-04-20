@@ -1,4 +1,4 @@
-﻿{
+{
   "DungeonBotState": {
     "DungeonBots": [
       {
@@ -14,9 +14,153 @@
         "TargettedAbilities": [
           "HeavySwing"
         ],
-        "NonTargettedAbilities": [
-        ]
+        "NonTargettedAbilities": []
       }
     ]
-  }  
+  },
+  "AdventureState": {
+    "Adventures": [
+      {
+        "Id": "4a9a6b47-9d06-497c-b474-e3b7cab29527",
+        "Name": "Abandoned cave where the treasure was hidden",
+        "AdventureMap": {
+          "MaxDimensions": {
+            "X": 7,
+            "Y": 7
+          },
+          "DungeonBotSpawnLocations": [
+            {
+              "X": 3,
+              "Y": 1
+            }
+          ],
+          "ImpassableLocations": [
+            {
+              "Location": {
+                "X": 0,
+                "Y": 2
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 1,
+                "Y": 1
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 2,
+                "Y": 0
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 0,
+                "Y": 3
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 0,
+                "Y": 4
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 1,
+                "Y": 5
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 2,
+                "Y": 6
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 6
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 6
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 5,
+                "Y": 5
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 6,
+                "Y": 4
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 6,
+                "Y": 3
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 6,
+                "Y": 2
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 5,
+                "Y": 1
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 0
+              },
+              "ImagePath": "images/wall"
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 0
+              },
+              "ImagePath": "images/entrance"
+            }
+          ],
+          "Enemies": [],
+          "Treasures": [
+            {
+              "TreasureLocation": {
+                "X": 3,
+                "Y": 4
+              },
+              "ImagePath": "images/treasure"
+            }
+          ]
+        },
+        "AdventureResults": []
+      }
+    ]
+  }
 }

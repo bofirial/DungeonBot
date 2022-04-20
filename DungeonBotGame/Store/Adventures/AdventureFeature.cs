@@ -5,7 +5,7 @@ namespace DungeonBotGame.Store.Adventures;
 public class AdventureFeature : Feature<AdventureState>
 {
     public override string GetName() => nameof(AdventureState);
-    protected override AdventureState GetInitialState() => new(ImmutableList<AdventureViewModel>.Empty);
+    protected override AdventureState GetInitialState() => new(ImmutableList.Create(FirstTreasureAdventure));
 
     public readonly static AdventureViewModel FirstTreasureAdventure = new(
         Guid.NewGuid().ToString(),
