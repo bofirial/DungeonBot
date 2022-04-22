@@ -10,7 +10,7 @@
         "Power": 5,
         "Armor": 5,
         "Speed": 5,
-        "ImageLocation": "/images/dungeonbot.png",
+        "ImagePath": "/images/dungeonbot.png",
         "TargettedAbilities": [
           "HeavySwing"
         ],

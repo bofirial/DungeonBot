@@ -11,6 +11,6 @@ public record DungeonBotViewModel(
     short Power,
     short Armor,
     short Speed,
-    string ImageLocation,
+    string ImagePath,
     IImmutableList<AbilityType> TargettedAbilities,
     IImmutableList<AbilityType> NonTargettedAbilities);
