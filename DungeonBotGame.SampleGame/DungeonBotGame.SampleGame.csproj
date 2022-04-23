@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
@@ -12,7 +12,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>preview</LangVersion>
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,17 +19,16 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
-        <PackageReference Include="xunit" Version="2.4.1" />
-        <PackageReference Include="xunit.analyzers" Version="0.10.0" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="3.1.2">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="gameState.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\DungeonBotGame.SourceGenerators\DungeonBotGame.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\DungeonBotGame\DungeonBotGame.csproj" />
     </ItemGroup>
 
 </Project>

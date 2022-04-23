@@ -16,26 +16,39 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "5.0"
+          dotnet-version: "6.0.x"
 
       - name: DotNet Test
         run: dotnet test ./DungeonBotGame.Tests/DungeonBotGame.Tests.csproj -c Release -r win-x86
 
+      - name: DotNet Pack
+        if: github.ref == 'refs/heads/main'
+        run: dotnet pack ./DungeonBotGame.SourceGenerators/DungeonBotGame.SourceGenerators.csproj -c Release -o packages
+
+      - name: DotNet Pack
+        if: github.ref == 'refs/heads/main'
+        run: dotnet pack ./DungeonBotGame/DungeonBotGame.csproj -c Release -o packages
+
+      - name: DotNet NuGet Push
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./packages
+        run: dotnet nuget push "*.nupkg" --skip-duplicate -k ${{secrets.NUGET_PASSWORD}} -s https://api.nuget.org/v3/index.json
+
       - name: DotNet Publish
         if: github.ref == 'refs/heads/main'
-        run: dotnet publish ./DungeonBotGame.Server/DungeonBotGame.Server.csproj -c Release -r win-x86 -o publish /p:PublishTrimmed=false --self-contained
+        run: dotnet publish ./DungeonBotGame.Web/DungeonBotGame.Web.csproj -c Release --no-self-contained -r win-x86 -o publish
 
       - name: Azure WebApp
         if: github.ref == 'refs/heads/main'
         uses: Azure/webapps-deploy@v2
         with:
           publish-profile: ${{secrets.SCM_CREDENTIALS}}
-          app-name: DungeonBot
+          app-name: DungeonBot-Web
           package: publish

@@ -1,0 +1,2 @@
+﻿
+DungeonBotGame.Application.Run(args);

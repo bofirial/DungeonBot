@@ -1,17 +1,80 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>preview</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RestoreAdditionalProjectSources>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json ;$(RestoreAdditionalProjectSources)</RestoreAdditionalProjectSources>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.1" PrivateAssets="all" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DungeonBotGame.SourceGenerators.Attributes\DungeonBotGame.SourceGenerators.Attributes.csproj" />
-  </ItemGroup>
+    <PropertyGroup>
+        <AssemblyName>DungeonBot.SourceGenerators</AssemblyName>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Authors>James Schafer</Authors>
+        <Title>Dungeon Bot</Title>
+        <Description>A Turn-Based Role-Playing Programming Game for CSharp Developers.</Description>
+        <PackageTags>game;rpg</PackageTags>
+        <Copyright>Copyright (c) 2022 James Schafer</Copyright>
+        <ProjectUrl>https://dungeonbot.net/</ProjectUrl>
+        <PackageIcon>Logo.png</PackageIcon>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>preview</LangVersion>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
+
+        <PackageReference Include="System.Text.Json" Version="6.0.2" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Buffers" Version="4.5.1" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Memory" Version="4.5.4" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" GeneratePathProperty="true" PrivateAssets="all" />
+
+        <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.255" PrivateAssets="all">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" IsImplicitlyDefined="true" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\Logo.png" Pack="true" PackagePath="" />
+        <None Include="..\README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+        <!-- Pack the foundation dll in the analyzers/dotnet/cs path -->
+        <None Include="$(OutputPath)\DungeonBot.Foundation.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+        <!-- Pack the foundation dll in the lib\netstandard2.0 path -->
+        <None Include="$(OutputPath)\DungeonBot.Foundation.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" GeneratePathProperty="true" PrivateAssets="all" />
+    </ItemGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Text_Json)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_Bcl_AsyncInterfaces)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Runtime_CompilerServices_Unsafe)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Threading_Tasks_Extensions)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Buffers)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Memory)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Numerics_Vectors)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(PKGSystem_Text_Encodings_Web)\lib\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+        </ItemGroup>
+    </Target>
+
+
 </Project>
