@@ -1,4 +1,4 @@
-﻿namespace DungeonBotGame.Foundation;
+﻿namespace DungeonBotGame.SourceGenerators.Foundation;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 public class DungeonBotAttribute : Attribute

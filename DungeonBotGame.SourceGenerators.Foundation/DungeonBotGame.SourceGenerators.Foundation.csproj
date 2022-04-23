@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>DungeonBot.Foundation</AssemblyName>
+        <AssemblyName>DungeonBot.SourceGenerators.Foundation</AssemblyName>
         <TargetFramework>netstandard2.0</TargetFramework>
         <Authors>James Schafer</Authors>
         <Title>Dungeon Bot</Title>

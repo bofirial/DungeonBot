@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.SampleGame",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.SourceGenerators", "DungeonBotGame.SourceGenerators\DungeonBotGame.SourceGenerators.csproj", "{ECE1E8ED-6BC0-4231-8AA5-CC8C50C97339}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.Foundation", "DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj", "{CBFA34C1-0268-4E0D-9372-6E36FC119C57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DungeonBotGame.SourceGenerators.Foundation", "DungeonBotGame.SourceGenerators.Foundation\DungeonBotGame.SourceGenerators.Foundation.csproj", "{CBFA34C1-0268-4E0D-9372-6E36FC119C57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
