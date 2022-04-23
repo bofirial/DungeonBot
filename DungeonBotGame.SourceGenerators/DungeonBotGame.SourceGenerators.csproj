@@ -60,7 +60,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" GeneratePathProperty="true" PrivateAssets="all" />
+        <ProjectReference Include="..\DungeonBotGame.SourceGenerators.Foundation\DungeonBotGame.SourceGenerators.Foundation.csproj" GeneratePathProperty="true" PrivateAssets="all" />
     </ItemGroup>
 
     <Target Name="GetDependencyTargetPaths">

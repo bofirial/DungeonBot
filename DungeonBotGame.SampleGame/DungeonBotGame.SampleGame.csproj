@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DungeonBotGame.Foundation\DungeonBotGame.Foundation.csproj" OutputItemType="Analyzer" />
+        <ProjectReference Include="..\DungeonBotGame.SourceGenerators.Foundation\DungeonBotGame.SourceGenerators.Foundation.csproj" OutputItemType="Analyzer" />
         <ProjectReference Include="..\DungeonBotGame.SourceGenerators\DungeonBotGame.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
         <ProjectReference Include="..\DungeonBotGame\DungeonBotGame.csproj" />
     </ItemGroup>

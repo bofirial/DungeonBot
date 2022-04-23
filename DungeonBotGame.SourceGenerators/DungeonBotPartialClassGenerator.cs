@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DungeonBotGame.Foundation;
+using DungeonBotGame.SourceGenerators.Foundation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -35,7 +35,7 @@ public class DungeonBotPartialClassGenerator : IIncrementalGenerator
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) => node is ClassDeclarationSyntax m && m.AttributeLists.Count > 0;
 
-    private const string DungeonBotAttribute = "DungeonBotGame.Foundation.DungeonBotAttribute";
+    private const string DungeonBotAttribute = "DungeonBotGame.SourceGenerators.Foundation.DungeonBotAttribute";
 
     private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
