@@ -22,7 +22,8 @@
     "Adventures": [
       {
         "Id": "4a9a6b47-9d06-497c-b474-e3b7cab29527",
-        "Name": "Abandoned cave where the treasure was hidden",
+        "Name": "A Bot's First Adventure",
+        "Description": "Enter the abandoned cave, find the treasure, and escape through the front door.",
         "AdventureMap": {
           "MaxDimensions": {
             "X": 7,
@@ -40,112 +41,112 @@
                 "X": 0,
                 "Y": 2
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 1,
                 "Y": 1
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 2,
                 "Y": 0
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 0,
                 "Y": 3
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 0,
                 "Y": 4
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 1,
                 "Y": 5
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 2,
                 "Y": 6
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 3,
                 "Y": 6
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 4,
                 "Y": 6
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 5,
                 "Y": 5
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 6,
                 "Y": 4
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 6,
                 "Y": 3
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 6,
                 "Y": 2
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 5,
                 "Y": 1
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 4,
                 "Y": 0
               },
-              "ImagePath": "images/wall"
+              "ImagePath": "images/wall.png"
             },
             {
               "Location": {
                 "X": 3,
                 "Y": 0
               },
-              "ImagePath": "images/entrance"
+              "ImagePath": "images/entrance.png"
             }
           ],
           "Enemies": [],
@@ -155,7 +156,7 @@
                 "X": 3,
                 "Y": 4
               },
-              "ImagePath": "images/treasure"
+              "ImagePath": "images/treasure.png"
             }
           ]
         },

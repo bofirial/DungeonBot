@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DungeonBotGame.Data;
-using DungeonBotGame.Store.Adventures;
 using Fluxor;
 using Microsoft.AspNetCore.Hosting;
 
@@ -88,5 +87,5 @@ public class GameStateFileMiddleware : Middleware
     }
 
     private string GetGameStateFilePath() => $"{_webHostEnvironment.ContentRootPath}gameState.json";
-    private GameState CreateEmptyGameState() => new GameState(new DungeonBotState(ImmutableList<DungeonBotViewModel>.Empty), new AdventureState(ImmutableList<AdventureViewModel>.Empty));
+    private static GameState CreateEmptyGameState() => new GameState(new DungeonBotState(ImmutableList<DungeonBot>.Empty), new AdventureState(ImmutableList<Adventure>.Empty));
 }

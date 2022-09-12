@@ -2,4 +2,4 @@
 
 namespace DungeonBotGame.Data;
 
-public record DungeonBotState(IImmutableList<DungeonBotViewModel> DungeonBots);
+public record DungeonBotState(IImmutableList<DungeonBot> DungeonBots);

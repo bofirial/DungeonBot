@@ -2,7 +2,7 @@
 
 namespace DungeonBotGame.Data;
 
-public record DungeonBotViewModel(
+public record DungeonBot(
     string Id,
     string Name,
     DungeonBotClass Class,

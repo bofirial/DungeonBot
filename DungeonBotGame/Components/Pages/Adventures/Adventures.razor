@@ -10,7 +10,7 @@
 
 <h1>Adventures</h1>
 
-<ListAndDetailView TListItem="AdventureViewModel" List="@AdventureState.Value.Adventures" KeyFunction="@(adventure => adventure.Id)" SelectAnItemText="Select an Adventure">
+<ListAndDetailView TListItem="Adventure" List="@AdventureState.Value.Adventures" KeyFunction="@(adventure => adventure.Id)" SelectAnItemText="Select an Adventure">
     <ListItemView>
         @if (context.ListItem != null)
         {
