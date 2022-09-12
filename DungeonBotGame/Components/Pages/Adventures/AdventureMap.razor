@@ -1,4 +1,4 @@
-﻿@using DungeonBotGame.Store.Adventures
+﻿@using DungeonBotGame.Data
 
 @if (Map != null)
 {
@@ -17,24 +17,24 @@
 
 @code {
     [Parameter]
-    public AdventureMapViewModel? Map { get; set; }
+    public Data.AdventureMap? Map { get; set; }
 
-    short GetMapTotalRows(AdventureMapViewModel map)
+    short GetMapTotalRows(Data.AdventureMap map)
     {
         return map.MaxDimensions.X;
     }
 
-    short GetMapTotalColumns(AdventureMapViewModel map)
+    short GetMapTotalColumns(Data.AdventureMap map)
     {
         return map.MaxDimensions.Y;
     }
 
-    string GetImagePath(AdventureMapViewModel map, short x, short y)
+    string GetImagePath(Data.AdventureMap map, short x, short y)
     {
         return $"https://dungeonbot.net/{GetRelativeImagePath(map, x, y)}";
     }
 
-    string GetRelativeImagePath(AdventureMapViewModel map, short x, short y)
+    string GetRelativeImagePath(Data.AdventureMap map, short x, short y)
     {
         if (map.DungeonBotSpawnLocations.Any(d => d.X == x && d.Y == y))
         {

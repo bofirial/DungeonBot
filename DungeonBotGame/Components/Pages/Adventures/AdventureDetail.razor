@@ -1,4 +1,4 @@
-﻿@using DungeonBotGame.Store.Adventures
+﻿@using DungeonBotGame.Data
 
 @if (Adventure != null)
 {
@@ -18,5 +18,5 @@
 
 @code {
     [Parameter]
-    public AdventureViewModel? Adventure { get; set; }
+    public Adventure? Adventure { get; set; }
 }

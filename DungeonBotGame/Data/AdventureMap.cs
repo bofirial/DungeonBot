@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 
-namespace DungeonBotGame.Store.Adventures;
+namespace DungeonBotGame.Data;
 
-public record AdventureMapViewModel(
+public record AdventureMap(
     Location MaxDimensions,
     IImmutableList<Location> DungeonBotSpawnLocations,
     IImmutableList<ImpassableLocation> ImpassableLocations,

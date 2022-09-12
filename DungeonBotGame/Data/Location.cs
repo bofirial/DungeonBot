@@ -1,3 +1,3 @@
-﻿namespace DungeonBotGame.Store.Adventures;
+﻿namespace DungeonBotGame.Data;
 
 public record Location(short X, short Y);

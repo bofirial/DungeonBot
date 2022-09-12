@@ -9,7 +9,7 @@
 
 <h1>Dungeon Bots</h1>
 
-<ListAndDetailView TListItem="DungeonBotViewModel" List="@DungeonBotState.Value.DungeonBots" KeyFunction="@((dungeonBot) => dungeonBot.Id)">
+<ListAndDetailView TListItem="DungeonBot" List="@DungeonBotState.Value.DungeonBots" KeyFunction="@((dungeonBot) => dungeonBot.Id)">
     <ListItemView>
         @if (context.ListItem != null)
         {
