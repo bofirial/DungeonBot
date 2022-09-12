@@ -2,4 +2,4 @@
 
 namespace DungeonBotGame.Store.Adventures;
 
-public record AdventureViewModel(string Id, string Name, AdventureMapViewModel AdventureMap, IImmutableList<AdventureResultViewModel> AdventureResults);
+public record AdventureViewModel(string Id, string Name, string Description, AdventureMapViewModel AdventureMap, IImmutableList<AdventureResultViewModel> AdventureResults);

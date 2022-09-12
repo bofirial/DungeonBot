@@ -1,0 +1,61 @@
+﻿@using DungeonBotGame.Store.Adventures
+
+@if (Map != null)
+{
+    <div class="d-flex flex-wrap-reverse justify-content-center align-items-center">
+    @for (short y = 0; y < GetMapTotalColumns(Map); y++)
+    {
+        <div class="d-flex w-100 justify-content-center align-items-center">
+        @for (short x = 0; x < GetMapTotalRows(Map); x++)
+        {
+            <img class="map-cell pixel-image m-1" src="@GetImagePath(Map, x, y)" data-x="@x" data-y="@y"/>
+        }
+        </div>
+    }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public AdventureMapViewModel? Map { get; set; }
+
+    short GetMapTotalRows(AdventureMapViewModel map)
+    {
+        return map.MaxDimensions.X;
+    }
+
+    short GetMapTotalColumns(AdventureMapViewModel map)
+    {
+        return map.MaxDimensions.Y;
+    }
+
+    string GetImagePath(AdventureMapViewModel map, short x, short y)
+    {
+        return $"https://dungeonbot.net/{GetRelativeImagePath(map, x, y)}";
+    }
+
+    string GetRelativeImagePath(AdventureMapViewModel map, short x, short y)
+    {
+        if (map.DungeonBotSpawnLocations.Any(d => d.X == x && d.Y == y))
+        {
+            return "images/dungeonbot.png";
+        }
+
+        if (map.Enemies.Any(e => e.EnemySpawnLocation.X == x && e.EnemySpawnLocation.Y == y))
+        {
+            return map.Enemies.First(e => e.EnemySpawnLocation.X == x && e.EnemySpawnLocation.Y == y).ImagePath;
+        }
+
+        if (map.Treasures.Any(t => t.TreasureLocation.X == x && t.TreasureLocation.Y == y))
+        {
+            return map.Treasures.First(t => t.TreasureLocation.X == x && t.TreasureLocation.Y == y).ImagePath;
+        }
+
+        if (map.ImpassableLocations.Any(e => e.Location.X == x && e.Location.Y == y))
+        {
+            return map.ImpassableLocations.First(e => e.Location.X == x && e.Location.Y == y).ImagePath;
+        }
+
+        return "images/blank.png";
+    }
+}

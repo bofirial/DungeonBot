@@ -134,20 +134,19 @@ main {
     }
 }
 
-.monaco-editor-container {
-    height: 400px;
-}
-
 .pixel-image {
     image-rendering: pixelated;
 }
 
-.profile-image {
-    max-width: 256px;
+.map-cell {
+    width: 32px;
+    min-width: 0;
 }
 
-.profile-cards .col {
-    max-width: 400px;
+@media (min-width: 768px) {
+    .map-cell {
+        width: auto;
+    }
 }
 
 //@media (min-width: 768px) {
