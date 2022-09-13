@@ -1,0 +1,37 @@
+﻿@using DungeonBotGame.Data
+
+@if (DungeonBot != null)
+{
+    <div class="card">
+        <div class="card-header">
+            @DungeonBot.Name
+        </div>
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(DungeonBotClassificationDisplay))
+            {
+                <h3 class="card-title text-center">@DungeonBotClassificationDisplayNameProvider.GetDisplayName(DungeonBot.Classification)</h3>
+            }
+            @if (DungeonBot.Level != default)
+            {
+                <h4 class="card-title text-center">Level @DungeonBot.Level</h4>
+            }
+            <img src="https://dungeonbot.net/@DungeonBot.ImagePath" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@DungeonBot.Name">
+        </div>
+    </div>
+}
+
+@inject IDungeonBotClassificationDisplayNameProvider DungeonBotClassificationDisplayNameProvider
+
+@code {
+    [Parameter]
+    public DungeonBot? DungeonBot { get; set; }
+
+    public string DungeonBotClassificationDisplay { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        DungeonBotClassificationDisplay = DungeonBotClassificationDisplayNameProvider.GetDisplayName(DungeonBot?.Classification);
+    }
+}

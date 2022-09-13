@@ -4,17 +4,7 @@
 {
     <div class="row justify-content-evenly row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4 mb-3 profile-cards">
         <div class="col">
-            <div class="card">
-                <div class="card-header">
-                    @DungeonBot.Name
-                </div>
-                <div class="card-body">
-                    <h3 class="card-title text-center">Warrior Bot</h3>
-                    @*<h3 class="card-title text-center">@ClassDetailProvider.GetClassName(DungeonBot.Class)</h3>*@
-                    <h4 class="card-title text-center">@($"Level {DungeonBot.Level}")</h4>
-                    @*<img src="@DungeonBot.ImagePath" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@DungeonBot.Name">*@
-                </div>
-            </div>
+            <DungeonBotCard DungeonBot="DungeonBot"/>
         </div>
 
         @*<div class="col">

@@ -4,13 +4,28 @@
       {
         "Id": "51ce2138-87ea-438d-87ef-1df1a1def9bf",
         "Name": "WarriorBot001",
-        "Class": "WarriorBot",
+        "Classification": "WarriorBot",
         "Level": 1,
         "AvailableStatPoints": 0,
         "Power": 5,
         "Armor": 5,
         "Speed": 5,
-        "ImagePath": "/images/dungeonbot.png",
+        "ImagePath": "images/dungeonbot.png",
+        "TargettedAbilities": [
+          "HeavySwing"
+        ],
+        "NonTargettedAbilities": []
+      },
+      {
+        "Id": "51ce2138-87ea-438d-87ef-1df1a1def9bf",
+        "Name": "SorcererBot001",
+        "Classification": "SorcererBot",
+        "Level": 1,
+        "AvailableStatPoints": 0,
+        "Power": 5,
+        "Armor": 5,
+        "Speed": 5,
+        "ImagePath": "images/dungeonbot-dark.png",
         "TargettedAbilities": [
           "HeavySwing"
         ],

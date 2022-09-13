@@ -1,4 +1,5 @@
-﻿using DungeonBotGame.Store;
+﻿using DungeonBotGame.Data;
+using DungeonBotGame.Store;
 using Fluxor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,11 @@ namespace DungeonBotGame;
 
 public static class Application
 {
+    public static void ConfigureServices(IServiceCollection services)
+    {
+        services.AddScoped<IDungeonBotClassificationDisplayNameProvider, DungeonBotClassificationDisplayNameProvider>();
+    }
+
     public static void Run(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +26,8 @@ public static class Application
             .ScanAssemblies(typeof(Application).Assembly)
             .UseReduxDevTools()
             .AddMiddleware<GameStateFileMiddleware>());
+
+        ConfigureServices(builder.Services);
 
         var app = builder.Build();
 

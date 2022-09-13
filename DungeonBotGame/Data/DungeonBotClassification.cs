@@ -1,5 +1,5 @@
 ﻿namespace DungeonBotGame.Data;
-public enum DungeonBotClass
+public enum DungeonBotClassification
 {
     WarriorBot = 1,
     ArmorBot,

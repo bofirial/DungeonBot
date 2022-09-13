@@ -89,6 +89,7 @@ main {
 
 .pixel-image {
   image-rendering: pixelated;
+  max-width: 128px;
 }
 
 .map-cell {
