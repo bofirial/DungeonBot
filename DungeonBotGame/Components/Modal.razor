@@ -1,0 +1,25 @@
+﻿<div id="@ModalId" class="modal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered @ModalDialogSize">
+        <div class="modal-content">
+            @if (!string.IsNullOrEmpty(ModalTitle))
+            {
+                <div class="modal-header">
+                    <h3 class="modal-title">@ModalTitle</h3>
+                    @if (IsClosable)
+                    {
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    }
+                </div>
+            }
+            <div class="modal-body">
+                @ChildContent
+            </div>
+            @if (IsClosable)
+            {
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary px-5 mx-3" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

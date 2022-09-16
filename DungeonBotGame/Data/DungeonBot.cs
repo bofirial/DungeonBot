@@ -5,7 +5,7 @@ namespace DungeonBotGame.Data;
 public record DungeonBot(
     string Id,
     string Name,
-    DungeonBotClass Class,
+    DungeonBotClassification? Classification,
     short Level,
     short AvailableStatPoints,
     short Power,
@@ -13,4 +13,18 @@ public record DungeonBot(
     short Speed,
     string ImagePath,
     IImmutableList<AbilityType> TargettedAbilities,
-    IImmutableList<AbilityType> NonTargettedAbilities);
+    IImmutableList<AbilityType> NonTargettedAbilities)
+{
+    public static readonly DungeonBot SelectADungeonBot = new DungeonBot(
+        Guid.Empty.ToString(),
+        "Select a Dungeonbot",
+        default,
+        default,
+        default,
+        default,
+        default,
+        default,
+        "images/dungeonbot-select.png",
+        ImmutableList<AbilityType>.Empty,
+        ImmutableList<AbilityType>.Empty);
+}
