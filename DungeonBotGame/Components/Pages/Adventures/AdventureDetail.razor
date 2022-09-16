@@ -1,22 +1,90 @@
-﻿@using DungeonBotGame.Data
+﻿@using DungeonBotGame.Components.Pages.DungeonBots
+@using DungeonBotGame.Data
+@using Fluxor
 
 @if (Adventure != null)
 {
     <h2>@Adventure.Name</h2>
     <p>@Adventure.Description</p>
 
-@*    <div class="card">
-      <h4 class="card-header">
-        Abandoned Cave
-      </h4>
-      <div class="card-body">
-        <AdventureMap Map="@Adventure.AdventureMap"></AdventureMap>
-      </div>
-    </div>*@
+    <div class="d-flex justify-content-center flex-wrap g-4 mb-3">
+    @foreach (var dungeonBot in DungeonBotParty)
+    {
+        <DungeonBotCard Class="characterCard mx-4 my-1" DungeonBot="dungeonBot.Value" ClickAction="async () => await SelectADungeonBotAsync(dungeonBot.Key)" />
+    }
+    </div>
 
+    <div class="mt-3 text-center">
+        <button type="button" class="btn btn-primary px-5 mx-3 @StartAdventureButtonClass"
+            @onclick="async e => await StartAdventureAsync()">
+            Start Adventure
+        </button>
+    </div>
+
+    <DungeonBotPickerModal @ref="DungeonBotPickerModal" DungeonBots="DungeonBotState?.Value?.DungeonBots"></DungeonBotPickerModal>
 }
+
+@inject IState<DungeonBotState> DungeonBotState
 
 @code {
     [Parameter]
     public Adventure? Adventure { get; set; }
+
+    public string StartAdventureButtonClass { get; set; } = string.Empty;
+
+    public Dictionary<ushort, DungeonBot> DungeonBotParty { get; set; } = new Dictionary<ushort, DungeonBot>();
+
+    public DungeonBotPickerModal? DungeonBotPickerModal { get; set; }
+
+    public async Task StartAdventureAsync()
+    {
+
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Adventure != null)
+        {
+            DungeonBotParty = new Dictionary<ushort, DungeonBot>();
+
+            StartAdventureButtonClass = "disabled";
+
+            ushort i = 1;
+
+            foreach (var dungeonBotSpawnLocation in Adventure.AdventureMap.DungeonBotSpawnLocations)
+            {
+                DungeonBotParty.Add(i, DungeonBot.SelectADungeonBot);
+
+                i++;
+            }
+        }
+    }
+
+    public async Task SelectADungeonBotAsync(ushort position)
+    {
+        if (DungeonBotPickerModal != null)
+        {
+            DungeonBotPickerModal.SelectedDungeonBot = DungeonBotParty[position];
+
+            DungeonBotPickerModal.UnavailableDungeonBots = DungeonBotParty.Where(d => d.Value != null && d.Value != DungeonBot.SelectADungeonBot && d.Key != position).Select(d => d.Value);
+
+            DungeonBotPickerModal.DungeonBotSelectionAction = dungeonBot =>
+            {
+                DungeonBotParty[position] = dungeonBot;
+
+                if (Adventure != null && !DungeonBotParty.Any(d => d.Value == DungeonBot.SelectADungeonBot))
+                {
+                    StartAdventureButtonClass = string.Empty;
+                }
+
+                StateHasChanged();
+            };
+
+            StateHasChanged();
+
+            await DungeonBotPickerModal.ShowAsync();
+        }
+    }
 }

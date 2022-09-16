@@ -1,0 +1,33 @@
+﻿@using DungeonBotGame.Components.Pages.DungeonBots
+
+<Modal ModalId="dungeonBotPicker" ModalTitle="Select a DungeonBot" ModalDialogSize="modal-xl" @ref="Modal">
+    <div class="row justify-content-evenly row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4 mb-3">
+        @foreach (var dungeonBot in DungeonBots)
+        {
+            var borderClass = string.Empty;
+            var buttonClass = string.Empty;
+            var clickAction = async () => await SelectAsync(dungeonBot);
+            var tooltip = string.Empty;
+
+            if (dungeonBot == SelectedDungeonBot)
+            {
+                borderClass = "border-primary";
+            }
+
+            if (UnavailableDungeonBots.Contains(dungeonBot))
+            {
+                buttonClass = "disabled";
+                borderClass = "text-secondary bg-light";
+
+                clickAction = default;
+                tooltip = $"{dungeonBot.Name} is already a member of the party.";
+            }
+
+            <div class="col">
+                @{#pragma warning disable CS8601}
+                <DungeonBotCard DungeonBot="@dungeonBot" BorderClass="@borderClass" ClickAction="@clickAction" Tooltip="@tooltip" />
+                @{#pragma warning restore CS8601}
+            </div>
+        }
+    </div>
+</Modal>

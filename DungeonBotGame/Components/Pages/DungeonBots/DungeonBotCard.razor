@@ -2,8 +2,8 @@
 
 @if (DungeonBot != null)
 {
-    <div class="card">
-        <div class="card-header">
+    <div @ref="CardElement" class="card @Class @BorderClass" data-bs-toggle="@(!string.IsNullOrEmpty(Tooltip) ? "tooltip" : null)" data-bs-title="@(!string.IsNullOrEmpty(Tooltip) ? Tooltip : null)">
+        <div class="card-header @BorderClass">
             @DungeonBot.Name
         </div>
         <div class="card-body">
@@ -16,22 +16,49 @@
                 <h4 class="card-title text-center">Level @DungeonBot.Level</h4>
             }
             <img src="https://dungeonbot.net/@DungeonBot.ImagePath" class="pixel-image profile-image rounded mx-auto d-block w-100" alt="@DungeonBot.Name">
+            @if (ClickAction != default)
+            {
+                <a href="javascript:void(0)" class="stretched-link" @onclick="ClickAction"></a>
+            }
         </div>
     </div>
 }
 
 @inject IDungeonBotClassificationDisplayNameProvider DungeonBotClassificationDisplayNameProvider
 
+@inject IJSRuntime JSRuntime
+
 @code {
     [Parameter]
     public DungeonBot? DungeonBot { get; set; }
 
+    [Parameter]
+    public string BorderClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Class { get; set; } = string.Empty;
+
+    [Parameter]
+    public Func<Task>? ClickAction { get; set; } = default;
+
+    [Parameter]
+    public string Tooltip { get; set; } = string.Empty;
+
     public string DungeonBotClassificationDisplay { get; set; } = string.Empty;
+
+    public ElementReference CardElement { get; set; }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
         DungeonBotClassificationDisplay = DungeonBotClassificationDisplayNameProvider.GetDisplayName(DungeonBot?.Classification);
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        await JSRuntime.InvokeVoidAsync("initializeTooltip", CardElement, !string.IsNullOrEmpty(Tooltip));
     }
 }
