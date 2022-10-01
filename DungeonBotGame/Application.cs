@@ -1,4 +1,5 @@
-﻿using DungeonBotGame.Data;
+﻿using DungeonBotGame.Combat;
+using DungeonBotGame.Data;
 using DungeonBotGame.Store;
 using Fluxor;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ public static class Application
     public static void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IDungeonBotClassificationDisplayNameProvider, DungeonBotClassificationDisplayNameProvider>();
+        services.AddScoped<IAdventureRunner, AdventureRunner>();
     }
 
     public static void Run(string[] args)

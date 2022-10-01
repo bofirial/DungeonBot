@@ -1,0 +1,70 @@
+﻿using System.Collections.Immutable;
+
+namespace DungeonBotGame.Combat;
+
+public interface IAdventureRunner
+{
+    Task<AdventureHistory> RunAdventureAsync(Data.Adventure adventure, IEnumerable<Data.DungeonBot> dungeonBotParty);
+}
+
+public class AdventureRunner : IAdventureRunner
+{
+    public Task<AdventureHistory> RunAdventureAsync(Data.Adventure adventure, IEnumerable<Data.DungeonBot> dungeonBotParty)
+    {
+        //TODO: Build AdventureContext with Combat models for Adventure, Adventure Map, DungeonBots, Enemies, etc.
+        //TODO: Run each turn of the adventure
+
+        var fakeAdventureHistory = CreateFakeTreasureHuntAdventureHistory();
+
+        //TODO: Update state with the adventure result before returning
+
+        return Task.FromResult(fakeAdventureHistory);
+    }
+
+    private static AdventureHistory CreateFakeTreasureHuntAdventureHistory()
+    {
+        var mapDimensions = new Location(7, 7);
+
+        var impassableLocations = new List<ImpassableLocation>()
+        {
+            new ImpassableLocation(new Location(0, 2), "images/wall.png"),
+            new ImpassableLocation(new Location(1, 1), "images/wall.png"),
+            new ImpassableLocation(new Location(2, 0), "images/wall.png"),
+            new ImpassableLocation(new Location(0, 3), "images/wall.png"),
+            new ImpassableLocation(new Location(0, 4), "images/wall.png"),
+            new ImpassableLocation(new Location(1, 5), "images/wall.png"),
+            new ImpassableLocation(new Location(2, 6), "images/wall.png"),
+            new ImpassableLocation(new Location(3, 6), "images/wall.png"),
+            new ImpassableLocation(new Location(4, 6), "images/wall.png"),
+            new ImpassableLocation(new Location(5, 5), "images/wall.png"),
+            new ImpassableLocation(new Location(6, 4), "images/wall.png"),
+            new ImpassableLocation(new Location(6, 3), "images/wall.png"),
+            new ImpassableLocation(new Location(6, 2), "images/wall.png"),
+            new ImpassableLocation(new Location(5, 1), "images/wall.png"),
+            new ImpassableLocation(new Location(4, 0), "images/wall.png")
+        }.ToImmutableList();
+
+        var dungeonBotId = Guid.NewGuid().ToString();
+        var treasureId = Guid.NewGuid().ToString();
+        var adventureExitId = Guid.NewGuid().ToString();
+
+        var treasure = new TreasureChest(treasureId, "images/treasure.png", "images/treasure-looted.png", new Location(3, 4), false);
+        var adventureExit = new AdventureExit(adventureExitId, "images/entrance.png", new Location(3, 0));
+
+        var dungeonBot = new DungeonBot(dungeonBotId, "images/dungeonbot.png", new Location(3, 1), "DungeonBot001", 10, 10);
+
+        var fakeAdventureHistory = new AdventureHistory(
+            new Dictionary<int, AdventureContext>() {
+                { 1, new AdventureContext(new AdventureMap(mapDimensions, impassableLocations, new List<ITarget>() { dungeonBot                                         , treasure                          , adventureExit }.ToImmutableList()), new AdventureStartAction()                        , new TimeSpan(0)) },
+                { 2, new AdventureContext(new AdventureMap(mapDimensions, impassableLocations, new List<ITarget>() { dungeonBot with { Location = new Location(3, 2)}   , treasure                          , adventureExit }.ToImmutableList()), new MoveAction(dungeonBotId, new Location(3, 2))  , new TimeSpan(500)) },
+                { 3, new AdventureContext(new AdventureMap(mapDimensions, impassableLocations, new List<ITarget>() { dungeonBot with { Location = new Location(3, 3)}   , treasure                          , adventureExit }.ToImmutableList()), new MoveAction(dungeonBotId, new Location(3, 3))  , new TimeSpan(1000)) },
+                { 4, new AdventureContext(new AdventureMap(mapDimensions, impassableLocations, new List<ITarget>() { dungeonBot with { Location = new Location(3, 3)}   , treasure with { IsLooted = true } , adventureExit }.ToImmutableList()), new InteractAction(dungeonBotId, treasureId)      , new TimeSpan(1500)) },
+                { 5, new AdventureContext(new AdventureMap(mapDimensions, impassableLocations, new List<ITarget>() { dungeonBot with { Location = new Location(3, 2)}   , treasure with { IsLooted = true } , adventureExit }.ToImmutableList()), new MoveAction(dungeonBotId, new Location(3, 2))  , new TimeSpan(2000)) },
+                { 6, new AdventureContext(new AdventureMap(mapDimensions, impassableLocations, new List<ITarget>() { dungeonBot with { Location = new Location(3, 1)}   , treasure with { IsLooted = true } , adventureExit }.ToImmutableList()), new MoveAction(dungeonBotId, new Location(3, 1))  , new TimeSpan(2500)) },
+                { 7, new AdventureContext(new AdventureMap(mapDimensions, impassableLocations, new List<ITarget>() { dungeonBot with { Location = new Location(3, 1)}   , treasure with { IsLooted = true } , adventureExit }.ToImmutableList()), new InteractAction(dungeonBotId, adventureExitId) , new TimeSpan(3000)) }
+            }.ToImmutableDictionary(),
+        AdventureResultStatus.Success);
+
+        return fakeAdventureHistory;
+    }
+}

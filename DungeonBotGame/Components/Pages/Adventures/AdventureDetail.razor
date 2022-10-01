@@ -26,6 +26,8 @@
 
 @inject IState<DungeonBotState> DungeonBotState
 
+@inject Combat.IAdventureRunner AdventureRunner
+
 @code {
     [Parameter]
     public Adventure? Adventure { get; set; }
@@ -36,9 +38,16 @@
 
     public DungeonBotPickerModal? DungeonBotPickerModal { get; set; }
 
+    public Combat.AdventureHistory? AdventureHistory { get; set; }
+
     public async Task StartAdventureAsync()
     {
+        if (Adventure != null && !DungeonBotParty.Any(d => d.Value == DungeonBot.SelectADungeonBot))
+        {
+            AdventureHistory = await AdventureRunner.RunAdventureAsync(Adventure, DungeonBotParty.Values);
 
+            //TODO: Show AdventureHistory Offcanvas
+        }
     }
 
     protected override void OnParametersSet()
