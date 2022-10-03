@@ -2,9 +2,9 @@
 
 namespace DungeonBotGame.Components;
 
-public record ListItemViewModel<TListItem>(TListItem ListItem, bool IsCurrentListItem) where TListItem : class;
+public record ListItemViewModel<TListItem>(TListItem ListItem, bool IsCurrentListItem);
 
-public partial class ListAndDetailView<TListItem> where TListItem : class
+public partial class ListAndDetailView<TListItem>
 {
     [Parameter]
     public IEnumerable<TListItem>? List { get; set; }

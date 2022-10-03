@@ -22,6 +22,7 @@
     </div>
 
     <DungeonBotPickerModal @ref="DungeonBotPickerModal" DungeonBots="DungeonBotState?.Value?.DungeonBots"></DungeonBotPickerModal>
+    <AdventureHistoryModal @ref="AdventureHistoryModal" AdventureHistory="AdventureHistory"></AdventureHistoryModal>
 }
 
 @inject IState<DungeonBotState> DungeonBotState
@@ -40,13 +41,18 @@
 
     public Combat.AdventureHistory? AdventureHistory { get; set; }
 
+    public AdventureHistoryModal? AdventureHistoryModal { get; set; }
+
     public async Task StartAdventureAsync()
     {
         if (Adventure != null && !DungeonBotParty.Any(d => d.Value == DungeonBot.SelectADungeonBot))
         {
             AdventureHistory = await AdventureRunner.RunAdventureAsync(Adventure, DungeonBotParty.Values);
 
-            //TODO: Show AdventureHistory Offcanvas
+            if (AdventureHistoryModal != null)
+            {
+                await AdventureHistoryModal.ShowAsync();
+            }
         }
     }
 

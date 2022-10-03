@@ -1,16 +1,16 @@
 ﻿namespace DungeonBotGame.Combat;
-public record InteractAction : IAction
+public record InteractAction : ITargettedAction
 {
-    public InteractAction(string characterId, string interactTargetId)
+    public InteractAction(ICharacter character, ITarget target)
     {
-        CharacterId = characterId;
-        InteractTargetId = interactTargetId;
+        Character = character;
+        Target = target;
     }
 
     public ActionType ActionType => ActionType.Interact;
 
-    public string CharacterId { get; init; }
+    public ICharacter Character { get; init; }
 
-    public string InteractTargetId { get; init; }
+    public ITarget Target { get; init; }
 }
 

@@ -1,15 +1,15 @@
 ﻿namespace DungeonBotGame.Combat;
 public record MoveAction : IAction
 {
-    public MoveAction(string characterId, Location location)
+    public MoveAction(ICharacter character, Location location)
     {
-        CharacterId = characterId;
+        Character = character;
         Location = location;
     }
 
     public ActionType ActionType => ActionType.Move;
 
-    public string CharacterId { get; init; }
+    public ICharacter Character { get; init; }
 
     public Location Location { get; init; }
 }

@@ -26,10 +26,15 @@ namespace {dungeonBotPartialClassToGenerate.Namespace};
         }
 
         sb.Append(@"
-public partial class ").Append(dungeonBotPartialClassToGenerate.Name).Append(@"
+public partial class ").Append(dungeonBotPartialClassToGenerate.Name).Append(@": DungeonBotGame.Combat.IDungeonBot
 {
-    private short CurrentHealth { get; }
-    private short MaximumHealth { get; }
+    public string Id { get; }
+    public string Name { get; }
+    public Combat.Location Location { get; }
+    public string ImagePath { get; }
+    public int CurrentHealth { get; }
+    public int MaximumHealth { get; }
+
     private short Level { get; }
     private short Power { get; }
     private short Armor { get; }
@@ -38,8 +43,12 @@ public partial class ").Append(dungeonBotPartialClassToGenerate.Name).Append(@"
     private IImmutableDictionary<AbilityType, AbilityContext> Abilities { get; }
 
     public ").Append(dungeonBotPartialClassToGenerate.Name).Append(@"(
-        short currentHealth,
-        short maximumHealth,
+        string id,
+        string name,
+        Combat.Location location,
+        string imagePath,
+        int currentHealth,
+        int maximumHealth,
         short level,
         short power,
         short armor,
@@ -47,6 +56,10 @@ public partial class ").Append(dungeonBotPartialClassToGenerate.Name).Append(@"
         IImmutableList<CombatEffect> combatEffects,
         IImmutableDictionary<AbilityType, AbilityContext> abilities)
     {
+        Id = id;
+        Name = name;
+        Location = location;
+        ImagePath = imagePath;
         CurrentHealth = currentHealth;
         MaximumHealth = maximumHealth;
         Level = level;
@@ -64,11 +77,11 @@ public partial class ").Append(dungeonBotPartialClassToGenerate.Name).Append(@"
     [EditorBrowsable(EditorBrowsableState.Never)]
     public bool AbilityIsAvailable(AbilityType abilityType) => Abilities.ContainsKey(abilityType) && Abilities[abilityType].IsAvailable;
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public IAbilityAction UseAbility(AbilityType abilityType) => new AbilityAction(abilityType);
+    public IAbilityAction UseAbility(AbilityType abilityType) => new AbilityAction(this, abilityType);
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public ITargettedAbilityAction UseTargettedAbility(ITarget target, AbilityType abilityType) => new TargettedAbilityAction(target, abilityType);
+    public ITargettedAbilityAction UseTargettedAbility(ITarget target, AbilityType abilityType) => new TargettedAbilityAction(this, target, abilityType);
 
-    public ITargettedAction Attack(ITarget attackTarget) => new AttackAction(attackTarget);");
+    public ITargettedAction Attack(ITarget attackTarget) => new AttackAction(this, attackTarget);");
 
         foreach (var targettedAbility in targettedAbilities)
         {

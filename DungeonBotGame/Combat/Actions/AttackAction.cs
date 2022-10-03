@@ -2,10 +2,12 @@
 
 public record AttackAction : ITargettedAction
 {
-    public AttackAction(ITarget attackTarget)
+    public AttackAction(ICharacter character, ITarget attackTarget)
     {
+        Character = character;
         Target = attackTarget;
     }
+    public ICharacter Character { get; init; }
 
     public ITarget Target { get; }
 

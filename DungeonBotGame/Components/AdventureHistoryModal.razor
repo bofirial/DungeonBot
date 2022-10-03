@@ -1,0 +1,29 @@
+﻿@using DungeonBotGame.Combat
+
+<Modal ModalId="adventureHistory" ModalTitle="Adventure Result" ModalDialogSize="modal-fullscreen" @ref="Modal">
+    @if (@AdventureHistory != null)
+    {
+        @if (AdventureHistory.AdventureResultStatus == AdventureResultStatus.Success)
+        {
+            <h5 class="alert alert-success" role="alert">The Dungeonbot(s) successfully completed the adventure!</h5>
+        }
+        else
+        {
+            <h5 class="alert alert-danger" role="alert">The Dungeonbot(s) failed to complete the adventure.</h5>
+        }
+
+        <ListAndDetailView TListItem="KeyValuePair<int, AdventureContext>" List="@AdventureHistory.TurnHistory" KeyFunction="@(turnHistory => turnHistory.Key.ToString())" SelectAnItemText="Select a turn">
+            <ListItemView>
+                @if (!context.ListItem.Equals(default(KeyValuePair<int, AdventureContext>)))
+                {
+                    var listItemText = $"{context.ListItem.Value.CombatTime.ToString("mm\\:ss")}: {GetCombatLogText(context.ListItem.Value.LastAction)}";
+
+                    @listItemText
+               }
+            </ListItemView>
+            <DetailView Context="adventureContext">
+
+            </DetailView>
+        </ListAndDetailView>
+    }
+</Modal>

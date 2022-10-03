@@ -2,4 +2,4 @@
 
 namespace DungeonBotGame.Combat;
 
-public record AdventureMap(Location MaxDimensions, IImmutableList<ImpassableLocation> ImpassableLocations, IImmutableList<ITarget> TargetLocations);
+public record AdventureMap(Location MaxDimensions, IImmutableList<ImpassableLocation> ImpassableLocations, IImmutableList<ITarget> Targets);
