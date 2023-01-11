@@ -1,4 +1,5 @@
 ﻿@using DungeonBotGame.Combat
+@using DungeonBotGame.Components.Pages.Adventures
 
 <Modal ModalId="adventureHistory" ModalTitle="Adventure Result" ModalDialogSize="modal-fullscreen" @ref="Modal">
     @if (@AdventureHistory != null)
@@ -22,7 +23,10 @@
                }
             </ListItemView>
             <DetailView Context="adventureContext">
-
+                @if (adventureContext.Value != null)
+                {
+                    <AdventureMap Map="@adventureContext.Value.AdventureMap"></AdventureMap>
+                }
             </DetailView>
         </ListAndDetailView>
     }
