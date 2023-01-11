@@ -86,6 +86,6 @@ public class GameStateFileMiddleware : Middleware
         await File.WriteAllTextAsync(GetGameStateFilePath(), gameStateFileContent);
     }
 
-    private string GetGameStateFilePath() => $"{_webHostEnvironment.ContentRootPath}gameState.json";
+    private string GetGameStateFilePath() => $"{_webHostEnvironment.ContentRootPath}{Path.DirectorySeparatorChar}gameState.json";
     private static GameState CreateEmptyGameState() => new GameState(new DungeonBotState(ImmutableList<DungeonBot>.Empty), new AdventureState(ImmutableList<Adventure>.Empty));
 }
