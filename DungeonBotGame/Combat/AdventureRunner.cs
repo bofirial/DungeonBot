@@ -63,7 +63,8 @@ public class AdventureRunner : IAdventureRunner
             new BackgroundLocation(new Location(6, 3), "images/wall.png", IsBarrier: true),
             new BackgroundLocation(new Location(6, 2), "images/wall.png", IsBarrier: true),
             new BackgroundLocation(new Location(5, 1), "images/wall.png", IsBarrier: true),
-            new BackgroundLocation(new Location(4, 0), "images/wall.png", IsBarrier: true)
+            new BackgroundLocation(new Location(4, 0), "images/wall.png", IsBarrier: true),
+            new BackgroundLocation(new Location(3, 0), "images/wall.png", IsBarrier: true)
         }.ToImmutableList();
 
         var dungeonBotId = Guid.NewGuid().ToString();

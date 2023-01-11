@@ -7,7 +7,14 @@
         <div class="d-flex w-100 justify-content-center align-items-center">
         @for (short x = 0; x < GetMapTotalRows(Map); x++)
         {
-            <img class="map-cell pixel-image m-1" src="@GetImagePath(Map, x, y)" data-x="@x" data-y="@y"/>
+            <img class="map-cell pixel-image m-1" src="@GetBackgroundImageSource(Map, x, y)" data-x="@x" data-y="@y" />
+
+            var target = Map.Targets.FirstOrDefault(t => t.Location.X == x && t.Location.Y == y);
+
+            if (target!= null)
+            {
+                <img class="map-cell pixel-image m-1 position-absolute" src="@GetTargetImageSource(target)" data-x="@x" data-y="@y" />
+            }
         }
         </div>
     }
@@ -28,9 +35,19 @@
         return map.MaxDimensions.Y;
     }
 
-    string GetImagePath(Combat.AdventureMap map, short x, short y)
+    string GetImageUrl(string imagePath)
     {
-        return $"https://dungeonbot.net/{GetBackgroundRelativeImagePath(map, x, y)}";
+        return $"https://dungeonbot.net/{imagePath}";
+    }
+
+    string GetBackgroundImageSource(Combat.AdventureMap map, short x, short y)
+    {
+        return GetImageUrl(GetBackgroundRelativeImagePath(map, x, y));
+    }
+
+    string GetTargetImageSource(Combat.ITarget target)
+    {
+        return GetImageUrl(target.ImagePath);
     }
 
     string GetBackgroundRelativeImagePath(Combat.AdventureMap map, short x, short y)
