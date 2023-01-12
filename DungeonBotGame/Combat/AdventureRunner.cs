@@ -9,9 +9,16 @@ public interface IAdventureRunner
 
 public class AdventureRunner : IAdventureRunner
 {
+    private readonly IAdventureContextBuilder _adventureContextBuilder;
+
+    public AdventureRunner(IAdventureContextBuilder adventureContextBuilder)
+    {
+        _adventureContextBuilder = adventureContextBuilder;
+    }
+
     public Task<AdventureHistory> RunAdventureAsync(Data.Adventure adventure, IEnumerable<Data.DungeonBot> dungeonBotParty)
     {
-        //TODO: Build AdventureContext with Combat models for Adventure, Adventure Map, DungeonBots, Enemies, etc.
+        var adventureContext = _adventureContextBuilder.CreateAdventureContext(adventure, dungeonBotParty);
         //TODO: Run each turn of the adventure
 
         var fakeAdventureHistory = CreateFakeTreasureHuntAdventureHistory();

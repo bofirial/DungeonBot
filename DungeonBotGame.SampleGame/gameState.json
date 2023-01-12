@@ -2,7 +2,7 @@
   "DungeonBotState": {
     "DungeonBots": [
       {
-        "Id": "51ce2138-87ea-438d-87ef-1df1a1def9bf",
+        "Id": "51ce2138-87ea-438d-87ef-1df1a1def9be",
         "Name": "WarriorBot001",
         "Classification": "WarriorBot",
         "Level": 1,
@@ -44,124 +44,317 @@
             "X": 7,
             "Y": 7
           },
-          "DungeonBotSpawnLocations": [
+          "DungeonBotStartLocations": [
             {
               "X": 3,
               "Y": 1
             }
           ],
-          "ImpassableLocations": [
-            {
-              "Location": {
-                "X": 0,
-                "Y": 2
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 1,
-                "Y": 1
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 2,
-                "Y": 0
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 0,
-                "Y": 3
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 0,
-                "Y": 4
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 1,
-                "Y": 5
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 2,
-                "Y": 6
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 3,
-                "Y": 6
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 4,
-                "Y": 6
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 5,
-                "Y": 5
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 6,
-                "Y": 4
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 6,
-                "Y": 3
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 6,
-                "Y": 2
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 5,
-                "Y": 1
-              },
-              "ImagePath": "images/wall.png"
-            },
-            {
-              "Location": {
-                "X": 4,
-                "Y": 0
-              },
-              "ImagePath": "images/wall.png"
-            },
+          "AdventureExitLocations": [
             {
               "Location": {
                 "X": 3,
                 "Y": 0
               },
               "ImagePath": "images/entrance.png"
+            }
+          ],
+          "BackgroundLocations": [
+            {
+              "Location": {
+                "X": 2,
+                "Y": 1
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 1
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 1
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 1,
+                "Y": 2
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 2,
+                "Y": 2
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 2
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 2
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 5,
+                "Y": 2
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 1,
+                "Y": 3
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 2,
+                "Y": 3
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 3
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 3
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 5,
+                "Y": 3
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 1,
+                "Y": 4
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 2,
+                "Y": 4
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 4
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 4
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 5
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 2,
+                "Y": 5
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 5
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 5
+              },
+              "ImagePath": "images/blank.png",
+              "IsBarrier": false
+            },
+            {
+              "Location": {
+                "X": 0,
+                "Y": 2
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 1,
+                "Y": 1
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 2,
+                "Y": 0
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 0,
+                "Y": 3
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 0,
+                "Y": 4
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 1,
+                "Y": 5
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 2,
+                "Y": 6
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 6
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 6
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 5,
+                "Y": 5
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 6,
+                "Y": 4
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 6,
+                "Y": 3
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 6,
+                "Y": 2
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 5,
+                "Y": 1
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 4,
+                "Y": 0
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
+            },
+            {
+              "Location": {
+                "X": 3,
+                "Y": 0
+              },
+              "ImagePath": "images/wall.png",
+              "IsBarrier": true
             }
           ],
           "Enemies": [],
@@ -171,7 +364,8 @@
                 "X": 3,
                 "Y": 4
               },
-              "ImagePath": "images/treasure.png"
+              "ImagePath": "images/treasure.png",
+              "LootedImagePath": "images/treasure-looted.png"
             }
           ]
         },
